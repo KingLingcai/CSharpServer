@@ -14,7 +14,6 @@ namespace HexiUserServer.Controllers
         {
             //SMSHelper.SendMessage("18514502514");
             HttpApplicationStateBase state = this.HttpContext.Application;
-            IDictionary<string,string> dic =  this.HttpContext.Items;
             state.Add("phone", "123456789");
             return Json(state, JsonRequestBehavior.AllowGet);
 

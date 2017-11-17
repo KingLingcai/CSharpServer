@@ -8,6 +8,7 @@ namespace HexiUserServer.Models
     public class Proprietor
     {
         public int? Id { get; set; }//ID
+        public int? RoomId { get; set; }//房产单元ID
         public string RoomNumber { get; set; }//资源表编号
         //public string RoomAddress { get; set; }//房产地址
         public string Name { get; set; }//占用者名称

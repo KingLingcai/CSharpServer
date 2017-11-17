@@ -69,12 +69,16 @@ namespace HexiUtils
                     {
                         cmd.CommandText = sqlString;
                         cmd.Parameters.AddRange(parameters);
-                        int lines = cmd.ExecuteNonQuery();//执行插入操作，并返回受影响行数
-                        if (lines < 1)
+                        int? id = Convert.ToInt32(cmd.ExecuteScalar());//执行插入操作，并返回受影响行数
+                        if (id == null)
                         {
                             sr.status = "Fail";
                             sr.result = "数据写入失败";
                             sr.parameters = sqlString;
+                        }
+                        else
+                        {
+                            sr.data = id.ToString();
                         }
                     }
                 }

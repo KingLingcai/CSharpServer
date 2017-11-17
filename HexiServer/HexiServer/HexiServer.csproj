@@ -110,6 +110,7 @@
     <Compile Include="Business\EmployeeDal.cs" />
     <Compile Include="Business\ProprietorDal.cs" />
     <Compile Include="Business\RepairDal.cs" />
+    <Compile Include="Business\WXPayDal.cs" />
     <Compile Include="Common\DataTypeHelper.cs" />
     <Compile Include="Common\RequestHelper.cs" />
     <Compile Include="Common\SQLHelper.cs" />

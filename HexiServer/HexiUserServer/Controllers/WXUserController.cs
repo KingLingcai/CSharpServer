@@ -86,12 +86,12 @@ namespace HexiServer.Controllers
         /// <param name="sessionId"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult OnBindUser(string userName, string phoneNumber, string code, string sessionId)
+        public ActionResult OnBindUser(string userName, string phoneNumber, string sessionId)
         {
             StatusReport sr = new StatusReport();
             SessionBag sessionBag = null;
             sessionBag = SessionContainer.GetSession(sessionId);
-            string sessionCode = (string)sessionBag.Name;
+            //string sessionCode = (string)sessionBag.Name;
             //string sessionCode =(string)HttpContext.Session[phoneNumber];
 
             if (sessionBag == null)//如果sessionId失效，返回失败信息
@@ -101,20 +101,20 @@ namespace HexiServer.Controllers
                 return Json(sr, JsonRequestBehavior.AllowGet);
             }
 
-            if (string.IsNullOrEmpty(sessionCode))//如果sessionCode失效，返回失败信息
-            {
-                sr.status = "Fail";
-                sr.result = "codeSession已失效";
-                sr.parameters = phoneNumber;
-                return Json(sr,JsonRequestBehavior.AllowGet);
-            }
+            //if (string.IsNullOrEmpty(sessionCode))//如果sessionCode失效，返回失败信息
+            //{
+            //    sr.status = "Fail";
+            //    sr.result = "codeSession已失效";
+            //    sr.parameters = phoneNumber;
+            //    return Json(sr,JsonRequestBehavior.AllowGet);
+            //}
 
-            if (code != sessionCode)//如果验证码与用户收到的验证码不一致，返回失败信息
-            {
-                sr.status = "Fail";
-                sr.result = "code错误";
-                return Json(sr, JsonRequestBehavior.AllowGet);
-            }
+            //if (code != sessionCode)//如果验证码与用户收到的验证码不一致，返回失败信息
+            //{
+            //    sr.status = "Fail";
+            //    sr.result = "code错误";
+            //    return Json(sr, JsonRequestBehavior.AllowGet);
+            //}
 
             string openId = sessionBag.OpenId;
             int id = ProprietorDal.CheckProprietorExist(userName, phoneNumber);
@@ -137,7 +137,7 @@ namespace HexiServer.Controllers
             }
         }
         [HttpPost]
-        public ActionResult OnGetCode(string userName, string phoneNumber, string sessionId)
+        public ActionResult OnGetCode(string userName, string phoneNumber)
         {
             
             //StatusReport sr = new StatusReport();
@@ -155,9 +155,9 @@ namespace HexiServer.Controllers
             if (id > 0)
             {
                 string code = getCode();
-                SessionBag sessionBag = null;
-                sessionBag = SessionContainer.GetSession(sessionId);
-                sessionBag.Name = code;
+                //SessionBag sessionBag = null;
+                //sessionBag = SessionContainer.GetSession(sessionId);
+                //sessionBag.Name = code;
                 //filterContext.HttpContext.Session.Add(phoneNumber, code);
                 //Session[phoneNumber] = code;
                 //Session.Timeout = 60;

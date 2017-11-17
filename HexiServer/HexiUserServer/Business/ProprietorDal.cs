@@ -35,7 +35,7 @@ namespace HexiUserServer.Business
             if (proprietorId > 0)
             {
                 string sqlStr =
-                    " SELECT ID, 房产单元编号, 占用者名称, 联系电话, 帐套名称, 帐套代码 " +
+                    " SELECT ID, 房产单元ID, 房产单元编号, 占用者名称, 联系电话, 帐套名称, 帐套代码 " +
                     " FROM dbo.小程序_现场查询 " +
                     " where ID = @ID";
                 DataTable dt = SQLHelper.ExecuteQuery(sqlStr, new SqlParameter("@ID", proprietorId));
@@ -44,6 +44,7 @@ namespace HexiUserServer.Business
                 Proprietor proprietor = new Proprietor()
                 {
                     Id = DataTypeHelper.GetIntValue(dr["ID"]),
+                    RoomId = DataTypeHelper.GetIntValue(dr["房产单元ID"]),
                     RoomNumber = DataTypeHelper.GetStringValue(dr["房产单元编号"]),
                     Name = DataTypeHelper.GetStringValue(dr["占用者名称"]),
                     Phone = DataTypeHelper.GetStringValue(dr["联系电话"]),
