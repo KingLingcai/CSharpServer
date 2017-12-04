@@ -123,6 +123,8 @@
     <Compile Include="Models\Charge.cs" />
     <Compile Include="Models\Common.cs" />
     <Compile Include="Models\Proprietor.cs" />
+    <Compile Include="Models\WXUnifiedOrder.cs" />
+    <Compile Include="Models\WXUnifiedOrderResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
