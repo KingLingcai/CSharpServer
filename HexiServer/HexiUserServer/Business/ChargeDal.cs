@@ -105,6 +105,8 @@ namespace HexiUserServer.Business
         public static StatusReport SetCharges(string datetime, string totalCharge, string roomName, string proprietorName, string[] chargeIds)
         {
             StatusReport sr = new StatusReport();
+            
+
             //如果没有接收到ID列表，直接返回错误信息
             if (chargeIds.Length == 0 || datetime == null || totalCharge == null || roomName == null || proprietorName == null)
             {

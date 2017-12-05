@@ -7,6 +7,8 @@ using System.Data.SqlClient;
 using Newtonsoft.Json;
 using HexiServer.Common;
 using HexiServer.Models;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace HexiServer.Business
 {
@@ -75,32 +77,42 @@ namespace HexiServer.Business
         /// <returns></returns>
         public static int CheckEmployeeExist(string userName,string password)
         {
+
+            SHA1 sha1 = SHA1.Create();
+            byte[] pw = sha1.ComputeHash(Encoding.Unicode.GetBytes(password));
+
             //string sqlString =
-            //    "select " +
-            //    "ID " +
-            //    "from 用户 " +
-            //    "where UserCode = @UserCode and Password = @Password";
+            //   "select " +
+            //   "ID " +
+            //   "from 用户 " +
+            //   "where UserCode = @UserCode";
 
-            //int id = SQLHelper.ExecuteScalar(sqlString,
-            //    new SqlParameter("@UserCode",name),
-            //    new SqlParameter("@Password",password));
-            string sqlString =
-               "select " +
-               "ID " +
-               "from 用户 " +
-               "where UserCode = @UserCode";
+            string sqlString = "if not exist select ID, Password from 用户 where UserCode = @UserCode";
 
-            int id = SQLHelper.ExecuteScalar(sqlString,
-                new SqlParameter("@UserCode", userName));
-
-            if (id > 0)
-            {
-                return id;
-            }
-            else
+            DataTable dt = SQLHelper.ExecuteQuery(sqlString, new SqlParameter("@UserCode", userName));
+            if (dt.Rows.Count == 0)
             {
                 return 0;
             }
+            DataRow dr = dt.Rows[0];
+            int id = Convert.ToInt32(dr["ID"]);
+            byte[] storedPassword = (byte[])dr["Password"];
+
+            Boolean isEqual = ComparePasswords(storedPassword, pw);
+
+            return isEqual ? id : 0;
+
+            //int id = SQLHelper.ExecuteScalar(sqlString,
+            //    new SqlParameter("@UserCode", userName));
+
+            //if (id > 0)
+            //{
+            //    return id;
+            //}
+            //else
+            //{
+            //    return 0;
+            //}
         }
 
         /// <summary>
@@ -147,5 +159,115 @@ namespace HexiServer.Business
 
             return null;
         }
+
+        private static Boolean ComparePasswords(byte[] storedPassword, byte[] hashedPassword)
+        {
+            int saltLength = 4;
+            if (storedPassword.Length == 0 || hashedPassword.Length == 0 || storedPassword.Length - hashedPassword.Length != saltLength)
+            {
+                return false;
+            }
+
+            byte[] saltValue = new byte[saltLength - 1];
+            int saltOffset = storedPassword.Length - saltLength;
+            for (int i = 0; i < saltLength; i++)
+            {
+                saltValue[i] = storedPassword[saltOffset + i];
+            }
+            byte[] saltedPassword = CreateSaltedPassword(saltValue, hashedPassword);
+            return CompareByteArray(storedPassword,saltedPassword);
+        }
+
+        private static Boolean CompareByteArray(byte[] array1, byte[] array2)
+        {
+            if (array1.Length != array2.Length)
+            {
+                return false;
+            }
+            for (int i = 0; i < array1.Length; i++)
+            {
+                if (array1[i] != array2[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private static byte[] CreateSaltedPassword (byte[] saltValue, byte[] unsaltedPassword)
+        {
+            byte[] rawSalted = new byte[unsaltedPassword.Length + saltValue.Length - 1];
+            unsaltedPassword.CopyTo(rawSalted, 0);
+            saltValue.CopyTo(rawSalted, unsaltedPassword.Length);
+            SHA1 sha1 = SHA1.Create();
+            byte[] saltedPassword = sha1.ComputeHash(rawSalted);
+            byte[] dbPassword = new byte[saltedPassword.Length + saltValue.Length - 1];
+            saltedPassword.CopyTo(dbPassword, 0);
+            saltValue.CopyTo(dbPassword, saltedPassword.Length);
+            return dbPassword;
+        }
     }
 }
+
+
+
+/**
+ *  
+ *  Dim sha1 As sha1 = sha1.Create()
+    Dim pw As Byte() = sha1.ComputeHash(Encoding.Unicode.GetBytes(password))
+ *  
+ *  ' compare the hashed password against the stored password
+    Private Function ComparePasswords(ByVal storedPassword As Byte(), ByVal hashedPassword As Byte()) As Boolean
+        If ((storedPassword Is Nothing) OrElse (hashedPassword Is Nothing) OrElse (hashedPassword.Length <> storedPassword.Length - saltLength)) Then
+            Return False
+        End If
+
+        ' get the saved saltValue
+        Dim saltValue(saltLength - 1) As Byte
+        Dim saltOffset As Integer = storedPassword.Length - saltLength
+        Dim i As Integer = 0
+        For i = 0 To saltLength - 1
+            saltValue(i) = storedPassword(saltOffset + i)
+        Next
+
+        Dim saltedPassword As Byte() = CreateSaltedPassword(saltValue, hashedPassword)
+
+        ' compare the values
+        Return CompareByteArray(storedPassword, saltedPassword)
+    End Function
+
+    ' compare the contents of two byte arrays
+    Private Function CompareByteArray(ByVal array1 As Byte(), ByVal array2 As Byte()) As Boolean
+        If (array1.Length <> array2.Length) Then
+            Return False
+        End If
+
+        Dim i As Integer
+        For i = 0 To array1.Length - 1
+            If (array1(i) <> array2(i)) Then
+                Return False
+            End If
+        Next
+
+        Return True
+    End Function
+
+    ' create a salted password given the salt value
+    Private Function CreateSaltedPassword(ByVal saltValue As Byte(), ByVal unsaltedPassword As Byte()) As Byte()
+        ' add the salt to the hash
+        Dim rawSalted(unsaltedPassword.Length + saltValue.Length - 1) As Byte
+        unsaltedPassword.CopyTo(rawSalted, 0)
+        saltValue.CopyTo(rawSalted, unsaltedPassword.Length)
+
+        'Create the salted hash			
+        Dim sha1 As sha1 = sha1.Create()
+        Dim saltedPassword As Byte() = sha1.ComputeHash(rawSalted)
+
+        ' add the salt value to the salted hash
+        Dim dbPassword(saltedPassword.Length + saltValue.Length - 1) As Byte
+        saltedPassword.CopyTo(dbPassword, 0)
+        saltValue.CopyTo(dbPassword, saltedPassword.Length)
+
+        Return dbPassword
+    End Function
+*/

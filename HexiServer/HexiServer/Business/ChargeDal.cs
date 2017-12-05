@@ -18,6 +18,8 @@ namespace HexiServer.Business
                                 "WHERE 帐套代码 = " + ztcode +
                                 (string.IsNullOrEmpty(homeNumber) ? "" : "and (房产单元编号 like '%" + homeNumber + "%') ") +
                                 (string.IsNullOrEmpty(name) ? "" : "and (占用者名称 like '%" + name + "%') ") +
+                                " and 计费开始年月 >= " + startMonth +
+                                " and 计费开始年月 <= " + endMonth +
                                 "GROUP BY 房产单元编号, 占用者名称, 帐套代码 " +
                                 "ORDER BY 占用者名称";
 
@@ -44,11 +46,14 @@ namespace HexiServer.Business
             string sqlString = "SELECT 应收金额, 计费年月, 付款方式, 费用名称, 计费开始年月, 计费截至年月 " +
                 "FROM dbo.小程序_已收查询 " +
                 "WHERE 房产单元编号 = @房产单元编号 and 占用者名称 = @占用者名称 and 帐套代码 = @帐套代码 " +
+                "and 计费开始年月 >= @计费开始年月 and 计费开始年月 <= @计费截止年月 " +
                 "ORDER BY 计费年月 ";
             DataTable dt = SQLHelper.ExecuteQuery(sqlString,
                 new SqlParameter("@房产单元编号", homeNumber),
                 new SqlParameter("@占用者名称", name),
-                new SqlParameter("@帐套代码", ztcode));
+                new SqlParameter("@帐套代码", ztcode),
+                new SqlParameter("@计费开始年月", startMonth),
+                new SqlParameter("@计费截止年月",endMonth));
             List<ChargedDetail> cdList = new List<ChargedDetail>();
             foreach (DataRow row in dt.Rows)
             {

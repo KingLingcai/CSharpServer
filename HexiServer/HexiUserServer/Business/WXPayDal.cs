@@ -20,14 +20,14 @@ namespace HexiUserServer.Business
         /// <param name="openId"></param>
         /// <param name="totalCharge"></param>
         /// <returns>StatusReport</returns>
-        public static StatusReport UnifiedOrder(string openId,double totalCharge, int[] ids)//统一下单
+        public static StatusReport UnifiedOrder(string openId,double totalCharge, string dataBag)//统一下单
         {
             StatusReport sr = new StatusReport();
             WXUnifiedOrder order = new WXUnifiedOrder()
             {
                 appid = Common.Appid,
                 mch_id = Common.Mchid,
-                attach = "物业收费",
+                attach = dataBag,
                 body = "物业费",
                 detail = "199",
                 nonce_str = "1991",
