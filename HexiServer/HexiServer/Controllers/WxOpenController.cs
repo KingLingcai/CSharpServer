@@ -95,6 +95,7 @@ namespace HexiServer.Controllers
                 return Json(sr);
             }
             string openId = sessionBag.OpenId;
+            //string openId = "oTTDy0KN71B2XLMXobrapvhqlHcY";
             int id = EmployeeDal.CheckEmployeeExist(userName,password);
             string temp = id > 0 ? "存在" : "不存在";
             if (id > 0)

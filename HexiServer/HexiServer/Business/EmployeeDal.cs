@@ -87,7 +87,7 @@ namespace HexiServer.Business
             //   "from 用户 " +
             //   "where UserCode = @UserCode";
 
-            string sqlString = "if not exist select ID, Password from 用户 where UserCode = @UserCode";
+            string sqlString = "select ID, Password from 用户 where UserCode = @UserCode";
 
             DataTable dt = SQLHelper.ExecuteQuery(sqlString, new SqlParameter("@UserCode", userName));
             if (dt.Rows.Count == 0)
@@ -168,7 +168,7 @@ namespace HexiServer.Business
                 return false;
             }
 
-            byte[] saltValue = new byte[saltLength - 1];
+            byte[] saltValue = new byte[saltLength];
             int saltOffset = storedPassword.Length - saltLength;
             for (int i = 0; i < saltLength; i++)
             {
@@ -196,12 +196,12 @@ namespace HexiServer.Business
 
         private static byte[] CreateSaltedPassword (byte[] saltValue, byte[] unsaltedPassword)
         {
-            byte[] rawSalted = new byte[unsaltedPassword.Length + saltValue.Length - 1];
+            byte[] rawSalted = new byte[unsaltedPassword.Length + saltValue.Length];
             unsaltedPassword.CopyTo(rawSalted, 0);
             saltValue.CopyTo(rawSalted, unsaltedPassword.Length);
             SHA1 sha1 = SHA1.Create();
             byte[] saltedPassword = sha1.ComputeHash(rawSalted);
-            byte[] dbPassword = new byte[saltedPassword.Length + saltValue.Length - 1];
+            byte[] dbPassword = new byte[saltedPassword.Length + saltValue.Length];
             saltedPassword.CopyTo(dbPassword, 0);
             saltValue.CopyTo(dbPassword, saltedPassword.Length);
             return dbPassword;

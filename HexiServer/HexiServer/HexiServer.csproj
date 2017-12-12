@@ -129,6 +129,7 @@
     <Compile Include="Models\Jurisdiction.cs" />
     <Compile Include="Models\Proprietor.cs" />
     <Compile Include="Models\Repair.cs" />
+    <Compile Include="Models\Status.cs" />
     <Compile Include="Models\StatusReport.cs" />
     <Compile Include="Models\WXUser.cs" />
     <Compile Include="Models\ZT.cs" />

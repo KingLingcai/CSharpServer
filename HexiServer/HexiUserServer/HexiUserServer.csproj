@@ -112,9 +112,11 @@
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Business\ChargeDal.cs" />
+    <Compile Include="Business\ComplaintDal.cs" />
     <Compile Include="Business\ProprietorDal.cs" />
     <Compile Include="Business\WXPayDal.cs" />
     <Compile Include="Controllers\ChargeController.cs" />
+    <Compile Include="Controllers\ComplaintController.cs" />
     <Compile Include="Controllers\SMSTestController.cs" />
     <Compile Include="Controllers\WXUserController.cs" />
     <Compile Include="Global.asax.cs">
@@ -122,6 +124,7 @@
     </Compile>
     <Compile Include="Models\Charge.cs" />
     <Compile Include="Models\Common.cs" />
+    <Compile Include="Models\Complaint.cs" />
     <Compile Include="Models\Proprietor.cs" />
     <Compile Include="Models\WXUnifiedOrder.cs" />
     <Compile Include="Models\WXUnifiedOrderResult.cs" />
@@ -141,6 +144,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\Charge\" />
+    <Folder Include="Views\Complaint\" />
     <Folder Include="Views\SMSTest\" />
     <Folder Include="Views\WXUser\" />
   </ItemGroup>

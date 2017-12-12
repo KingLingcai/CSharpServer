@@ -17,20 +17,23 @@ namespace HexiServer.Business
         /// <param name="openId"></param>
         /// <param name="ztcode"></param>
         /// <returns></returns>
-        public static Repair[] GetRepairOrder(string userCode, string ztcode)
+        public static Repair[] GetRepairOrder(string userCode, string ztcode, string orderType, int page)
         {
             //string receivePerson = UserHelper.GetUser(openId);
+            // select   top   y   *   from   表   where   主键   not   in(select   top   (x-1)*y   主键   from   表) 
             string sqlString =
-                "select" +
+                "select top 100 " +
                 " ID,序号,部门,地址,报修人,联系电话,服务项目,服务类别," +
                 "紧急程度,报修说明,报修时间,预约服务时间,谈好上门时间,发单人,接单人,派工时间," +
-                "到场时间,操作人,完成时间,材料费,人工费,是否阅读,完成情况及所耗物料 " +
+                "到场时间,操作人,完成时间,材料费,人工费,是否阅读,状态,完成情况及所耗物料 " +
                 "from 基础资料_服务任务管理 " +
-                "where 接单人 = @接单人 and left(分类,2) = @分类 " +
+                "where 接单人 = @接单人 and left(分类,2) = @分类 and 状态 = @状态  and ID not in (select top ((@page -1) * 100) ID from 基础资料_服务任务管理 order by ID desc) " +
                 "order by ID desc ";
             DataTable dt = SQLHelper.ExecuteQuery(sqlString,
                 new SqlParameter("@接单人", userCode),
-                new SqlParameter("@分类", ztcode));
+                new SqlParameter("@分类", ztcode),
+                new SqlParameter("@状态",orderType),
+                new SqlParameter("@page",page));
 
             List<Repair> repairList = new List<Repair>();
             foreach (DataRow row in dt.Rows)
@@ -58,6 +61,7 @@ namespace HexiServer.Business
                 r.MaterialExpense = DataTypeHelper.GetDoubleValue(row["材料费"]);
                 r.LaborExpense = DataTypeHelper.GetDoubleValue(row["人工费"]);
                 r.IsRead = DataTypeHelper.GetIntValue(row["是否阅读"]);
+                r.status = DataTypeHelper.GetStringValue(row["状态"]);
                 r.CompleteStatus = DataTypeHelper.GetStringValue(row["完成情况及所耗物料"]);
                 repairList.Add(r);
             }
@@ -73,8 +77,9 @@ namespace HexiServer.Business
         /// <param name="completeStatus"></param>
         /// <param name="laborExpense"></param>
         /// <param name="materialExpense"></param>
+        /// /// <param name="status"></param>
         /// <returns></returns>
-        public static StatusReport SetRepairOrder(string id, string arriveTime, string completeTime, string completeStatus, string laborExpense, string materialExpense)
+        public static StatusReport SetRepairOrder(string id, string arriveTime, string completeTime, string completeStatus, string laborExpense, string materialExpense,string status)
         {
             StatusReport sr = new StatusReport();
             string sqlString = 
@@ -83,6 +88,7 @@ namespace HexiServer.Business
                 "到场时间 = @到场时间, " +
                 "完成时间 = @完成时间, " +
                 "完成情况及所耗物料 = @完成情况及所耗物料, " +
+                "状态 = @状态, " + 
                 "人工费 = @人工费, " +
                 "材料费 = @材料费 " +
                 "where ID = @ID";
@@ -90,15 +96,21 @@ namespace HexiServer.Business
                 new SqlParameter("@到场时间", arriveTime),
                 new SqlParameter("@完成时间", completeTime),
                 new SqlParameter("@完成情况及所耗物料", completeStatus),
+                new SqlParameter("@状态", status),
                 new SqlParameter("@人工费", Convert.ToDouble(laborExpense)),
                 new SqlParameter("@材料费", Convert.ToDouble(materialExpense)),
                 new SqlParameter("@ID", Convert.ToInt32(id)));
-
+                
             return sr;
         }
 
 
-
+        public static StatusReport SetOrderIsRead (string id)
+        {
+            string sqlstring = "update 基础资料_服务任务管理 set 是否阅读 = 0 where ID = @ID";
+            StatusReport sr = SQLHelper.Update(sqlstring, new SqlParameter("@ID", id));
+            return sr;
+        }
 
 
 

@@ -13,8 +13,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HexiTest", "HexiTest\HexiTest.csproj", "{B9A52EA4-1251-4963-AE89-E66C350B7A75}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "VBTest", "VBTest\VBTest.vbproj", "{0774CA81-041B-44A7-BCC3-FDB84215FFEE}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,10 +39,6 @@ Global
 		{B9A52EA4-1251-4963-AE89-E66C350B7A75}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9A52EA4-1251-4963-AE89-E66C350B7A75}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B9A52EA4-1251-4963-AE89-E66C350B7A75}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0774CA81-041B-44A7-BCC3-FDB84215FFEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0774CA81-041B-44A7-BCC3-FDB84215FFEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0774CA81-041B-44A7-BCC3-FDB84215FFEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0774CA81-041B-44A7-BCC3-FDB84215FFEE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

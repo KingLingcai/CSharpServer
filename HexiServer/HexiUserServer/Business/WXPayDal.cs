@@ -47,7 +47,7 @@ namespace HexiUserServer.Business
             {
                 return sr;
             }
-            string xmlResult = sr.data;
+            string xmlResult = (string)sr.data;
             sr = GetOrderResult(xmlResult);
             sr.parameters = xmlParam;
             return sr;

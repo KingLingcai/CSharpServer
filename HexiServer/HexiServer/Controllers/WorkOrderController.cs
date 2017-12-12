@@ -20,14 +20,14 @@ namespace HexiServer.Controllers
         /// <param name="ztCode"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult OnGetRepairList(string userCode, string ztCode)
+        public ActionResult OnGetRepairList(string userCode, string ztCode, string orderType,int page)
         {
             StatusReport sr = new StatusReport();
             //string openid = GetOpenId(sessionId);
             Repair[] repairList = null;
             //if (openid != null)
             //{
-                repairList = RepairDal.GetRepairOrder(userCode, ztCode);
+                repairList = RepairDal.GetRepairOrder(userCode, ztCode,orderType,page);
             //}
             
             return Json(repairList);
@@ -44,14 +44,19 @@ namespace HexiServer.Controllers
         /// <param name="laborExpense"></param>
         /// <param name="materialExpense"></param>
         /// <returns></returns>
-        public ActionResult OnSetRepairOrder(string sessionId, string id, string arriveTime, string completeTime, string completeStatus, string laborExpense, string materialExpense)
+        public ActionResult OnSetRepairOrder(string sessionId, string id, string arriveTime, string completeTime, string completeStatus, string laborExpense, string materialExpense, string status)
         {
             StatusReport sr = new StatusReport();
-            sr = RepairDal.SetRepairOrder(id, arriveTime, completeTime, completeStatus, laborExpense, materialExpense);
+            sr = RepairDal.SetRepairOrder(id, arriveTime, completeTime, completeStatus, laborExpense, materialExpense,status);
             return Json(sr);
         }
 
-
+        public ActionResult OnSetOrderIsRead(string id)
+        {
+            StatusReport sr = new StatusReport();
+            sr = RepairDal.SetOrderIsRead(id);
+            return Json(sr);
+        }
 
         private string GetOpenId (string sessionId)
         {
