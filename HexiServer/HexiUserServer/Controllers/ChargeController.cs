@@ -15,16 +15,16 @@ namespace HexiUserServer.Controllers
     public class ChargeController : Controller
     {
         [HttpPost]
-        public ActionResult OnGetCharges(string ztCode, string roomId, string proprietorId )
+        public ActionResult OnGetCharges(string ztCode, string roomNumber, string userName )
         {
-            return Json(ChargeDal.GetCharges(ztCode, roomId, proprietorId));
+            return Json(ChargeDal.GetCharges(ztCode, roomNumber, userName));
         }
 
         [HttpPost]
-        public ActionResult OnSetCharges(string datetime, string totalCharge, string roomName, string proprietorName, string[] chargeIds)
+        public ActionResult OnSetCharges(string datetime, string proprietorName, string[] chargeIds)
         {
-            return Json(new { datetime = datetime, totalCharge = totalCharge, roomName = roomName, proprietorName = proprietorName, chargeIds = chargeIds });
-            //return Json(ChargeDal.SetCharges(datetime, totalCharge, roomName, proprietorName, chargeIds));
+            //return Json(new { datetime = datetime, proprietorName = proprietorName, chargeIds = chargeIds });
+            return Json(ChargeDal.SetCharges(datetime, proprietorName, chargeIds));
         }
 
         [HttpPost]

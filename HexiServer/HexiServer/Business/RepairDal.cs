@@ -6,6 +6,7 @@ using System.Data;
 using System.Data.SqlClient;
 using HexiServer.Models;
 using HexiServer.Common;
+using HexiUtils;
 
 namespace HexiServer.Business
 {
@@ -17,23 +18,30 @@ namespace HexiServer.Business
         /// <param name="openId"></param>
         /// <param name="ztcode"></param>
         /// <returns></returns>
-        public static Repair[] GetRepairOrder(string userCode, string ztcode, string orderType, int page)
+        public static StatusReport GetRepairOrder(string userCode, string ztcode, string orderType)
         {
             //string receivePerson = UserHelper.GetUser(openId);
             // select   top   y   *   from   表   where   主键   not   in(select   top   (x-1)*y   主键   from   表) 
+            StatusReport sr = new StatusReport();
             string sqlString =
                 "select top 100 " +
                 " ID,序号,部门,地址,报修人,联系电话,服务项目,服务类别," +
                 "紧急程度,报修说明,报修时间,预约服务时间,谈好上门时间,发单人,接单人,派工时间," +
                 "到场时间,操作人,完成时间,材料费,人工费,是否阅读,状态,完成情况及所耗物料 " +
                 "from 基础资料_服务任务管理 " +
-                "where 接单人 = @接单人 and left(分类,2) = @分类 and 状态 = @状态  and ID not in (select top ((@page -1) * 100) ID from 基础资料_服务任务管理 order by ID desc) " +
+                "where 接单人 = @接单人 and left(分类,2) = @分类 and 状态 = @状态 " +
                 "order by ID desc ";
-            DataTable dt = SQLHelper.ExecuteQuery(sqlString,
+            DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlString,
                 new SqlParameter("@接单人", userCode),
                 new SqlParameter("@分类", ztcode),
-                new SqlParameter("@状态",orderType),
-                new SqlParameter("@page",page));
+                new SqlParameter("@状态",orderType));
+
+            if (dt.Rows.Count == 0)
+            {
+                sr.status = "Fail";
+                sr.result = "未查询到任何数据";
+                return sr;
+            }
 
             List<Repair> repairList = new List<Repair>();
             foreach (DataRow row in dt.Rows)
@@ -65,7 +73,11 @@ namespace HexiServer.Business
                 r.CompleteStatus = DataTypeHelper.GetStringValue(row["完成情况及所耗物料"]);
                 repairList.Add(r);
             }
-            return repairList.ToArray();
+            sr.status = "Success";
+            sr.result = "成功";
+            sr.data = repairList.ToArray();
+
+            return sr;
         }
 
         /// <summary>
@@ -92,7 +104,7 @@ namespace HexiServer.Business
                 "人工费 = @人工费, " +
                 "材料费 = @材料费 " +
                 "where ID = @ID";
-            sr = SQLHelper.Update(sqlString,
+            sr = SQLHelper.Update("wyt", sqlString,
                 new SqlParameter("@到场时间", arriveTime),
                 new SqlParameter("@完成时间", completeTime),
                 new SqlParameter("@完成情况及所耗物料", completeStatus),
@@ -107,8 +119,25 @@ namespace HexiServer.Business
 
         public static StatusReport SetOrderIsRead (string id)
         {
-            string sqlstring = "update 基础资料_服务任务管理 set 是否阅读 = 0 where ID = @ID";
-            StatusReport sr = SQLHelper.Update(sqlstring, new SqlParameter("@ID", id));
+            string sqlstring = "update 基础资料_服务任务管理 set 是否阅读 = 1 where ID = @ID";
+            StatusReport sr = SQLHelper.Update("wyt", sqlstring, new SqlParameter("@ID", id));
+            return sr;
+        }
+
+
+        public static StatusReport SetPatrol (string name, string address, string detail, string classify, string time)
+        {
+            StatusReport sr = new StatusReport();
+            string sqlString = "insert into 基础资料_服务任务管理 (报修人,地址,服务项目,分类,报修时间,状态,报修来源) " +
+                " select @报修人,@地址,@服务项目,@分类,@报修时间,@状态,@报修来源 ";
+            sr = SQLHelper.Insert("wyt", sqlString,
+                new SqlParameter("@报修人", name),
+                new SqlParameter("@地址", address),
+                new SqlParameter("@服务项目", detail),
+                new SqlParameter("@分类", classify),
+                new SqlParameter("@报修时间", time),
+                new SqlParameter("@状态", "未受理"),
+                new SqlParameter("@报修来源", "小程序报事"));
             return sr;
         }
 

@@ -9,6 +9,7 @@ using HexiServer.Common;
 using HexiServer.Models;
 using System.Security.Cryptography;
 using System.Text;
+using HexiUtils;
 
 namespace HexiServer.Business
 {
@@ -31,7 +32,7 @@ namespace HexiServer.Business
                 "from 基础资料_微信员工绑定表 " +
                 "where OpenId = @OpenId";
 
-            int empId = SQLHelper.ExecuteScalar(sqlString,
+            int empId = SQLHelper.ExecuteScalar("wyt", sqlString,
                 new SqlParameter("@OpenId", openId));
             
             if (empId > 0)
@@ -42,7 +43,7 @@ namespace HexiServer.Business
                     "from 用户 " +
                     "where ID = @ID";
 
-                DataTable dt = SQLHelper.ExecuteQuery(sqlStr, new SqlParameter("@ID", empId));
+                DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlStr, new SqlParameter("@ID", empId));
                 DataRow dr = dt.Rows[0];
 
                 Employee emp = new Employee()
@@ -56,7 +57,7 @@ namespace HexiServer.Business
                 emp = GetZTInfo(emp, ztcodes);
                 sr.status = "Success";
                 sr.result = "成功";
-                sr.data = JsonConvert.SerializeObject(emp);
+                sr.data = emp;
                 return sr;
             }
             else
@@ -89,7 +90,7 @@ namespace HexiServer.Business
 
             string sqlString = "select ID, Password from 用户 where UserCode = @UserCode";
 
-            DataTable dt = SQLHelper.ExecuteQuery(sqlString, new SqlParameter("@UserCode", userName));
+            DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlString, new SqlParameter("@UserCode", userName));
             if (dt.Rows.Count == 0)
             {
                 return 0;
@@ -129,7 +130,7 @@ namespace HexiServer.Business
                 "select " +
                 "@用户表Id, @OpenId";
 
-            StatusReport sr = SQLHelper.Insert(sqlString,
+            StatusReport sr = SQLHelper.Insert("wyt", sqlString,
                 new SqlParameter("@用户表Id", id),
                 new SqlParameter("@OpenId", openId));
 
@@ -145,7 +146,7 @@ namespace HexiServer.Business
             {
                 string ztcode = ztcodes[i];
                 string sqlString = "select 帐套代码,帐套名称 from 资源帐套表 where 帐套代码 = @帐套代码";
-                DataTable dt = SQLHelper.ExecuteQuery(sqlString, new SqlParameter("@帐套代码", ztcode));
+                DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlString, new SqlParameter("@帐套代码", ztcode));
                 DataRow dr = dt.Rows[0];
                 ZT zt = new ZT((string)dr["帐套代码"], (string)dr["帐套名称"]);
                 zts.Add(zt);

@@ -8,6 +8,7 @@ using Senparc.Weixin.WxOpen.AdvancedAPIs.Sns;
 using Senparc.Weixin.WxOpen.Containers;
 using HexiServer.Business;
 using HexiServer.Models;
+using HexiUtils;
 
 namespace HexiServer.Controllers
 {

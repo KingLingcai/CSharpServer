@@ -15,7 +15,7 @@ namespace HexiUserServer.Business
         {
             string sqlString = " insert into 基础资料_顾客投诉处理登记表 (投诉接待日期, 投诉方式, 投诉人姓名, 地址, 投诉内容, 联系电话, 分类) " +
                                " select @投诉接待日期, @投诉方式, @投诉人姓名, @地址, @投诉内容, @联系电话, @分类 ";
-            StatusReport sr = SQLHelper.Insert(sqlString,
+            StatusReport sr = SQLHelper.Insert("wyt", sqlString,
                 new SqlParameter("@投诉接待日期", receptionDate),
                 new SqlParameter("@投诉方式", "小程序投诉"),
                 new SqlParameter("@投诉人姓名", name),
@@ -37,7 +37,7 @@ namespace HexiUserServer.Business
                                " from 基础资料_顾客投诉处理登记表 " +
                                " where 分类 = @分类 and 投诉人姓名 = @投诉人姓名 and 联系电话 = @联系电话 " +
                                " order by ID desc ";
-            DataTable dt = SQLHelper.ExecuteQuery(sqlString,
+            DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlString,
                 new SqlParameter("@分类", classify),
                 new SqlParameter("@投诉人姓名", name),
                 new SqlParameter("@联系电话", phone));

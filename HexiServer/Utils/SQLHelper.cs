@@ -9,13 +9,23 @@ namespace HexiUtils
 {
     public class SQLHelper
     {
-        private static string connectionString = "Data Source=.;Initial Catalog=wytnetsz;Persist Security Info=False;User ID=sa;Password=101128";//连接字符串
+        private static string wytconnectionString = "Data Source=.;Initial Catalog=wytnetsz;Persist Security Info=False;User ID=sa;Password=101128";//连接字符串
+        private static string wxConnectionString = "Data Source=.;Initial Catalog=weixin;Persist Security Info=False;User ID=sa;Password=101128";
         /**
          * 该静态方法，用于根据传入的sql语句和相关参数，在数据库中查询
          * 数据，并以表的数据表（DataTable）的形式返回查询到的数据。
          * */
-        public static DataTable ExecuteQuery(string sqlString, params SqlParameter[] parameters)
+        public static DataTable ExecuteQuery(string database, string sqlString, params SqlParameter[] parameters)
         {
+            string connectionString = "";
+            if (database == "wyt")
+            {
+                connectionString = wytconnectionString;
+            }
+            else
+            {
+                connectionString = wxConnectionString;
+            }
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -35,8 +45,17 @@ namespace HexiUtils
          * 该静态方法，用于根据传入的sql语句和相关参数，在数据库中查询
          * 数据，并以表的数据表（DataTable）的形式返回查询到的数据。
          * */
-        public static int ExecuteScalar(string sqlString, params SqlParameter[] parameters)
+        public static int ExecuteScalar(string database, string sqlString, params SqlParameter[] parameters)
         {
+            string connectionString = "";
+            if (database == "wyt")
+            {
+                connectionString = wytconnectionString;
+            }
+            else
+            {
+                connectionString = wxConnectionString;
+            }
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -54,8 +73,17 @@ namespace HexiUtils
          * 该静态方法，用于根据传入的sql语句和相关参数，在数据库中插入数据，
          * 并将插入的结果返回
          * */
-        public static StatusReport Insert(string sqlString, params SqlParameter[] parameters)
+        public static StatusReport Insert(string database, string sqlString, params SqlParameter[] parameters)
         {
+            string connectionString = "";
+            if (database == "wyt")
+            {
+                connectionString = wytconnectionString;
+            }
+            else
+            {
+                connectionString = wxConnectionString;
+            }
             StatusReport sr = new StatusReport();
             sr.status = "Success";
             sr.result = "操作成功";
@@ -99,8 +127,17 @@ namespace HexiUtils
 
 
 
-        public static StatusReport Update(string sqlString, params SqlParameter[] parameters)
+        public static StatusReport Update(string database, string sqlString, params SqlParameter[] parameters)
         {
+            string connectionString = "";
+            if (database == "wyt")
+            {
+                connectionString = wytconnectionString;
+            }
+            else
+            {
+                connectionString = wxConnectionString;
+            }
             StatusReport sr = new StatusReport();
             sr.status = "Success";
             sr.result = "操作成功";

@@ -29,7 +29,7 @@ namespace HexiUserServer.Business
                 "from 基础资料_微信占用者绑定表 " +
                 "where OpenID = @OpenId";
 
-            int proprietorId = SQLHelper.ExecuteScalar(sqlString,
+            int proprietorId = SQLHelper.ExecuteScalar("wyt", sqlString,
                 new SqlParameter("@OpenId", openId));
 
             if (proprietorId > 0)
@@ -38,7 +38,7 @@ namespace HexiUserServer.Business
                     " SELECT ID, 房产单元ID, 房产单元编号, 占用者名称, 联系电话, 帐套名称, 帐套代码 " +
                     " FROM dbo.小程序_现场查询 " +
                     " where ID = @ID";
-                DataTable dt = SQLHelper.ExecuteQuery(sqlStr, new SqlParameter("@ID", proprietorId));
+                DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlStr, new SqlParameter("@ID", proprietorId));
                 DataRow dr = dt.Rows[0];
 
                 Proprietor proprietor = new Proprietor()
@@ -89,7 +89,7 @@ namespace HexiUserServer.Business
                "from 资源占用者 " +
                "where 占用者名称 = @占用者名称 and 联系电话 like '%" + phoneNumber + "%'";
 
-            int id = SQLHelper.ExecuteScalar(sqlString,
+            int id = SQLHelper.ExecuteScalar("wyt", sqlString,
                 new SqlParameter("@占用者名称", userName));
 
             if (id > 0)
@@ -116,7 +116,7 @@ namespace HexiUserServer.Business
                 "select " +
                 "@占用者ID, @OpenID";
 
-            StatusReport sr = SQLHelper.Insert(sqlString,
+            StatusReport sr = SQLHelper.Insert("wyt", sqlString,
                 new SqlParameter("@占用者ID", id),
                 new SqlParameter("@OpenID", openId));
 

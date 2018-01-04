@@ -111,21 +111,30 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Business\AdviseDal.cs" />
     <Compile Include="Business\ChargeDal.cs" />
     <Compile Include="Business\ComplaintDal.cs" />
+    <Compile Include="Business\DeliveryDal.cs" />
     <Compile Include="Business\ProprietorDal.cs" />
+    <Compile Include="Business\RepairDal.cs" />
     <Compile Include="Business\WXPayDal.cs" />
+    <Compile Include="Controllers\AdviseController.cs" />
     <Compile Include="Controllers\ChargeController.cs" />
     <Compile Include="Controllers\ComplaintController.cs" />
+    <Compile Include="Controllers\DeliveryController.cs" />
+    <Compile Include="Controllers\RepairController.cs" />
     <Compile Include="Controllers\SMSTestController.cs" />
     <Compile Include="Controllers\WXUserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Advise.cs" />
     <Compile Include="Models\Charge.cs" />
     <Compile Include="Models\Common.cs" />
     <Compile Include="Models\Complaint.cs" />
+    <Compile Include="Models\Delivery.cs" />
     <Compile Include="Models\Proprietor.cs" />
+    <Compile Include="Models\Repair.cs" />
     <Compile Include="Models\WXUnifiedOrder.cs" />
     <Compile Include="Models\WXUnifiedOrderResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -143,8 +152,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Advise\" />
     <Folder Include="Views\Charge\" />
     <Folder Include="Views\Complaint\" />
+    <Folder Include="Views\Delivery\" />
+    <Folder Include="Views\Repair\" />
     <Folder Include="Views\SMSTest\" />
     <Folder Include="Views\WXUser\" />
   </ItemGroup>

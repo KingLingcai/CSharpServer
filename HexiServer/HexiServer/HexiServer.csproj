@@ -108,6 +108,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Business\ChargeDal.cs" />
     <Compile Include="Business\EmployeeDal.cs" />
+    <Compile Include="Business\EquipmentDal.cs" />
     <Compile Include="Business\ProprietorDal.cs" />
     <Compile Include="Business\RepairDal.cs" />
     <Compile Include="Business\WXPayDal.cs" />
@@ -116,6 +117,7 @@
     <Compile Include="Common\SQLHelper.cs" />
     <Compile Include="Common\UserHelper.cs" />
     <Compile Include="Controllers\ChargeController.cs" />
+    <Compile Include="Controllers\EquipmentController.cs" />
     <Compile Include="Controllers\ProprietorController.cs" />
     <Compile Include="Controllers\WorkOrderController.cs" />
     <Compile Include="Controllers\WxOpenController.cs" />
@@ -126,6 +128,7 @@
     <Compile Include="Models\Charged.cs" />
     <Compile Include="Models\Comman.cs" />
     <Compile Include="Models\Employee.cs" />
+    <Compile Include="Models\Equipment.cs" />
     <Compile Include="Models\Jurisdiction.cs" />
     <Compile Include="Models\Proprietor.cs" />
     <Compile Include="Models\Repair.cs" />
@@ -149,11 +152,19 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\Charge\" />
+    <Folder Include="Views\Equipment\" />
     <Folder Include="Views\Proprietor\" />
     <Folder Include="Views\WorkOrder\" />
+    <Folder Include="wxImages\equipment\" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Utils\HexiUtils.csproj">
+      <Project>{c919ff5d-aeda-420d-a8b5-f52b474d979e}</Project>
+      <Name>HexiUtils</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

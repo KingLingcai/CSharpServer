@@ -7,12 +7,13 @@ using Senparc.Weixin.WxOpen.AdvancedAPIs.Sns;
 using Senparc.Weixin.WxOpen.Containers;
 using HexiServer.Business;
 using HexiServer.Models;
+using HexiUtils;
 
 namespace HexiServer.Controllers
 {
     public class WorkOrderController : Controller
     {
-      
+
         /// <summary>
         /// 获取某接单人的工单列表
         /// </summary>
@@ -20,18 +21,22 @@ namespace HexiServer.Controllers
         /// <param name="ztCode"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult OnGetRepairList(string userCode, string ztCode, string orderType,int page)
+        public ActionResult OnGetRepairList(string userCode, string ztCode, string orderType)
         {
             StatusReport sr = new StatusReport();
-            //string openid = GetOpenId(sessionId);
-            Repair[] repairList = null;
-            //if (openid != null)
-            //{
-                repairList = RepairDal.GetRepairOrder(userCode, ztCode,orderType,page);
-            //}
-            
-            return Json(repairList);
+            if (string.IsNullOrEmpty(userCode) || string.IsNullOrEmpty(ztCode) || string.IsNullOrEmpty(orderType))
+            {
+                sr.status = "Fail";
+                sr.result = "信息不完整";
+                return Json(sr);
+            }
+            sr = RepairDal.GetRepairOrder(userCode, ztCode, orderType);
+
+            return Json(sr);
         }
+
+
+
 
         /// <summary>
         /// 将工单的处理详情写入数据库
@@ -51,12 +56,32 @@ namespace HexiServer.Controllers
             return Json(sr);
         }
 
+
+
+        public ActionResult OnSetPatrol(string name, string address, string detail, string classify, string time)
+        {
+            StatusReport sr = new StatusReport();
+            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(address) || string.IsNullOrEmpty(detail) || string.IsNullOrEmpty(classify) || string.IsNullOrEmpty(time))
+            {
+                sr.status = "Fail";
+                sr.result = "信息不完整";
+                return Json(sr);
+            }
+            sr = RepairDal.SetPatrol(name, address, detail, classify, time);
+            return Json(sr);
+        }
+
+
+
         public ActionResult OnSetOrderIsRead(string id)
         {
             StatusReport sr = new StatusReport();
             sr = RepairDal.SetOrderIsRead(id);
             return Json(sr);
         }
+
+
+
 
         private string GetOpenId (string sessionId)
         {

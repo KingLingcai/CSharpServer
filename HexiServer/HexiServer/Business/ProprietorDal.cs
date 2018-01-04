@@ -6,6 +6,7 @@ using System.Data;
 using System.Data.SqlClient;
 using HexiServer.Models;
 using HexiServer.Common;
+using HexiUtils;
 
 namespace HexiServer.Business
 {
@@ -23,7 +24,7 @@ namespace HexiServer.Business
                 (string.IsNullOrEmpty(homeNumber) ? "" : "and (房产单元编号 like '%" + homeNumber + "%') ") +
                 (string.IsNullOrEmpty(name) ? "" : "and (占用者名称 like '%" + name + "%') ") +
                 "ORDER BY ID ";
-            DataTable dt = SQLHelper.ExecuteQuery(sqlString,
+            DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlString,
                 new SqlParameter("@帐套代码", ztCode),
                 new SqlParameter("@资源表编号", homeNumber),
                 new SqlParameter("@占用者名称", name));

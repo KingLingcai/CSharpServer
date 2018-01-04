@@ -5,7 +5,7 @@ using System.Web;
 
 namespace HexiServer.Models
 {
-    public class Status
+    public class Statusddddddddddddd
     {
         public string result { get; set; }
         public object data { get; set; }

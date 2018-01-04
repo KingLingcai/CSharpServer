@@ -6,12 +6,13 @@ using System.Net;
 using System.IO;
 using System.Collections.Specialized;
 using HexiServer.Models;
+using HexiUtils;
 
 namespace HexiServer.Common
 {
-    public class RequestHelper
+    public class RequestHelper1
     {
-        public static StatusReport getRequest(string url)
+        public static StatusReport getRequest1(string url)
         {
             WebRequest request = null;
             WebResponse response = null;
@@ -44,7 +45,7 @@ namespace HexiServer.Common
             return sr;
         }
 
-        public static StatusReport PostRequest(string url, NameValueCollection data)
+        public static StatusReport PostRequest1(string url, NameValueCollection data)
         {
             WebRequest request = null;
             WebResponse response = null;

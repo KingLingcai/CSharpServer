@@ -93,5 +93,22 @@ namespace HexiUtils
                 return Convert.ToInt32(row);
             }
         }
+
+        /// <summary>
+        /// 将数据库中取出的数据转换为int?类型
+        /// </summary>
+        /// <param name="row"></param>
+        /// <returns></returns>
+        public static bool? GetBooleanValue(object row)
+        {
+            if (row == DBNull.Value)
+            {
+                return null;
+            }
+            else
+            {
+                return Convert.ToBoolean(row);
+            }
+        }
     }
 }

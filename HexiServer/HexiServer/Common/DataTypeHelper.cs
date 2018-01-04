@@ -5,14 +5,14 @@ using System.Web;
 
 namespace HexiServer.Common
 {
-    public class DataTypeHelper
+    public class DataTypeHelper1
     {
         /// <summary>
         /// 将数据库中取出的数据转换为string类型
         /// </summary>
         /// <param name="row"></param>
         /// <returns></returns>
-        public static string GetStringValue(object row)
+        public static string GetStringValue1(object row)
         {
             if (row == DBNull.Value)
             {
@@ -29,7 +29,7 @@ namespace HexiServer.Common
         /// </summary>
         /// <param name="row"></param>
         /// <returns></returns>
-        public static DateTime? GetDateValue(object row)
+        public static DateTime? GetDateValue1(object row)
         {
             if (row == DBNull.Value)
             {
@@ -42,7 +42,7 @@ namespace HexiServer.Common
         }
 
 
-        public static string GetDateStringValue(object row)
+        public static string GetDateStringValue1(object row)
         {
             if (row == DBNull.Value)
             {
@@ -61,7 +61,7 @@ namespace HexiServer.Common
         /// </summary>
         /// <param name="row"></param>
         /// <returns></returns>
-        public static double? GetDoubleValue(object row)
+        public static double? GetDoubleValue1(object row)
         {
             if (row == DBNull.Value)
             {
@@ -78,7 +78,7 @@ namespace HexiServer.Common
         /// </summary>
         /// <param name="row"></param>
         /// <returns></returns>
-        public static int? GetIntValue(object row)
+        public static int? GetIntValue1(object row)
         {
             if (row == DBNull.Value)
             {

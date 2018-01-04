@@ -5,17 +5,18 @@ using System.Web;
 using System.Data;
 using System.Data.SqlClient;
 using HexiServer.Models;
+using HexiUtils;
 
 namespace HexiServer.Common
 {
-    public class SQLHelper
+    public class SQLHelper1
     {
         private static string connectionString = "Data Source=.;Initial Catalog=wytnetsz;Persist Security Info=False;User ID=sa;Password=101128";//连接字符串
         /**
          * 该静态方法，用于根据传入的sql语句和相关参数，在数据库中查询
          * 数据，并以表的数据表（DataTable）的形式返回查询到的数据。
          * */
-        public static DataTable ExecuteQuery(string sqlString, params SqlParameter[] parameters)
+        public static DataTable ExecuteQuery1(string sqlString, params SqlParameter[] parameters)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -36,7 +37,7 @@ namespace HexiServer.Common
          * 该静态方法，用于根据传入的sql语句和相关参数，在数据库中查询
          * 数据，并以表的数据表（DataTable）的形式返回查询到的数据。
          * */
-        public static int ExecuteScalar(string sqlString, params SqlParameter[] parameters)
+        public static int ExecuteScalar1(string sqlString, params SqlParameter[] parameters)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -55,7 +56,7 @@ namespace HexiServer.Common
          * 该静态方法，用于根据传入的sql语句和相关参数，在数据库中插入数据，
          * 并将插入的结果返回
          * */
-        public static StatusReport Insert(string sqlString, params SqlParameter[] parameters)
+        public static StatusReport Insert1(string sqlString, params SqlParameter[] parameters)
         {
             StatusReport sr = new StatusReport();
             sr.status = "Success";
@@ -96,7 +97,7 @@ namespace HexiServer.Common
 
 
 
-        public static StatusReport Update(string sqlString, params SqlParameter[] parameters)
+        public static StatusReport Update1(string sqlString, params SqlParameter[] parameters)
         {
             StatusReport sr = new StatusReport();
             sr.status = "Success";
