@@ -52,9 +52,9 @@ namespace HexiServer.Controllers
             }
             try
             {
-                string mainPath = "D:\\wximages\\equipment\\";
+                string mainPath = "D:\\wximages\\";
                 string imagePath = mainPath + Request.Files.AllKeys[0];
-                string sqlImagePath = "equipment\\" + Request.Files.AllKeys[0];
+                string sqlImagePath = Request.Files.AllKeys[0];
                 HttpPostedFileBase uploadImage = (Request.Files[0]);
                 uploadImage.SaveAs(imagePath);
                 string ID = Request.Form["ID"];

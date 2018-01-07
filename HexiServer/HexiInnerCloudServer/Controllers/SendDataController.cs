@@ -27,21 +27,12 @@ namespace HexiInnerCloudServer.Controllers
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Clear();
             client.BaseAddress = new Uri(url);
-            //Request.
             HttpRequestMessage requestMessage = new HttpRequestMessage();
             HttpResponseMessage responseMessage = new HttpResponseMessage();
             requestMessage.Headers.Clear();
             requestMessage.Headers.Add("ContentType", Request.ContentType);
             requestMessage.Method = HttpMethod.Post;
-            if (Request.ContentType.Substring(0,19) == "multipart/form-data")
-            {
-                //HttpFileCollectionBase http = Request.Files;
-                requestMessage.Content = new StreamContent(Request.InputStream);
-            }
-            else
-            {
-                requestMessage.Content = new FormUrlEncodedContent(ToDictionary(parameters));
-            }
+            requestMessage.Content = new FormUrlEncodedContent(ToDictionary(parameters));
             
             responseMessage = client.SendAsync(requestMessage).Result;
             return responseMessage.Content.ReadAsStringAsync().Result;
