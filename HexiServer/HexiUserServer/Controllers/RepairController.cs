@@ -11,17 +11,17 @@ namespace HexiUserServer.Controllers
     public class RepairController : Controller
     {
         [HttpPost]
-        public ActionResult OnSetRepairOrder(string name, string phone, string address, string content, string time)
+        public ActionResult OnSetRepairOrder(string name, string phone, string address, string content, string time,string classify)
         {
             StatusReport sr = new StatusReport();
-            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(phone) || string.IsNullOrEmpty(address) || string.IsNullOrEmpty(content) || string.IsNullOrEmpty(time))
+            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(phone) || string.IsNullOrEmpty(address) || string.IsNullOrEmpty(content) || string.IsNullOrEmpty(time) || string.IsNullOrEmpty(classify))
             {
                 sr.status = "Fail";
                 sr.result = "信息不完整";
             }
             else
             {
-                sr = RepairDal.SetRepairOrder(name, phone, address, content, time);
+                sr = RepairDal.SetRepairOrder(name, phone, address, content, time,classify);
             }
             return Json(sr);
         }

@@ -88,19 +88,21 @@ namespace HexiUserServer.Business
         /// <param name="materialExpense"></param>
         /// /// <param name="status"></param>
         /// <returns></returns>
-        public static StatusReport SetRepairOrder(string name, string phone, string address, string content, string time)
+        public static StatusReport SetRepairOrder(string name, string phone, string address, string content, string time,string classify)
         {
             StatusReport sr = new StatusReport();
             string sqlString =
-                "insert into 基础资料_服务任务管理 (报修人,地址,联系电话,服务项目,报修时间) " +
-                "select @报修人,@地址,@联系电话,@服务项目,@报修时间 ";
+                "insert into 基础资料_服务任务管理 (报修人,地址,联系电话,服务项目,报修时间,分类,报修来源) " +
+                "select @报修人,@地址,@联系电话,@服务项目,@报修时间,@分类,@报修来源 ";
                 
             sr = SQLHelper.Update("wyt", sqlString,
                 new SqlParameter("@报修人", name),
                 new SqlParameter("@地址", address),
                 new SqlParameter("@联系电话", phone),
                 new SqlParameter("@服务项目", content),
-                new SqlParameter("@报修时间", time));
+                new SqlParameter("@报修时间", time),
+                new SqlParameter("@分类", classify),
+                new SqlParameter("@报修来源", "小程序业主报修"));
 
             return sr;
         }

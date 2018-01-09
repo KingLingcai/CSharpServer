@@ -57,6 +57,7 @@ namespace HexiServer.Business
             string sqlString = "SELECT 资源编号, 占用者名称, SUM(应收金额) AS 已收总额, 帐套代码 " +
                                 "FROM 应收款APP " +
                                 "WHERE 帐套代码 = " + ztcode +
+                                " and 收费状态 is null " +
                                 (string.IsNullOrEmpty(homeNumber) ? "" : "and (资源编号 like '%" + homeNumber + "%') ") +
                                 (string.IsNullOrEmpty(name) ? "" : "and (占用者名称 like '%" + name + "%') ") +
                                 " and 计费年月 >= " + startMonth +
@@ -278,6 +279,29 @@ namespace HexiServer.Business
             ///////////////////////////////////////////////////
         }
 
+        public static StatusReport SetCharges(string datetime, string name, string[] chargeIds)
+        {
+            StatusReport sr = new StatusReport();
+            string sqlString = "update weixin.dbo.应收款APP " +
+                                "set 收费状态 = '已收费', " +
+                                " 收费日期 = @收费日期, " +
+                                " 付款方式 = @付款方式, " +
+                                " 收款人 = @收款人 " +
+
+                                " where 应收款ID in (";
+            foreach (string ID in chargeIds)
+            {
+                sqlString += ID + ",";
+            }
+            sqlString = sqlString.Substring(0, sqlString.Length - 1) + ")";
+
+            sr = SQLHelper.Update("wyt", sqlString,
+                new SqlParameter("@收费日期", datetime),
+                new SqlParameter("@收款人", name),
+                new SqlParameter("@付款方式", "小程序现金收款"));
+            sr.parameters = sqlString;
+            return sr;
+        }
 
 
         //public static Charged[] GetChargedList(string homeNumber, string name, string ztcode, string startMonth, string endMonth)

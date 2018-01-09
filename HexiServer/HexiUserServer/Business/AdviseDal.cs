@@ -32,7 +32,8 @@ namespace HexiUserServer.Business
             StatusReport sr = new StatusReport();
             string sqlstring = " select ID,分类,姓名,联系电话,房号,表扬建议,内容,提交时间 " +
                                " from 基础资料_表扬建议管理 " +
-                               " where 分类 = @分类 and 联系电话 = @联系电话 ";
+                               " where 分类 = @分类 and 联系电话 = @联系电话" +
+                               " order by ID desc ";
             DataTable dt = SQLHelper.ExecuteQuery("wyt",sqlstring,
                 new SqlParameter("@分类",ztName),
                 new SqlParameter("@联系电话",phone));

@@ -55,6 +55,7 @@ namespace HexiServer.Business
                 };
                 string[] ztcodes = ((string)dr["ZTCodes"]).Split(',');
                 emp = GetZTInfo(emp, ztcodes);
+                emp = GetJurisdictionInfo(emp, emp.UserName);
                 sr.status = "Success";
                 sr.result = "成功";
                 sr.data = emp;
@@ -137,6 +138,21 @@ namespace HexiServer.Business
             return sr;
         }
 
+        private static Employee GetJurisdictionInfo(Employee employee, string name)
+        {
+            string jurisdiction = "";
+            string sqlString = "select 权限 from 基础资料_小程序员工权限配置 where 员工 = @员工";
+            DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlString, new SqlParameter("@员工", name));
+            if (dt.Rows.Count == 0)
+            {
+                employee.Jurisdiction = null;
+                return employee;
+            }
+            DataRow dr = dt.Rows[0];
+            jurisdiction = DataTypeHelper.GetStringValue(dr["权限"]);
+            employee.Jurisdiction = jurisdiction.Split(',');
+            return employee;
+        }
 
         private static Employee GetZTInfo(Employee employee, string[] ztcodes)
         {

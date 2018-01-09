@@ -48,5 +48,13 @@ namespace HexiServer.Controllers
             }
             return Json(ChargeDal.GetCharges(ZTCode, RoomNumber, Name, startMonth, endMonth));
         }
+
+
+        [HttpPost]
+        public ActionResult OnSetCharges(string datetime, string name, string[] chargeIds)
+        {
+            //return Json(new { datetime = datetime, proprietorName = proprietorName, chargeIds = chargeIds });
+            return Json(ChargeDal.SetCharges(datetime, name, chargeIds));
+        }
     }
 }
