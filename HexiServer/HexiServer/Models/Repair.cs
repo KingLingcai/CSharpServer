@@ -103,5 +103,13 @@ namespace HexiServer.Models
         /// 完成情况及所耗物料
         /// </summary>
         public string CompleteStatus { get; set; }//完成情况及所耗物料
+        /// <summary>
+        /// 报修前照片1，2，3
+        /// </summary>
+        public string[] BeforeImage { get; set; } //报修前照片1，2，3
+        /// <summary>
+        /// 处理后照片1，2，3
+        /// </summary>
+        public string[] AfterImage { get; set; }//处理后照片1，2，3
     }
 }

@@ -15,7 +15,7 @@ namespace HexiPublicCloudServer.Controllers
         [HttpPost]
         public string OnSendData()
         {
-            
+            return null;
         }
     }
 }

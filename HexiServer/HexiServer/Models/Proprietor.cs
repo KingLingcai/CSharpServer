@@ -21,6 +21,9 @@ namespace HexiServer.Models
         public double? Area { get; set; }//面积
         public string Identity { get; set; }//占用者性质
         public double? TotalArrearage { get; set; }//欠费总计
-        public string LicensePlateNumber { get; set; }//车牌号
+        public string LicensePlateNumber { get; set; }//车牌号码
+        public string CarColor { get; set; }//车辆颜色
+        public string CarBrand { get; set; }//车辆品牌
+        public string CarType { get; set; }//车辆型号
     }
 }

@@ -22,8 +22,8 @@ namespace HexiServer.Business
                                 (string.IsNullOrEmpty(name) ? "" : "and (占用者名称 like '%" + name + "%') ") +
                                 " and 计费开始年月 >= " + startMonth +
                                 " and 计费开始年月 <= " + endMonth +
-                                "GROUP BY 房产单元编号, 占用者名称, 帐套代码 " +
-                                "ORDER BY 占用者名称";
+                                " GROUP BY 房产单元编号, 占用者名称, 帐套代码 " +
+                                " ORDER BY 占用者名称 ";
 
             DataTable dt = SQLHelper.ExecuteQuery("wyt",sqlString);
             if (dt.Rows.Count == 0)

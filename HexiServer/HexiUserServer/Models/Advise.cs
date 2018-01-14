@@ -39,5 +39,9 @@ namespace HexiUserServer.Models
         /// 提交时间
         /// </summary>
         public string SubmitDate { get; set; }
+        /// <summary>
+        /// 照片1，2，3
+        /// </summary>
+        public string[] Image { get; set; }
     }
 }

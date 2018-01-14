@@ -107,6 +107,14 @@ namespace HexiServer.Models
         /// 序次
         /// </summary>
         public string Order { get; set; }
+        /// <summary>
+        /// 宽限上延天数
+        /// </summary>
+        public int? BeforeDays { get; set; }
+        /// <summary>
+        /// 宽限下延天数
+        /// </summary>
+        public int? AfterDays { get; set; }
 
     }
 }

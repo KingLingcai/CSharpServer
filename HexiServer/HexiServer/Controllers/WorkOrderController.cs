@@ -81,20 +81,81 @@ namespace HexiServer.Controllers
         }
 
 
-
-
-        private string GetOpenId (string sessionId)
+        public ActionResult OnSetRepairImage()
         {
-            SessionBag sessionbag = null;
-            sessionbag = SessionContainer.GetSession(sessionId);
-            if (sessionbag != null)
+            StatusReport sr = new StatusReport();
+            if (Request.Files.Count == 0)
             {
-                return sessionbag.OpenId;
+                sr.status = "Fail";
+                sr.result = "没有图片";
+                return Json(sr);
             }
-            else
+            try
             {
-                return null;
+                string mainPath = "D:\\wximages\\";
+                string imagePath = mainPath + Request.Files.AllKeys[0];
+                string sqlImagePath = Request.Files.AllKeys[0];
+                HttpPostedFileBase uploadImage = (Request.Files[0]);
+                uploadImage.SaveAs(imagePath);
+                string ID = Request.Form["id"];
+                string func = Request.Form["func"];
+                string index = Request.Form["index"];
+                sr = RepairDal.SetRepairImage(ID, func, index, sqlImagePath);
+                return Json(sr);
+            }
+            catch (NotImplementedException exp)
+            {
+                sr.status = "Fail";
+                sr.result = exp.Message;
+                return Json(sr);
             }
         }
+
+        public ActionResult OnSetPatrolImage()
+        {
+            StatusReport sr = new StatusReport();
+            if (Request.Files.Count == 0)
+            {
+                sr.status = "Fail";
+                sr.result = "没有图片";
+                return Json(sr);
+            }
+            try
+            {
+                string mainPath = "D:\\wximages\\";
+                string imagePath = mainPath + Request.Files.AllKeys[0];
+                string sqlImagePath = Request.Files.AllKeys[0];
+                HttpPostedFileBase uploadImage = (Request.Files[0]);
+                uploadImage.SaveAs(imagePath);
+                string ID = Request.Form["id"];
+                string func = Request.Form["func"];
+                string index = Request.Form["index"];
+                sr = RepairDal.SetPatrolImage(func, ID, index, sqlImagePath);
+                return Json(sr);
+            }
+            catch (NotImplementedException exp)
+            {
+                sr.status = "Fail";
+                sr.result = exp.Message;
+                return Json(sr);
+            }
+        }
+
+
+
+
+        //private string GetOpenId (string sessionId)
+        //{
+        //    SessionBag sessionbag = null;
+        //    sessionbag = SessionContainer.GetSession(sessionId);
+        //    if (sessionbag != null)
+        //    {
+        //        return sessionbag.OpenId;
+        //    }
+        //    else
+        //    {
+        //        return null;
+        //    }
+        //}
     }
 }

@@ -15,7 +15,8 @@ namespace HexiUserServer.Business
         {
             StatusReport sr = new StatusReport();
             string sqlstring = " insert into 基础资料_表扬建议管理 (分类,姓名,联系电话,房号,表扬建议,内容,提交时间) " +
-                               " select @分类,@姓名,@联系电话,@房号,@表扬建议,@内容,@提交时间 ";
+                               " select @分类,@姓名,@联系电话,@房号,@表扬建议,@内容,@提交时间 " +
+                               " SELECT @@IDENTITY ";
             sr = SQLHelper.Insert("wyt", sqlstring,
                 new SqlParameter("@分类", ztName),
                 new SqlParameter("@姓名", name),
@@ -30,7 +31,7 @@ namespace HexiUserServer.Business
         public static StatusReport GetAdvise (string ztName,string phone)
         {
             StatusReport sr = new StatusReport();
-            string sqlstring = " select ID,分类,姓名,联系电话,房号,表扬建议,内容,提交时间 " +
+            string sqlstring = " select ID,分类,姓名,联系电话,房号,表扬建议,内容,提交时间,照片1,照片2,照片3 " +
                                " from 基础资料_表扬建议管理 " +
                                " where 分类 = @分类 and 联系电话 = @联系电话" +
                                " order by ID desc ";
@@ -46,6 +47,7 @@ namespace HexiUserServer.Business
             List<Advise> adviseList = new List<Advise>();
             foreach(DataRow dr in dt.Rows)
             {
+                List<string> imageList = new List<string>();
                 Advise advise = new Advise();
                 advise.Id = DataTypeHelper.GetIntValue(dr["ID"]);
                 advise.classify = DataTypeHelper.GetStringValue(dr["分类"]);
@@ -55,11 +57,28 @@ namespace HexiUserServer.Business
                 advise.Type = DataTypeHelper.GetStringValue(dr["表扬建议"]); 
                 advise.Content = DataTypeHelper.GetStringValue(dr["内容"]);
                 advise.SubmitDate = DataTypeHelper.GetDateStringValue(dr["提交时间"]);
+                imageList.Add(DataTypeHelper.GetStringValue(dr["照片1"]));
+                imageList.Add(DataTypeHelper.GetStringValue(dr["照片2"]));
+                imageList.Add(DataTypeHelper.GetStringValue(dr["照片3"]));
+                advise.Image = imageList.ToArray();
                 adviseList.Add(advise);
             }
             sr.status = "Success";
             sr.result = "成功";
             sr.data = adviseList.ToArray();
+            return sr;
+        }
+
+        public static StatusReport SetAdviseImage(string ID, string func, string index, string sqlImagePath)
+        {
+            StatusReport sr = new StatusReport();
+            string itemName = "照片" + index.ToString();
+            string sqlString = " update 基础资料_表扬建议管理 set " + itemName + " = @路径 " +
+                               " where ID = @ID ";
+            sr = SQLHelper.Update("wyt", sqlString,
+                new SqlParameter("@路径", sqlImagePath),
+                new SqlParameter("@ID", ID));
+            sr.parameters = index;
             return sr;
         }
     }

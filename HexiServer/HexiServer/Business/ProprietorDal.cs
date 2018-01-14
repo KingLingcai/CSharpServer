@@ -17,12 +17,13 @@ namespace HexiServer.Business
         {
             string sqlString =
                 " SELECT ID, 房产单元编号, 占用者名称, 占用者身份, 联系电话, 联系地址, 紧急联系人, 紧急联系人电话," +
-                " 紧急联系人地址, 建筑面积, 当前欠款, 房号, 层数, 所属楼宇, 部门 " +
+                " 紧急联系人地址, 建筑面积, 当前欠款, 房号, 层数, 所属楼宇, 部门,车牌号码,车辆颜色,车辆品牌,车辆型号 " +
                 " FROM dbo.小程序_现场查询 " +
                 " WHERE(占用情况 = '正在占用') " +
                 " and (帐套代码 = @帐套代码) " +
                 (string.IsNullOrEmpty(homeNumber) ? "" : "and (房产单元编号 like '%" + homeNumber + "%') ") +
                 (string.IsNullOrEmpty(name) ? "" : "and (占用者名称 like '%" + name + "%') ") +
+                (string.IsNullOrEmpty(licensePlateNumber) ? "" : "and (车牌号码 like '%" + licensePlateNumber + "%') ") +
                 "ORDER BY ID ";
             DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlString,
                 new SqlParameter("@帐套代码", ztCode),
@@ -45,7 +46,11 @@ namespace HexiServer.Business
                     EmergencyPhone = DataTypeHelper.GetStringValue(row["紧急联系人电话"]),
                     EmergencyAddress = DataTypeHelper.GetStringValue(row["紧急联系人地址"]),
                     Area = DataTypeHelper.GetDoubleValue(row["建筑面积"]),
-                    TotalArrearage = DataTypeHelper.GetDoubleValue(row["当前欠款"])
+                    TotalArrearage = DataTypeHelper.GetDoubleValue(row["当前欠款"]),
+                    LicensePlateNumber = DataTypeHelper.GetStringValue(row["车牌号码"]),
+                    CarBrand = DataTypeHelper.GetStringValue(row["车辆品牌"]),
+                    CarColor = DataTypeHelper.GetStringValue(row["车辆颜色"]),
+                    CarType = DataTypeHelper.GetStringValue(row["车辆型号"])
                 };
 
                 proprietorList.Add(p);
