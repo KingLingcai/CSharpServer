@@ -43,5 +43,13 @@ namespace HexiPicture.Models
         /// 照片名
         /// </summary>
         public string picName { get; set; }
+        /// <summary>
+        /// 描述
+        /// </summary>
+        public string description { get; set; }
+        /// <summary>
+        /// 点击率
+        /// </summary>
+        public int? rate { get; set; }
     }
 }

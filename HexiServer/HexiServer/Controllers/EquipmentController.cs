@@ -71,5 +71,12 @@ namespace HexiServer.Controllers
             
             
         }
+
+        public ActionResult OnSearchEquipment(string operationNumber)
+        {
+            StatusReport sr = new StatusReport();
+            sr = EquipmentDal.SearchEquipment(operationNumber);
+            return Json(sr);
+        }
     }
 }

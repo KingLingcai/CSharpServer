@@ -12,7 +12,7 @@ namespace WanBoWebapp.operation
         public static Point[] GetAllPoints(int officeId)
         {
             //officeId = 9;
-            string sqlString = string.Format("select ID,位置名称,经度,纬度,排序编号 from 基础_巡更设置_巡更点 where pid in (select MIN(ID) as ID from 基础_巡更设置 where 分类记录ID = {0}) order by 排序编号", officeId);
+            string sqlString = string.Format("select ID,位置名称,经度,纬度,排序编号 from 基础_巡更设置_巡更点 where pid in (select MIN(ID) as ID from 基础_巡更设置 where 组织ID = {0}) order by 排序编号", officeId);
             DataTable dt = SqlHelper.ExecuteQuery(sqlString);
             List<Point> points = new List<Point>();
             foreach (DataRow row in dt.Rows)

@@ -15,7 +15,7 @@ namespace HexiPicture.Business
         public static StatusReport GetPeriodsInfo()
         {
             StatusReport sr = new StatusReport();
-            string sqlstring = "SELECT TOP 1 ID, 期数, 主题, 主题描述, 开始时间, 结束时间 " +
+            string sqlstring = "SELECT TOP 1 ID, 期数, 主题, 主题描述, 开始时间, 结束时间,主办单位,参赛规则,评奖方式,注意事项 " +
                 " FROM dbo.基础资料_摄影比赛设置 " +
                 " WHERE (状态 = N'进行中') " +
                 " ORDER BY ID DESC";
@@ -35,17 +35,38 @@ namespace HexiPicture.Business
             pi.themeContent = DataTypeHelper.GetStringValue(dr["主题描述"]);
             pi.startTime = DataTypeHelper.GetDateStringValue(dr["开始时间"]);
             pi.endTime = DataTypeHelper.GetDateStringValue(dr["结束时间"]);
+            pi.sponsor = DataTypeHelper.GetStringValue(dr["主办单位"]);
+            pi.roles = DataTypeHelper.GetStringValue(dr["参赛规则"]);
+            pi.appraiseWay = DataTypeHelper.GetStringValue(dr["评奖方式"]);
+            pi.mattersNeedAttention = DataTypeHelper.GetStringValue(dr["注意事项"]);
+
+            sqlstring = "select 奖项,奖品,人数 from 基础资料_摄影比赛设置_奖项设置 where PID = @PID";
+            dt = SQLHelper.ExecuteQuery("wyt", sqlstring, new SqlParameter("@PID", pi.id));
+            if (dt.Rows.Count != 0)
+            {
+                List<Awards> awardList = new List<Awards>();
+                foreach(DataRow row in dt.Rows)
+                {
+                    Awards awards = new Awards();
+                    awards.award = DataTypeHelper.GetStringValue(row["奖项"]);
+                    awards.prize = DataTypeHelper.GetStringValue(row["奖品"]);
+                    awards.number = DataTypeHelper.GetIntValue(row["人数"]);
+                    awardList.Add(awards);
+                }
+                pi.awardSetting = awardList.ToArray();
+            }
+
             sr.status = "Success";
             sr.result = "成功";
             sr.data = pi;
             return sr;
         }
 
-        public static StatusReport SetPicture(string openid, string nackname, string phone, string picName, string periodId, string periods, string theme,string picPath,string submitTime)
+        public static StatusReport SetPicture(string openid, string nackname, string phone, string picName, string periodId, string periods, string theme,string picPath,string submitTime,string description)
         {
             StatusReport sr = new StatusReport();
-            string sqlstring = " insert into 基础资料_摄影比赛 (openid,昵称,手机号,照片名,上传时间,得票数,期数ID,照片,期数,主题) " +
-                " select @openid,@昵称,@手机号,@照片名,@上传时间,@得票数,@期数ID,@照片,@期数,@主题 ";
+            string sqlstring = " insert into 基础资料_摄影比赛 (openid,昵称,手机号,照片名,上传时间,得票数,期数ID,照片,期数,主题,描述,点击率) " +
+                " select @openid,@昵称,@手机号,@照片名,@上传时间,@得票数,@期数ID,@照片,@期数,@主题,@描述,@点击率 ";
             sr = SQLHelper.Insert("wyt", sqlstring,
                 new SqlParameter("@openid", openid),
                 new SqlParameter("@昵称", nackname),
@@ -56,7 +77,9 @@ namespace HexiPicture.Business
                 new SqlParameter("@期数ID", periodId),
                 new SqlParameter("@照片", picPath),
                 new SqlParameter("@期数", periods),
-                new SqlParameter("@主题", theme));
+                new SqlParameter("@主题", theme),
+                new SqlParameter("@描述", description),
+                new SqlParameter("@点击率", 0));
             return sr;
         }
 
@@ -72,12 +95,16 @@ namespace HexiPicture.Business
             {
                 sort = "order by ID desc";
             }
-            else
+            else if (sortType == "best")
             {
                 sort = "order by 得票数 Desc";
             }
+            else
+            {
+                sort = "order by 点击率 Desc";
+            }
             
-            string sqlstring = " select ID,openid,昵称,手机号,上传时间,得票数,期数ID,照片,照片名 " +
+            string sqlstring = " select ID,openid,昵称,手机号,上传时间,得票数,期数ID,照片,照片名,描述,点击率 " +
                                 " from 基础资料_摄影比赛 " +
                                 " where 期数ID = @期数ID ";
             sqlstring += sort;
@@ -103,6 +130,8 @@ namespace HexiPicture.Business
                 pic.vote = DataTypeHelper.GetIntValue(dr["得票数"]);
                 pic.picPath = DataTypeHelper.GetStringValue(dr["照片"]);
                 pic.picName = DataTypeHelper.GetStringValue(dr["照片名"]);
+                pic.description = DataTypeHelper.GetStringValue(dr["描述"]);
+                pic.rate = DataTypeHelper.GetIntValue(dr["点击率"]);
                 picList.Add(pic);
             }
             sr.status = "Success";
@@ -142,6 +171,14 @@ namespace HexiPicture.Business
             DataRow dr = dt.Rows[0];
             int vote = Convert.ToInt32(dr["投票次数"]);
             return vote;
+        }
+
+        public static StatusReport SetPictureTaped (string picId)
+        {
+            StatusReport sr = new StatusReport();
+            string sqlstring = "update 基础资料_摄影比赛 set 点击率 = 点击率 + 1 where ID = @ID";
+            sr = SQLHelper.Update("wyt", sqlstring, new SqlParameter("@ID", picId));
+            return sr;
         }
     }
 }

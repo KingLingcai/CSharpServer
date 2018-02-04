@@ -45,7 +45,8 @@ namespace HexiPicture.Controllers
                 string periods = Request.Form["periods"];
                 string theme = Request.Form["theme"];
                 string submitTime = Request.Form["submitTime"];
-                sr = PictureDal.SetPicture(openid, nackname, phone, picName, periodId, periods, theme, sqlImagePath,submitTime);
+                string description = Request.Form["picDescription"];
+                sr = PictureDal.SetPicture(openid, nackname, phone, picName, periodId, periods, theme, sqlImagePath,submitTime,description);
                 //sr = EquipmentDal.SetEquipmentImage(ID, func, sqlImagePath);
                 return Json(sr);
             }
@@ -89,6 +90,19 @@ namespace HexiPicture.Controllers
                 return Json(sr);
             }
             sr = PictureDal.SetPictureVote(id);
+            return Json(sr);
+        }
+
+        public ActionResult OnSetPictureTaped(string picId)
+        {
+            StatusReport sr = new StatusReport();
+            if (string.IsNullOrEmpty(picId))
+            {
+                sr.status = "Fail";
+                sr.result = "未提供图片ID";
+                return Json(sr);
+            }
+            sr = PictureDal.SetPictureTaped(picId);
             return Json(sr);
         }
 

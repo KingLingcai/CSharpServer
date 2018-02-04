@@ -11,7 +11,7 @@ namespace WanBoWebapp.operation
     {
         public static Office[] GetAllOffice()
         {
-            string sqlString = "select ID,名称 from 组织结构 where ID in (select distinct 分类记录ID from 基础_巡更设置)";
+            string sqlString = "select ID,名称 from 组织结构 where ID in (select distinct 组织ID from 基础_巡更设置)";
             DataTable dt = SqlHelper.ExecuteQuery(sqlString);
             List<Office> offices = new List<Office>();
             foreach (DataRow row in dt.Rows)

@@ -14,7 +14,7 @@ namespace WanBoWebapp.operation
         {
             Debug.WriteLine(officeId);
             //officeId = 9;
-            string sqlString = string.Format("select ID,班次名称,巡更次数,开始时间,结束时间,单次规定时长_分 from 基础_巡更设置_班次 where pid in (select MIN(ID) as ID from 基础_巡更设置 where 分类记录ID = {0})", officeId);
+            string sqlString = string.Format("select ID,班次名称,巡更次数,开始时间,结束时间,单次规定时长_分 from 基础_巡更设置_班次 where pid in (select MIN(ID) as ID from 基础_巡更设置 where 组织ID = {0})", officeId);
             DataTable dt = SqlHelper.ExecuteQuery(sqlString);
             List<Frequency> frequencies = new List<Frequency>();
             foreach (DataRow row in dt.Rows)

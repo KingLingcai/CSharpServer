@@ -29,6 +29,7 @@ namespace HexiServer.Business
                                " 宽限上延天数,宽限下延天数 " +
                                " FROM dbo.小程序_设备管理 " +
                                " WHERE (分类 = @分类)  AND " +
+                               " (序次 IS NULL)  AND " +
                                done +
                                //isDone == "0" ? "(是否完成 is NULL)" : "(是否完成 = 1)" +
                                " ORDER BY ID DESC ";
@@ -117,7 +118,39 @@ namespace HexiServer.Business
                 new SqlParameter("@保养后照片", imagePath),
                 new SqlParameter("@ID", id));
             return sr;
+        }
 
+        public static StatusReport SearchEquipment(string operationNumber)
+        {
+            StatusReport sr = new StatusReport();
+            string sqlstring = "SELECT ID, 系统名称, 设备运行编号, 卡号, 设备名称, 设备型号, 设备编号, 安装地点," +
+                                " 产地, 出厂日期, 使用日期, 设备价格, 出厂序号, 设计寿命, 预计残值, 使用年限 " +
+                                 "FROM 基础资料_设备卡 WHERE 设备运行编号 = @设备运行编号";
+            DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlstring, new SqlParameter("@设备运行编号", operationNumber));
+            if (dt.Rows.Count == 0)
+            {
+                sr.status = "Fail";
+                sr.result = "未查询到任何记录";
+                return sr;
+            }
+            DataRow dr = dt.Rows[0];
+            Equipment equipment = new Equipment();
+            equipment.OperationNumber = DataTypeHelper.GetStringValue(dr["设备运行编号"]);
+            equipment.Number = DataTypeHelper.GetStringValue(dr["设备编号"]);
+            equipment.Name = DataTypeHelper.GetStringValue(dr["设备名称"]);
+            equipment.SystemName = DataTypeHelper.GetStringValue(dr["系统名称"]);
+            equipment.ProductionDate = DataTypeHelper.GetDateStringValue(dr["出厂日期"]);
+            equipment.UseDate = DataTypeHelper.GetDateStringValue(dr["使用日期"]);
+            equipment.price = DataTypeHelper.GetDoubleValue(dr["设备价格"]);
+            equipment.ProductionNumber = DataTypeHelper.GetStringValue(dr["出厂序号"]);
+            equipment.DesignedLife = DataTypeHelper.GetStringValue(dr["设计寿命"]);
+            equipment.CardNumber = DataTypeHelper.GetStringValue(dr["卡号"]);
+            equipment.UseAddress = DataTypeHelper.GetStringValue(dr["安装地点"]);
+            equipment.ProductionAddress = DataTypeHelper.GetStringValue(dr["产地"]);
+            sr.status = "Success";
+            sr.result = "成功";
+            sr.data = equipment;
+            return sr;
         }
     }
 }
