@@ -9,8 +9,8 @@ namespace HexiUtils
 {
     public class SQLHelper
     {
-        private static string wytconnectionString = "Data Source=.;Initial Catalog=wytnetsz;Persist Security Info=False;User ID=sa;Password=101128";//连接字符串
-        private static string wxConnectionString = "Data Source=.;Initial Catalog=weixin;Persist Security Info=False;User ID=sa;Password=101128";
+        private static string syConnectionString = "Data Source=.;Initial Catalog=wytnetsz;Persist Security Info=False;User ID=sa;Password=101128";//连接字符串
+        private static string ydelConnectionString = "Data Source=.;Initial Catalog=weixin;Persist Security Info=False;User ID=sa;Password=101128";
         /**
          * 该静态方法，用于根据传入的sql语句和相关参数，在数据库中查询
          * 数据，并以表的数据表（DataTable）的形式返回查询到的数据。
@@ -20,11 +20,11 @@ namespace HexiUtils
             string connectionString = "";
             if (database == "wyt")
             {
-                connectionString = wytconnectionString;
+                connectionString = syConnectionString;
             }
             else
             {
-                connectionString = wxConnectionString;
+                connectionString = ydelConnectionString;
             }
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -98,10 +98,10 @@ namespace HexiUtils
                         cmd.CommandText = sqlString;
                         cmd.Parameters.AddRange(parameters);
                         int? id = Convert.ToInt32(cmd.ExecuteScalar());//执行插入操作，并返回受影响行数
-                        if (id == null)
+                        if (id == -10)
                         {
                             sr.status = "Fail";
-                            sr.result = "数据写入失败";
+                            sr.result = "数据已存在";
                             sr.parameters = sqlString;
                         }
                         else
