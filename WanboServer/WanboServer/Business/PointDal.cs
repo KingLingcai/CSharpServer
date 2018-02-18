@@ -31,6 +31,7 @@ namespace WanboServer.Business
                 p.longitude = DataTypeHelper.GetDoubleValue(row["经度"]);
                 p.latitude = DataTypeHelper.GetDoubleValue(row["纬度"]);
                 p.no = DataTypeHelper.GetIntValue(row["排序编号"]);
+                p.isScan = false;
                 points.Add(p);
             }
             Point[] pointArray = points.ToArray();

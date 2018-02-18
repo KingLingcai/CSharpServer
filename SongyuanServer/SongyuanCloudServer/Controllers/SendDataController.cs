@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using System.IO;
-using System.Net;
-using System.Diagnostics;
 using System.Collections.Specialized;
 using System.Net.Http;
 
@@ -17,7 +12,6 @@ namespace SongyuanCloudServer.Controllers
         public string OnSendData()
         {
             NameValueCollection parameters = Request.Params;
-            Debug.WriteLine(parameters.ToString());
             string url = Request["serverURL"];
             if (string.IsNullOrEmpty(url))
             {

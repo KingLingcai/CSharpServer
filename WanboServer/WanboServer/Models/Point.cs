@@ -12,6 +12,6 @@ namespace WanboServer.Models
         public double? latitude { get; set; }
         public string locationName { get; set; }
         public int? no { get; set; }
-
+        public bool? isScan { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using HexiUtils;
+using SongyuanServer.Business;
 
 namespace SongyuanServer.Controllers
 {
@@ -73,6 +74,7 @@ namespace SongyuanServer.Controllers
         /// <param name="patriarchName">家长姓名</param>
         /// <param name="websiteName">网站名称</param>
         /// <param name="examDate">体检时间</param>
+        /// <param name="kyId">看园ID</param>
         /// <returns></returns>
         [HttpPost]
         public ActionResult OnSetSignUpData(string kindergartenName, string name, string gender, string bagPhone, string birth,
@@ -85,9 +87,35 @@ namespace SongyuanServer.Controllers
             string examination, string vaccineNote, string kidCredentialType, string kidIDNumber, string kidNation, string kidNationality,
             string gangaotai, string area, string areaDetail, string residenceNature, string nonagricultureType, string disabled,
             string disabledType, string leftChild, string onlyChild, string migrantWorkerChild, string orphan, string healthCondition,
-            string bloodType, string teacherName, string patriarchName, string websiteName, string examDate)
+            string bloodType, string teacherName, string patriarchName, string websiteName, string examDate, string kyId)
         {
             StatusReport sr = new StatusReport();
+            //如果未指定幼儿园，返回错误信息
+            if (string.IsNullOrEmpty(kindergartenName))
+            {
+                sr.status = "Fail";
+                sr.result = "未指定幼儿园";
+                return Json(sr);
+            }
+
+            //如果姓名或联系方式为空，返回错误信息
+            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(bagPhone))
+            {
+                sr.status = "Fail";
+                sr.result = "姓名和书包电话不能为空";
+                return Json(sr);
+            }
+
+            //如果数据满足条件，调用SignUpDal.SetSignUpData方法，将数据存入数据库中
+            sr = SignUpDal.SetSignUpData(kindergartenName, name, gender, bagPhone, birth, address, source, 
+                guardianName, relation,guardianPhone, guardianCredentialType, guardianIdNumber, occupation, job, 
+                guardianName2, relation2, guardianPhone2, guardianCredentialType2, guardianIDNumber2, occupation2, job2, 
+                guardianName3, relation3, guardianPhone3, guardianCredentialType3, guardianIDNumber3, occupation3, job3, 
+                guardianName4, relation4, guardianPhone4, guardianCredentialType4, guardianIDNumber4, occupation4, job4,
+                healthRemarks, foodDragRemarks, healthCareNote, examination, vaccineNote, kidCredentialType, kidIDNumber, 
+                kidNation, kidNationality, gangaotai, area, areaDetail, residenceNature, nonagricultureType, disabled, 
+                disabledType, leftChild, onlyChild, migrantWorkerChild, orphan,healthCondition, bloodType, teacherName, 
+                patriarchName, websiteName, examDate, kyId);
 
             return Json(sr) ;
         }

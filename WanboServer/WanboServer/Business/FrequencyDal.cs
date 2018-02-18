@@ -35,10 +35,80 @@ namespace WanboServer.Business
                 frequencies.Add(f);
             }
             Frequency[] frequencyArray = frequencies.ToArray();
+            //Frequency freq = frequencyArray[0];
+            //if (Convert.ToInt32(freq.startTime.Split(':')[0]) > DateTime.Now.Hour)
+            //{
+            //    foreach (Frequency f in frequencyArray)
+            //    {
+            //        f.workDate = GetDate();
+            //    }
+            //}
+            //else
+            //{
+            //    for (int i = 0; i < frequencyArray.Length; i++)
+            //    {
+            //        Frequency f = frequencyArray[i];
+            //        int startHour = Convert.ToInt32(f.startTime.Split(':'));
+            //        int endHour = Convert.ToInt32(f.endTime.Split(':'));
+            //        if (startHour < endHour)
+            //        {
+            //            f.workDate = GetDate();
+            //        }
+            //        else
+            //        {
+            //            f.workDate = GetEarlyDate(1);
+            //        }
+            //    }
+            //}
+
             sr.status = "Success";
             sr.result = "成功";
             sr.data = frequencyArray;
             return sr;
         }
+
+        private static string GetDate()
+        {
+            return DateTime.Now.ToString("yyyy-MM-dd");
+        }
+
+        private static string GetEarlyDate(int day)
+        {
+            DateTime today = DateTime.Now;
+            DateTime earlyDay = today.AddDays(-day);
+            return earlyDay.ToString("yyyy-MM-dd");
+        }
+
+        private static int GetHour()
+        {
+            return DateTime.Now.Hour;
+        }
     }
 }
+
+
+
+
+/**
+ 设置班次的工作日期
+        如果第一个班次的开始时间大于当前时间，设置工作日期为当天
+        if (parseInt(frequencies[0].startTime.split(":")[0]) > getHour()) {
+          for (var i = 0; i < frequencies.length; i++) {
+            frequencies[i].workDate = getDate();
+          }
+        }
+        else {
+          for (var i = 0; i < frequencies.length; i++) {
+            var start = parseInt(frequencies[i].startTime.split(":")[0]);
+            var end = parseInt(frequencies[i].endTime.split(":")[0]);
+            //如果开始时间小于结束时间，设置工作日期为当天
+            if (start < end) {
+              frequencies[i].workDate = getDate();
+            }
+            //如果开始时间大于结束时间，设置工作日期为前一天
+            if (start > end) {
+              frequencies[i].workDate = getEarlyDate(1);
+            }
+          }
+        }
+*/

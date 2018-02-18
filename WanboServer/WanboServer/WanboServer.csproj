@@ -103,10 +103,12 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\ChildFrequency.cs" />
     <Compile Include="Models\Frequency.cs" />
     <Compile Include="Models\Office.cs" />
     <Compile Include="Models\Point.cs" />
     <Compile Include="Models\Watch.cs" />
+    <Compile Include="Models\WatchInfo.cs" />
     <Compile Include="Models\WatchResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

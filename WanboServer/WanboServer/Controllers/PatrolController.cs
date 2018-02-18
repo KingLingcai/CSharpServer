@@ -18,33 +18,46 @@ namespace WanboServer.Controllers
             return Json(sr);
         }
 
-        public ActionResult GetWatchInfo(string officeId)
+        public ActionResult GetWatchInfo(string officeId,string workDate)
         {
             StatusReport sr = new StatusReport();
-            if (string.IsNullOrEmpty(officeId))
+            if (string.IsNullOrEmpty(officeId) || string.IsNullOrEmpty(workDate))
             {
                 sr.status = "Fail";
                 sr.result = "数据不完整";
                 return Json(sr);
             }
-            sr = WatchDal.getWatchInfo(officeId);
+            sr = WatchDal.getWatchInfo(officeId,workDate);
             return Json(sr);
         }
 
-        public ActionResult SetWatchResult(string officeId,string frequencyId,string pointId,string workDate,string watchTimes,string usedTime,string arriveLa,string arriveLo,string arriveTime)
+        public ActionResult SetWatchResult(string officeId,string frequencyId,string pointId,string workDate,string watchTimes,string usedTime,string arriveLa,string arriveLo,string arriveTime,string startTime)
         {
             StatusReport sr = new StatusReport();
             if (string.IsNullOrEmpty(officeId) || string.IsNullOrEmpty(frequencyId) || string.IsNullOrEmpty(pointId) || string.IsNullOrEmpty(workDate) || 
                 string.IsNullOrEmpty(watchTimes) || string.IsNullOrEmpty(usedTime) || string.IsNullOrEmpty(arriveLa) || string.IsNullOrEmpty(arriveLo) || 
-                string.IsNullOrEmpty(arriveTime))
+                string.IsNullOrEmpty(arriveTime) || string.IsNullOrEmpty(arriveTime))
             {
                 sr.status = "Fail";
                 sr.result = "数据不完整";
                 return Json(sr);
             }
-            sr = WatchResultDal.SetWatchResult(officeId,frequencyId,pointId,workDate,watchTimes,usedTime,arriveLa,arriveLo,arriveTime);
+            sr = WatchResultDal.SetWatchResult(officeId,frequencyId,pointId,workDate,watchTimes,usedTime,arriveLa,arriveLo,arriveTime,startTime);
             return Json(sr);
         }
+
+        //public ActionResult GetWatchInfo(string officeId, string date)
+        //{
+        //    StatusReport sr = new StatusReport();
+        //    if (string.IsNullOrEmpty(officeId) || string.IsNullOrEmpty(date))
+        //    {
+        //        sr.status = "Fail";
+        //        sr.result = "数据不完整";
+        //        return Json(sr);
+        //    }
+        //    sr = WatchResultDal.GetWatchInfo(officeId, date);
+        //    return Json(sr);
+        //}
 
         public ActionResult SetWatchImages()
         {

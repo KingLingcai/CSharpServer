@@ -13,5 +13,8 @@ namespace WanboServer.Models
         public string startTime { get; set; }
         public string endTime { get; set; }
         public int? minutes { get; set; }//单次规定时长
+        public string workDate { get; set; }
+        public bool? isDone { get; set; }
+        public ChildFrequency[] cFreq { get; set; }//子班次
     }
 }

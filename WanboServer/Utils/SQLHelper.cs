@@ -10,6 +10,7 @@ namespace HexiUtils
     public class SQLHelper
     {
         private static string wytconnectionString = "Data Source=192.168.0.233\\cy2012;Initial Catalog=wb02;Persist Security Info=False;User ID=sa;Password=CY2012";//连接字符串
+        //private static string wytconnectionString = "Data Source=.;Initial Catalog=wb02;Persist Security Info=False;User ID=sa;Password=101128";//连接字符串
         private static string wxConnectionString = "Data Source=.;Initial Catalog=weixin;Persist Security Info=False;User ID=sa;Password=101128";
         /**
          * 该静态方法，用于根据传入的sql语句和相关参数，在数据库中查询
@@ -87,7 +88,7 @@ namespace HexiUtils
             StatusReport sr = new StatusReport();
             sr.status = "Success";
             sr.result = "操作成功";
-            sr.parameters = sqlString;
+            //sr.parameters = sqlString;
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
@@ -97,17 +98,28 @@ namespace HexiUtils
                     {
                         cmd.CommandText = sqlString;
                         cmd.Parameters.AddRange(parameters);
-                        int? id = Convert.ToInt32(cmd.ExecuteScalar());//执行插入操作，并返回受影响行数
-                        if (id == null)
+                        object id = null;
+                        id = cmd.ExecuteScalar();
+                        if (id == DBNull.Value)
                         {
                             sr.status = "Fail";
-                            sr.result = "数据写入失败";
-                            sr.parameters = sqlString;
+                            sr.result = "数据已存在";
                         }
                         else
                         {
                             sr.data = id.ToString();
                         }
+                        //int? id = Convert.ToInt32(cmd.ExecuteScalar());//执行插入操作，并返回受影响行数
+                        //if (id == null)
+                        //{
+                        //    sr.status = "Fail";
+                        //    sr.result = "数据写入失败";
+                        //    sr.parameters = sqlString;
+                        //}
+                        //else
+                        //{
+                        //    sr.data = id.ToString();
+                        //}
                     }
                 }
             }
@@ -115,8 +127,8 @@ namespace HexiUtils
             {
                 sr.status = "Fail";
                 sr.result = exp.Message;
-                sr.parameters = sqlString;
-                throw exp;
+                //sr.parameters = sqlString;
+                //throw exp;
             }
             finally
             {

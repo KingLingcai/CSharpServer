@@ -7,7 +7,8 @@ namespace WanboServer.Models
 {
     public class Watch
     {
-        public Point[] route { get; set; }
+        ////public Point[] route { get; set; }
         public Frequency[] frequencies { get; set; }
+        public bool isDone { get; set; }
     }
 }
