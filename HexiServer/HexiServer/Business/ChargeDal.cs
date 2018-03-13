@@ -51,7 +51,7 @@ namespace HexiServer.Business
             return sr; 
         }
 
-        public static StatusReport GetChargeList(string homeNumber, string name, string ztcode, string startMonth, string endMonth)
+        public static StatusReport GetChargeList(string homeNumber, string name, string ztcode)
         {
             StatusReport sr = new StatusReport();
             string sqlString = "SELECT 资源编号, 占用者名称, SUM(应收金额) AS 已收总额, 帐套代码 " +
@@ -60,8 +60,6 @@ namespace HexiServer.Business
                                 " and 收费状态 is null " +
                                 (string.IsNullOrEmpty(homeNumber) ? "" : "and (资源编号 like '%" + homeNumber + "%') ") +
                                 (string.IsNullOrEmpty(name) ? "" : "and (占用者名称 like '%" + name + "%') ") +
-                                " and 计费年月 >= " + startMonth +
-                                " and 计费年月 <= " + endMonth +
                                 "GROUP BY 资源编号, 占用者名称, 帐套代码 " +
                                 "ORDER BY 占用者名称";
             DataTable dt = SQLHelper.ExecuteQuery("wx",sqlString);
@@ -169,7 +167,7 @@ namespace HexiServer.Business
             sr.data = resList.ToArray();
             return sr;
         }
-        public static StatusReport GetCharges(string ztCode, string roomNumber, string userName, string startMonth, string endMonth)
+        public static StatusReport GetCharges(string ztCode, string roomNumber, string userName)
         {
 
             //string sqlString = 
@@ -190,8 +188,6 @@ namespace HexiServer.Business
                                 " where 帐套代码 = @帐套代码 " +
                                 " and 房号 = @房号 " +
                                 " and 占用者名称 = @占用者名称 " +
-                                " and 计费年月 >= " + startMonth +
-                                " and 计费年月 <= " + endMonth +
                                 " and 收费状态 IS NULL";
 
             DataTable dt = SQLHelper.ExecuteQuery("wx",sqlString,

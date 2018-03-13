@@ -14,7 +14,7 @@ namespace WanboServer.Business
         public static StatusReport SetWatchResult(string officeId, string frequencyId, string pointId, string workDate, string watchTimes, string usedTime, string arriveLa, string arriveLo, string arriveTime,string startTime)
         {
             StatusReport sr = new StatusReport();
-            string sqlString = " if not exists(select * from 基础_微信巡更 where 当前组织ID = @当前组织ID and 工作日期 = @工作日期 and 班次ID = @班次ID and 巡更点ID = @巡更点ID) " +
+            string sqlString = " if not exists(select * from 基础_微信巡更 where 当前组织ID = @当前组织ID and 工作日期 = @工作日期 and 班次ID = @班次ID and 巡更点ID = @巡更点ID and 巡更序次 = @巡更序次) " +
                 " insert into 基础_微信巡更 (当前组织ID,工作日期,班次ID,巡更点ID,到达经度,到达纬度,到达时间,巡更序次,单次实际时长_分,开始时间 )" +
                 " select @当前组织ID,@工作日期,@班次ID,@巡更点ID,@到达经度,@到达纬度,@到达时间,@巡更序次,@单次实际时长_分,@开始时间 " +
                 " select @@identity ";

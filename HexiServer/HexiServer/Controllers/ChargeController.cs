@@ -10,7 +10,16 @@ namespace HexiServer.Controllers
 {
     public class ChargeController : Controller
     {
-        // GET: Charge
+        /// <summary>
+        /// 获取符合查询条件的已收费列表
+        /// </summary>
+        /// <param name="homeNumber"></param>
+        /// <param name="name"></param>
+        /// <param name="ztcode"></param>
+        /// <param name="startMonth"></param>
+        /// <param name="endMonth"></param>
+        /// <param name="isCharge"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult OnGetChargedList(string homeNumber, string name, string ztcode, string startMonth, string endMonth, string isCharge)
         {
@@ -19,16 +28,19 @@ namespace HexiServer.Controllers
             {
                 return Json(new {status = "Fail" , result = "信息不完整" });
             }
-            if (isCharge == "已收")
-            {
-                return Json(ChargeDal.GetChargedList(homeNumber, name, ztcode, startMonth, endMonth));
-            }
-            else
-            {
-                return Json(ChargeDal.GetChargeList(homeNumber, name, ztcode, startMonth, endMonth));
-            }
+            return Json(ChargeDal.GetChargedList(homeNumber, name, ztcode, startMonth, endMonth));
         }
 
+        
+        /// <summary>
+        /// 获取选定的已收费详情
+        /// </summary>
+        /// <param name="RoomNumber"></param>
+        /// <param name="Name"></param>
+        /// <param name="ZTCode"></param>
+        /// <param name="startMonth"></param>
+        /// <param name="endMonth"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult OnGetChargedDetail(string RoomNumber, string Name, string ZTCode, string startMonth, string endMonth)
         {
@@ -39,14 +51,39 @@ namespace HexiServer.Controllers
             return Json(ChargeDal.GetChargedDetail(RoomNumber, Name, ZTCode, startMonth, endMonth));
         }
 
+        /// <summary>
+        /// 获取符合查询条件的应收款列表
+        /// </summary>
+        /// <param name="homeNumber"></param>
+        /// <param name="name"></param>
+        /// <param name="ztcode"></param>
+        /// <returns></returns>
         [HttpPost]
-        public ActionResult OnGetChargeDetail(string ZTCode, string RoomNumber, string Name, string startMonth, string endMonth)
+        public ActionResult OnGetChargeList(string homeNumber, string name, string ztcode)
         {
-            if (string.IsNullOrEmpty(RoomNumber) || string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(ZTCode) || string.IsNullOrEmpty(startMonth) || string.IsNullOrEmpty(endMonth))
+            StatusReport sr = new StatusReport();
+            if (string.IsNullOrEmpty(ztcode))
             {
                 return Json(new { status = "Fail", result = "信息不完整" });
             }
-            return Json(ChargeDal.GetCharges(ZTCode, RoomNumber, Name, startMonth, endMonth));
+            return Json(ChargeDal.GetChargeList(homeNumber, name, ztcode));
+        }
+
+        /// <summary>
+        /// 获取选定的应收款详情
+        /// </summary>
+        /// <param name="ZTCode"></param>
+        /// <param name="RoomNumber"></param>
+        /// <param name="Name"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult OnGetChargeDetail(string ZTCode, string RoomNumber, string Name)
+        {
+            if (string.IsNullOrEmpty(RoomNumber) || string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(ZTCode))
+            {
+                return Json(new { status = "Fail", result = "信息不完整" });
+            }
+            return Json(ChargeDal.GetCharges(ZTCode, RoomNumber, Name));
         }
 
 

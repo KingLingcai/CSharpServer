@@ -9,9 +9,9 @@ namespace HexiUtils
 {
     public class SQLHelper
     {
-        private static string syConnectionString = "Data Source=192.168.13.1;Initial Catalog=f2wyt;Integrated Security=false;User ID=sa;Password=!1asdfgh";//连接字符串
-        //private static string syConnectionString = "Data Source=192.168.0.111;Initial Catalog=sywytnet;Integrated Security=false;User ID=sa;Password=101128";//连接字符串
-        private static string ydalConnectionString = "Data Source=192.168.13.1;Initial Catalog=qy;Integrated Security=false;User ID=sa;Password=!1asdfgh";
+        //private static string wytConnectionString = "Data Source=192.168.13.1;Initial Catalog=f2wyt;Integrated Security=false;User ID=sa;Password=!1asdfgh";//连接字符串
+        private static string wytConnectionString = "Data Source=192.168.0.111;Initial Catalog=wytnetsz;Integrated Security=false;User ID=sa;Password=101128";//连接字符串
+        private static string wxConnectionString = "Data Source=192.168.0.111;Initial Catalog=weixin;Integrated Security=false;User ID=sa;Password=101128";
         /**
          * 该静态方法，用于根据传入的sql语句和相关参数，在数据库中查询
          * 数据，并以表的数据表（DataTable）的形式返回查询到的数据。
@@ -19,13 +19,13 @@ namespace HexiUtils
         public static DataTable ExecuteQuery(string database, string sqlString, params SqlParameter[] parameters)
         {
             string connectionString = "";
-            if (database == "sy")
+            if (database == "wyt")
             {
-                connectionString = syConnectionString;
+                connectionString = wytConnectionString;
             }
             else
             {
-                connectionString = ydalConnectionString;
+                connectionString = wxConnectionString;
             }
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -49,13 +49,13 @@ namespace HexiUtils
         public static int ExecuteScalar(string database, string sqlString, params SqlParameter[] parameters)
         {
             string connectionString = "";
-            if (database == "sy")
+            if (database == "wyt")
             {
-                connectionString = syConnectionString;
+                connectionString = wytConnectionString;
             }
             else
             {
-                connectionString = ydalConnectionString;
+                connectionString = wxConnectionString;
             }
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -77,13 +77,13 @@ namespace HexiUtils
         public static StatusReport Insert(string database, string sqlString, params SqlParameter[] parameters)
         {
             string connectionString = "";
-            if (database == "sy")
+            if (database == "wyt")
             {
-                connectionString = syConnectionString;
+                connectionString = wytConnectionString;
             }
             else
             {
-                connectionString = ydalConnectionString;
+                connectionString = wxConnectionString;
             }
             StatusReport sr = new StatusReport();
             sr.status = "Success";
@@ -133,13 +133,13 @@ namespace HexiUtils
         public static StatusReport Update(string database, string sqlString, params SqlParameter[] parameters)
         {
             string connectionString = "";
-            if (database == "sy")
+            if (database == "wyt")
             {
-                connectionString = syConnectionString;
+                connectionString = wytConnectionString;
             }
             else
             {
-                connectionString = ydalConnectionString;
+                connectionString = wxConnectionString;
             }
             StatusReport sr = new StatusReport();
             sr.status = "Success";
