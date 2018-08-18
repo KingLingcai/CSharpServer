@@ -10,6 +10,16 @@ namespace HexiUserServer.Controllers
 {
     public class RepairController : Controller
     {
+        /// <summary>
+        /// 提交报修信息
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="phone"></param>
+        /// <param name="address"></param>
+        /// <param name="content"></param>
+        /// <param name="time"></param>
+        /// <param name="classify"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult OnSetRepairOrder(string name, string phone, string address, string content, string time,string classify)
         {
@@ -26,10 +36,18 @@ namespace HexiUserServer.Controllers
             return Json(sr);
         }
 
+        /// <summary>
+        /// 获取报修列表
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="phone"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult OnGetRepairOrder(string name, string phone)
         {
             StatusReport sr = new StatusReport();
+
+            //throw new Exception("hello world");
             if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(phone))
             {
                 sr.status = "Fail";
@@ -42,6 +60,10 @@ namespace HexiUserServer.Controllers
             return Json(sr);
         }
 
+        /// <summary>
+        /// 上传报修图片
+        /// </summary>
+        /// <returns></returns>
         public ActionResult OnSetRepairImage()
         {
             StatusReport sr = new StatusReport();
@@ -53,7 +75,7 @@ namespace HexiUserServer.Controllers
             }
             try
             {
-                string mainPath = "D:\\wximages\\";
+                string mainPath = "F:\\wytws\\Files\\jczl_fwrwgl\\";
                 string imagePath = mainPath + Request.Files.AllKeys[0];
                 string sqlImagePath = Request.Files.AllKeys[0];
                 HttpPostedFileBase uploadImage = (Request.Files[0]);
@@ -70,6 +92,14 @@ namespace HexiUserServer.Controllers
                 sr.result = exp.Message;
                 return Json(sr);
             }
+        }
+
+
+        public ActionResult OnEvaluation(string evaluation, string isSatisfying, string isFinish, string id)
+        {
+            StatusReport sr = new StatusReport();
+            sr = RepairDal.Evaluation(evaluation, isSatisfying, isFinish, id);
+            return Json(sr);
         }
     }
 }

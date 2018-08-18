@@ -15,5 +15,6 @@ namespace HexiServer.Models
         public string[] ZTCodes { get; set; }//ZTCodes：帐套代码（有多个）
         public ZT[] ZTInfo { get; set; }//帐套信息
         public string[] Jurisdiction { get; set; } //权限信息
+        public string[] Level { get; set; }//等级信息
     }
 }

@@ -35,8 +35,13 @@ namespace HexiInnerCloudServer.Controllers
             requestMessage.Content = new FormUrlEncodedContent(ToDictionary(parameters));
             
             responseMessage = client.SendAsync(requestMessage).Result;
-            return responseMessage.Content.ReadAsStringAsync().Result;
-            
+            string result = responseMessage.Content.ReadAsStringAsync().Result;
+            if (result.Substring(0,1) == "<")
+            {
+                return "{\"status\": \"Fail\", \"result\": \"本地服务器发生错误：" + "系统内部错误" + "\"}";
+            }
+
+            return result;
         }
 
         private static Dictionary<string, string> ToDictionary(NameValueCollection nvc)

@@ -79,7 +79,6 @@ namespace HexiUserServer.Business
                     afterList.Add(DataTypeHelper.GetStringValue(row["处理后照片3"]));
                     r.AfterImage = afterList.ToArray();
                     repairList.Add(r);
-                    repairList.Add(r);
                 }
                 sr.status = "Success";
                 sr.result = "成功";
@@ -141,6 +140,25 @@ namespace HexiUserServer.Business
                 new SqlParameter("@路径", sqlImagePath),
                 new SqlParameter("@ID", ID));
             sr.parameters = index;
+            return sr;
+        }
+
+        public static StatusReport Evaluation(string evaluation, string isSatisfying, string isFinish, string id)
+        {
+            StatusReport sr = new StatusReport();
+            string sqlString = "update 基础资料_服务任务管理 " +
+                " set 业主确认完成 = @业主确认完成," +
+                " 业主确认完成时间 = @业主确认完成时间, " +
+                " 是否满意 = @是否满意, " +
+                " 业主评价 = @业主评价 " +
+                " where ID = @ID " +
+                " select @@identity ";
+            sr = SQLHelper.Update("wyt", sqlString,
+                new SqlParameter("@业主确认完成", isFinish),
+                new SqlParameter("@业主确认完成时间", DateTime.Now),
+                new SqlParameter("@是否满意", isSatisfying),
+                new SqlParameter("@业主评价", evaluation),
+                new SqlParameter("@ID", id));
             return sr;
         }
     }

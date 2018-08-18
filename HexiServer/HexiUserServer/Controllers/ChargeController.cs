@@ -14,19 +14,40 @@ namespace HexiUserServer.Controllers
 {
     public class ChargeController : Controller
     {
+        /// <summary>
+        /// 获取应收列表
+        /// </summary>
+        /// <param name="ztCode"></param>
+        /// <param name="roomNumber"></param>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult OnGetCharges(string ztCode, string roomNumber, string userName )
         {
             return Json(ChargeDal.GetCharges(ztCode, roomNumber, userName));
         }
 
+        /// <summary>
+        /// 收费成功后变更应收款状态
+        /// </summary>
+        /// <param name="datetime"></param>
+        /// <param name="proprietorName"></param>
+        /// <param name="chargeIds"></param>
+        /// <returns></returns>
         [HttpPost]
-        public ActionResult OnSetCharges(string datetime, string proprietorName, string[] chargeIds)
+        public ActionResult OnSetCharges(string datetime, string proprietorName, string tradeNumber, string[] chargeIds)
         {
             //return Json(new { datetime = datetime, proprietorName = proprietorName, chargeIds = chargeIds });
-            return Json(ChargeDal.SetCharges(datetime, proprietorName, chargeIds));
+            return Json(ChargeDal.SetCharges(datetime, proprietorName, tradeNumber, chargeIds));
         }
 
+        /// <summary>
+        /// 统一下单
+        /// </summary>
+        /// <param name="sessionId"></param>
+        /// <param name="totalCharge"></param>
+        /// <param name="dataBag"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult OnUnifiedOrder(string sessionId, double totalCharge, string dataBag)
         {
@@ -52,38 +73,7 @@ namespace HexiUserServer.Controllers
             string value = reader.ReadToEnd();
             using (StreamWriter sw = new StreamWriter("D:\\1_importTemp\\TestFile.txt"))
             {
-                NameValueCollection headers = Request.Headers;
-                //string headerstring = "";
-                string[] headerKeys = headers.AllKeys;
-                for (int i = 0; i < headerKeys.Length; i++)
-                {
-                    sw.WriteLine(headerKeys[i] + ":" + headers.Get(headerKeys[i]));
-                }
-                sw.WriteLine("-------------------");
-                sw.WriteLine("-------------------");
-                sw.WriteLine("-------------------");
-                sw.WriteLine("-------------------");
-                sw.WriteLine("-------------------");
-                sw.WriteLine("-------------------");
-                sw.WriteLine("-------------------");
                 sw.WriteLine(value);
-                NameValueCollection nvc = Request.QueryString;
-                //string value = "";
-                string[] nvcKeys = nvc.AllKeys;
-                for (int i = 0; i < nvcKeys.Length; i++)
-                {
-                    sw.WriteLine(nvcKeys[i] + ":" + nvc.Get(nvcKeys[i]));
-                }
-
-                //sw.WriteLine(headerstring);
-                //sw.WriteLine(value);
-                // Add some text to the file.
-                //sw.Write("This is the ");
-                //sw.WriteLine("header for the file.");
-                sw.WriteLine("-------------------");
-                // Arbitrary objects can also be written to the file.
-                sw.Write("The date is: ");
-                sw.WriteLine(DateTime.Now);
             }
             return null;
         }

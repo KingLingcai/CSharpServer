@@ -55,7 +55,8 @@ namespace HexiUtils
             else
             {
                 DateTime dt = (DateTime)row;
-                string dstring = dt.ToString("yyyy-MM-dd HH:mm:ss");
+                //string dstring = dt.ToString("yyyy-MM-dd HH:mm:ss");
+                string dstring = dt.ToString("yyyy-MM-dd");
                 return dstring;
             }
         }
@@ -74,6 +75,24 @@ namespace HexiUtils
             else
             {
                 return Convert.ToDouble(row);
+            }
+        }
+
+
+        /// <summary>
+        /// 将数据库中取出的数据转换为double?类型
+        /// </summary>
+        /// <param name="row"></param>
+        /// <returns></returns>
+        public static decimal? GetDecimalValue(object row)
+        {
+            if (row == DBNull.Value)
+            {
+                return null;
+            }
+            else
+            {
+                return Convert.ToDecimal(row);
             }
         }
 

@@ -100,6 +100,10 @@ namespace HexiServer.Models
         /// </summary>
         public string BeforeImage { get; set; }
         /// <summary>
+        /// 保养中照片
+        /// </summary>
+        public string MiddleImage { get; set; }
+        /// <summary>
         /// 保养后照片
         /// </summary>
         public string AfterImage { get; set; }

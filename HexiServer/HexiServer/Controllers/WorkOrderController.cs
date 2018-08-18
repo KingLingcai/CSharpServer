@@ -21,16 +21,16 @@ namespace HexiServer.Controllers
         /// <param name="ztCode"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult OnGetRepairList(string userCode, string ztCode, string orderType)
+        public ActionResult OnGetRepairList(string userCode, string ztCode, string status, string orderType)
         {
             StatusReport sr = new StatusReport();
-            if (string.IsNullOrEmpty(userCode) || string.IsNullOrEmpty(ztCode) || string.IsNullOrEmpty(orderType))
+            if (string.IsNullOrEmpty(userCode) || string.IsNullOrEmpty(ztCode) || string.IsNullOrEmpty(status) || string.IsNullOrEmpty(orderType))
             {
                 sr.status = "Fail";
                 sr.result = "信息不完整";
                 return Json(sr);
             }
-            sr = RepairDal.GetRepairOrder(userCode, ztCode, orderType);
+            sr = RepairDal.GetRepairOrder(userCode, ztCode, status, orderType);
 
             return Json(sr);
         }
@@ -49,10 +49,10 @@ namespace HexiServer.Controllers
         /// <param name="laborExpense"></param>
         /// <param name="materialExpense"></param>
         /// <returns></returns>
-        public ActionResult OnSetRepairOrder(string sessionId, string id, string arriveTime, string completeTime, string completeStatus, string laborExpense, string materialExpense, string status)
+        public ActionResult OnSetRepairOrder(string sessionId, string id, string arriveTime, string completeTime, string completeStatus, string chargeType, string laborExpense, string materialExpense, string status, string lateReason, string lateTime, string isPaid)
         {
             StatusReport sr = new StatusReport();
-            sr = RepairDal.SetRepairOrder(id, arriveTime, completeTime, completeStatus, laborExpense, materialExpense,status);
+            sr = RepairDal.SetRepairOrder(id, arriveTime, completeTime, completeStatus, chargeType, laborExpense, materialExpense,status,lateReason,lateTime,isPaid);
             return Json(sr);
         }
 
@@ -68,6 +68,20 @@ namespace HexiServer.Controllers
                 return Json(sr);
             }
             sr = RepairDal.SetPatrol(name, address, detail, classify, time);
+            return Json(sr);
+        }
+
+        public ActionResult OnGetPatrol(string name, string classify)
+        {
+            StatusReport sr = new StatusReport();
+            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(classify))
+            {
+                sr.status = "Fail";
+                sr.result = "信息不完整";
+                return Json(sr);
+            }
+            sr = RepairDal.GetPatrol(name,classify);
+
             return Json(sr);
         }
 
@@ -92,7 +106,7 @@ namespace HexiServer.Controllers
             }
             try
             {
-                string mainPath = "D:\\wximages\\";
+                string mainPath = "F:\\wytws\\Files\\jczl_fwrwgl\\";
                 string imagePath = mainPath + Request.Files.AllKeys[0];
                 string sqlImagePath = Request.Files.AllKeys[0];
                 HttpPostedFileBase uploadImage = (Request.Files[0]);
@@ -122,7 +136,7 @@ namespace HexiServer.Controllers
             }
             try
             {
-                string mainPath = "D:\\wximages\\";
+                string mainPath = "F:\\wytws\\Files\\jczl_fwrwgl\\";
                 string imagePath = mainPath + Request.Files.AllKeys[0];
                 string sqlImagePath = Request.Files.AllKeys[0];
                 HttpPostedFileBase uploadImage = (Request.Files[0]);

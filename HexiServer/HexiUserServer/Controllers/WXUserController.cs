@@ -40,7 +40,7 @@ namespace HexiServer.Controllers
 
         //[HttpGet]
         /// <summary>
-        /// 获取员工信息，使用openId获取员工信息
+        /// 获取员工信息，使用openId获取占用者信息
         /// </summary>
         /// <param name="sessionId"></param>
         /// <returns></returns>
@@ -118,10 +118,10 @@ namespace HexiServer.Controllers
 
             string openId = sessionBag.OpenId;
             int id = ProprietorDal.CheckProprietorExist(userName, phoneNumber);
-            string temp = id > 0 ? "存在" : "不存在";
-            if (id > 0)
+            string temp = id != 0 ? "存在" : "不存在";
+            if (id != 0)
             {
-                sr = ProprietorDal.BindProprietor(id, openId);
+                sr = ProprietorDal.BindProprietor(Math.Abs(id), userName, phoneNumber, openId, id > 0 ? true : false);
                 return Json(sr, JsonRequestBehavior.AllowGet);
             }
             else
@@ -152,7 +152,7 @@ namespace HexiServer.Controllers
             //string openId = sessionBag.OpenId;
             int id = ProprietorDal.CheckProprietorExist(userName, phoneNumber);
             string temp = id > 0 ? "存在" : "不存在";
-            if (id > 0)
+            if (id != 0)
             {
                 string code = getCode();
                 //SessionBag sessionBag = null;
@@ -181,6 +181,30 @@ namespace HexiServer.Controllers
                 };
                 return Json(data);
             }
+        }
+
+        /// <summary>
+        /// 添加家庭成员
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="address"></param>
+        /// <param name="birth"></param>
+        /// <param name="company"></param>
+        /// <param name="idNumber"></param>
+        /// <param name="idType"></param>
+        /// <param name="job"></param>
+        /// <param name="nation"></param>
+        /// <param name="nationality"></param>
+        /// <param name="phoneNumber"></param>
+        /// <param name="relation"></param>
+        /// <param name="userName"></param>
+        /// <returns></returns>
+        public ActionResult OnAddFamily(int id, string gender, string address, string birth, string company, string idNumber, string idType, string job, string nation, string nationality, string phoneNumber, string relation, string userName, string[] roomId)
+        {
+            StatusReport sr = new StatusReport();
+            sr = ProprietorDal.AddFamily(id, gender, address, birth, company, idNumber, idType, job, nation, nationality, phoneNumber, relation, userName,roomId);
+            return Json(sr);
+
         }
 
 

@@ -28,9 +28,9 @@ namespace HexiServer.Business
 
             string sqlString =
                 "select " +
-                "用户表Id " +
+                "用户ID " +
                 "from 基础资料_微信员工绑定表 " +
-                "where OpenId = @OpenId";
+                "where openid = @OpenId";
 
             int empId = SQLHelper.ExecuteScalar("wyt", sqlString,
                 new SqlParameter("@OpenId", openId));
@@ -39,7 +39,7 @@ namespace HexiServer.Business
             {
                 string sqlStr =
                     "select " +
-                    "ID,UserCode,UserName,员工Id,ZTCodes " +
+                    "ID,UserCode,UserName,员工ID,ZTCodes " +
                     "from 用户 " +
                     "where ID = @ID";
 
@@ -53,8 +53,12 @@ namespace HexiServer.Business
                     UserName = (string)dr["UserName"],
                     //ZTCodes = ((string)dr["ZTCodes"]).Split(',')
                 };
-                string[] ztcodes = ((string)dr["ZTCodes"]).Split(',');
-                emp = GetZTInfo(emp, ztcodes);
+                string zts = DataTypeHelper.GetStringValue(dr["ZTCodes"]);
+                if (!string.IsNullOrEmpty(zts))
+                {
+                    string[] ztcodes = zts.Split(',');
+                    emp = GetZTInfo(emp, ztcodes);
+                }
                 emp = GetJurisdictionInfo(emp, emp.UserName);
                 sr.status = "Success";
                 sr.result = "成功";
@@ -89,7 +93,7 @@ namespace HexiServer.Business
             //   "from 用户 " +
             //   "where UserCode = @UserCode";
 
-            string sqlString = "select ID, Password from 用户 where UserCode = @UserCode";
+            string sqlString = "select ID, Password from 用户 where ltrim(rtrim(UserCode)) = @UserCode";
 
             DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlString, new SqlParameter("@UserCode", userName));
             if (dt.Rows.Count == 0)
@@ -126,10 +130,12 @@ namespace HexiServer.Business
         public static StatusReport BindEmployee(int id,string openId)
         {
             string sqlString =
+                "if not exists (select 用户ID from 基础资料_微信员工绑定表 where 用户ID = @用户表Id) " +
                 "insert into 基础资料_微信员工绑定表 " +
-                "(用户表Id , OpenId) " +
+                "(用户ID , openid) " +
                 "select " +
-                "@用户表Id, @OpenId";
+                "@用户表Id, @OpenId " +
+                "select @@identity";
 
             StatusReport sr = SQLHelper.Insert("wyt", sqlString,
                 new SqlParameter("@用户表Id", id),
@@ -138,19 +144,59 @@ namespace HexiServer.Business
             return sr;
         }
 
+
+        public static StatusReport CheckPassword(string userId, string password)
+        {
+            StatusReport sr = new StatusReport();
+            SHA1 sha1 = SHA1.Create();
+            byte[] pw = sha1.ComputeHash(Encoding.Unicode.GetBytes(password));
+            string sqlString = "select Password from 用户 where ID = @userId";
+
+            DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlString, new SqlParameter("@userId", userId));
+            if (dt.Rows.Count == 0)
+            {
+                sr.status = "Fail";
+                sr.result = "未找到此用户";
+                return sr;
+            }
+            DataRow dr = dt.Rows[0];
+            //int id = Convert.ToInt32(dr["ID"]);
+            byte[] storedPassword = (byte[])dr["Password"];
+
+            Boolean isEqual = ComparePasswords(storedPassword, pw);
+            if (isEqual)
+            {
+                sr.status = "Success";
+                sr.result = "匹配";
+                return sr;
+            }
+            else
+            {
+                sr.status = "Fail";
+                sr.result = "不匹配";
+                return sr;
+            }
+
+            //return isEqual ? id : 0;
+        }
+
         private static Employee GetJurisdictionInfo(Employee employee, string name)
         {
             string jurisdiction = "";
-            string sqlString = "select 权限 from 基础资料_小程序员工权限配置 where 员工 = @员工";
+            string level = "";
+            string sqlString = "select 权限,等级 from 基础资料_小程序员工权限配置 where 员工 = @员工";
             DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlString, new SqlParameter("@员工", name));
             if (dt.Rows.Count == 0)
             {
                 employee.Jurisdiction = null;
+                employee.Level = null;
                 return employee;
             }
             DataRow dr = dt.Rows[0];
             jurisdiction = DataTypeHelper.GetStringValue(dr["权限"]);
+            level = DataTypeHelper.GetStringValue(dr["等级"]);
             employee.Jurisdiction = jurisdiction.Split(',');
+            employee.Level = level.Split(',');
             return employee;
         }
 

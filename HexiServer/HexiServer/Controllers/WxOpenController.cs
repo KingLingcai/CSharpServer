@@ -36,8 +36,7 @@ namespace HexiServer.Controllers
                 return Json(new { success = false, mag = jsonResult.errmsg, result = jsonResult });
             }
         }
-
-        //[HttpGet]
+        
         /// <summary>
         /// 获取员工信息，使用openId获取员工信息
         /// </summary>
@@ -74,6 +73,16 @@ namespace HexiServer.Controllers
             //{
                 return Json(sr);
             //}
+        }
+
+
+        [HttpPost]
+        public ActionResult OnGetUserInfoTest(string openid)
+        {
+            StatusReport sr = new StatusReport();
+            
+            sr = EmployeeDal.CheckOpenIdExist(openid);
+            return Json(sr);
         }
 
         /// <summary>
@@ -115,6 +124,20 @@ namespace HexiServer.Controllers
                 };
                 return Json(data);
             }
+        }
+
+        [HttpPost]
+        public ActionResult OnCheckPassword(string userId, string password)
+        {
+            StatusReport sr = new StatusReport();
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(password))
+            {
+                sr.status = "Fail";
+                sr.result = "信息不完整";
+                return Json(sr);
+            }
+            sr = EmployeeDal.CheckPassword(userId, password);
+            return Json(sr);
         }
     }
 }

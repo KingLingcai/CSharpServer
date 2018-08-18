@@ -14,7 +14,8 @@ namespace HexiUserServer.Business
         public static StatusReport SetComplaint (string receptionDate, string name, string address, string content, string classify, string phone)
         {
             string sqlString = " insert into 基础资料_顾客投诉处理登记表 (投诉接待日期, 投诉方式, 投诉人姓名, 地址, 投诉内容, 联系电话, 分类) " +
-                               " select @投诉接待日期, @投诉方式, @投诉人姓名, @地址, @投诉内容, @联系电话, @分类 ";
+                               " select @投诉接待日期, @投诉方式, @投诉人姓名, @地址, @投诉内容, @联系电话, @分类 " +
+                               " SELECT @@IDENTITY ";
             StatusReport sr = SQLHelper.Insert("wyt", sqlString,
                 new SqlParameter("@投诉接待日期", receptionDate),
                 new SqlParameter("@投诉方式", "小程序投诉"),
@@ -69,6 +70,18 @@ namespace HexiUserServer.Business
             }
 
             sr.data = complaintList.ToArray();
+            return sr;
+        }
+
+
+        public static StatusReport Evaluation(string evaluation, string isSatisfying, string id)
+        {
+            StatusReport sr = new StatusReport();
+            string sqlString = "update 基础资料_顾客投诉处理登记表 set 是否满意 = @是否满意, 业主评价 = @业主评价 where ID = @ID";
+            sr = SQLHelper.Update("wyt", sqlString,
+                new SqlParameter("@是否满意", isSatisfying),
+                new SqlParameter("@业主评价", evaluation),
+                new SqlParameter("@ID", id));
             return sr;
         }
     }

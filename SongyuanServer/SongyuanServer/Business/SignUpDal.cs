@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using HexiUtils;
+using SongyuanServer.Models;
+using System;
 using System.Data;
 using System.Data.SqlClient;
-using HexiUtils;
 
 namespace SongyuanServer.Business
 {
@@ -86,10 +84,20 @@ namespace SongyuanServer.Business
             string examination, string vaccineNote, string kidCredentialType, string kidIDNumber, string kidNation, string kidNationality,
             string gangaotai, string area, string areaDetail, string residenceNature, string nonagricultureType, string disabled,
             string disabledType, string leftChild, string onlyChild, string migrantWorkerChild, string orphan, string healthCondition,
-            string bloodType, string teacherName, string patriarchName, string websiteName, string examDate, string kyId)
+            string bloodType, string teacherName, string patriarchName, string websiteName, string examDate, string kyId, string openid,
+            string shareNumber)
         {
             StatusReport sr = new StatusReport();
-            string dbName = kindergartenName == "松园幼儿园" ? "sy" : "ydal";
+            string dbName = kindergartenName == "松园幼儿园" ? "wyt" : "ydal";
+            string sqlStr = "select ID from 基础_看园管理 where 姓名 = @姓名 and 联系电话 = @联系电话";
+            string kanyuanId = null;
+            DataTable dt = SQLHelper.ExecuteQuery(dbName, sqlStr, new SqlParameter("@姓名", name), new SqlParameter("@联系电话", bagPhone));
+            if (!(dt.Rows.Count == 0))
+            {
+                DataRow dr = dt.Rows[0];
+                kanyuanId = DataTypeHelper.GetIntValue(dr["ID"]).ToString();
+            }
+
             string sqlString = " if not exists(select * from 基础_小程序报名 where 姓名=@姓名 and 书包电话= @书包电话) " +
                                " insert into 基础_小程序报名(姓名,性别,书包电话,出生日期,家庭住址,学生来源,监护人,与幼儿关系," +
                                " 监护人电话,监护人身份证件类型,监护人证件号码,监护人职业,监护人工作单位及职位," +
@@ -98,7 +106,7 @@ namespace SongyuanServer.Business
                                " 监护人4,与幼儿关系4,监护人4电话,监护人4身份证件类型,监护人4证件号码,监护人4职业,监护人4工作单位及职位," +
                                " 健康备注,食物药品备注,保健手册,体检手册,预防针本,幼儿身份证件类型,幼儿身份证件号码,民族,国籍地区,港澳台侨外," +
                                " 户籍地区,户籍地区详情,户口性质,非农业户口类型,是否残疾,残疾类型,是否留守儿童,是否独生子女,是否进城务工人员子女," +
-                               " 是否孤儿,健康状况,血型,看园ID,报名日期,家长姓名,老师姓名,网站名称,体检时间,审核状态)" +
+                               " 是否孤儿,健康状况,血型,看园ID,报名日期,家长姓名,老师姓名,网站名称,体检时间,审核状态,openid,分享单编号)" +
                                " select @姓名,@性别,@书包电话,@出生日期,@家庭住址,@学生来源," +
                                " @监护人,@与幼儿关系,@监护人电话,@监护人身份证件类型,@监护人证件号码,@监护人职业,@监护人工作单位及职位," +
                                " @监护人2,@与幼儿关系2,@监护人2电话,@监护人2身份证件类型,@监护人2证件号码,@监护人2职业,@监护人2工作单位及职位," +
@@ -106,7 +114,7 @@ namespace SongyuanServer.Business
                                " @监护人4,@与幼儿关系4,@监护人4电话,@监护人4身份证件类型,@监护人4证件号码,@监护人4职业,@监护人4工作单位及职位," +
                                " @健康备注,@食物药品备注,@保健手册,@体检手册,@预防针本,@幼儿身份证件类型,@幼儿身份证件号码,@民族,@国籍地区,@港澳台侨外," +
                                " @户籍地区,@户籍地区详情,@户口性质,@非农业户口类型,@是否残疾,@残疾类型,@是否留守儿童,@是否独生子女,@是否进城务工人员子女," +
-                               " @是否孤儿,@健康状况,@血型,@看园ID,@报名日期,@家长姓名,@老师姓名,@网站名称,@体检时间,@审核状态 " +
+                               " @是否孤儿,@健康状况,@血型,@看园ID,@报名日期,@家长姓名,@老师姓名,@网站名称,@体检时间,@审核状态,@openid,@分享单编号 " +
                                " select @@identity ";
 
             sr = SQLHelper.Insert(dbName, sqlString, new SqlParameter("@姓名", GetDBValue(name)),
@@ -165,15 +173,41 @@ namespace SongyuanServer.Business
                                                      new SqlParameter("@是否孤儿", GetDBValue(orphan)),
                                                      new SqlParameter("@健康状况", GetDBValue(healthCondition)),
                                                      new SqlParameter("@血型", GetDBValue(bloodType)),
-                                                     new SqlParameter("@看园ID", GetDBValue(kyId)),
+                                                     new SqlParameter("@看园ID", kyId == "undefined" ? DBNull.Value : GetDBValue(kanyuanId)),
                                                      new SqlParameter("@报名日期", System.DateTime.Now),
                                                      new SqlParameter("@家长姓名", GetDBValue(patriarchName)),
                                                      new SqlParameter("@老师姓名", GetDBValue(teacherName)),
                                                      new SqlParameter("@网站名称", GetDBValue(websiteName)),
                                                      new SqlParameter("@体检时间", GetDBValue(examDate)),
+                                                     new SqlParameter("@openid", GetDBValue(openid)),
+                                                     new SqlParameter("@分享单编号", GetDBValue(shareNumber)),
                                                      new SqlParameter("@审核状态", "未审"));
             return sr;
         }
+
+        public static SignUp GetSignUpInfo(string kindergartenName, string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return null;
+            }
+            string dbName = kindergartenName == "松园幼儿园" ? "wyt" : "ydal";
+            string sqlString = "select 姓名,监护人 from 基础_小程序报名 where ID = @id";
+            DataTable dt = SQLHelper.ExecuteQuery(dbName, sqlString, new SqlParameter("@id", id));
+            if (dt.Rows.Count == 0)
+            {
+                return null;
+            }
+            DataRow dr = dt.Rows[0];
+            SignUp signup = new SignUp()
+            {
+                name = DataTypeHelper.GetStringValue(dr["姓名"]),
+                relateName = DataTypeHelper.GetStringValue(dr["监护人"])
+            };
+            return signup;
+            
+        }
+
 
         private static Object GetDBValue(string value)
         {

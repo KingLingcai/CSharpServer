@@ -23,20 +23,20 @@ namespace HexiUserServer.Business
         public static StatusReport UnifiedOrder(string openId,double totalCharge, string dataBag)//统一下单
         {
             StatusReport sr = new StatusReport();
+            string outTradeNo = GetOutTradeNumber();
             WXUnifiedOrder order = new WXUnifiedOrder()
             {
                 appid = Common.Appid,
                 mch_id = Common.Mchid,
                 attach = dataBag,
-                body = "物业费",
-                detail = "199",
-                nonce_str = "1991",
+                body = "北京燕侨物业管理有限公司苏州分公司-物业收费",
+                detail = "dfsaff",
+                nonce_str = GetNonceStr(),
                 notify_url = "http://k17154485y.imwork.net/wxuser/Charge/OnTest",
                 openid = openId,
-                out_trade_no = GetOutTradeNumber(),
-                spbill_create_ip = "192.168.0.111",
-                total_fee = Convert.ToInt32(totalCharge * 100).ToString(),
-                //total_fee = "100",
+                out_trade_no = outTradeNo,
+                spbill_create_ip = "115.159.93.120",
+                total_fee = Convert.ToInt32(totalCharge * 100).ToString(),  
                 trade_type = "JSAPI",
             };
             string xmlParam = GetXmlParam(order);
@@ -49,7 +49,7 @@ namespace HexiUserServer.Business
             }
             string xmlResult = (string)sr.data;
             sr = GetOrderResult(xmlResult);
-            sr.parameters = xmlParam;
+            sr.parameters = order.out_trade_no;
             return sr;
         }
 
@@ -203,8 +203,13 @@ namespace HexiUserServer.Business
                 }
             }
             return map;
-
         }
 
+        private static string GetNonceStr()
+        {
+            string nonceStr = Guid.NewGuid().ToString("N");
+            nonceStr = nonceStr.Substring(0, 32).ToUpper();
+            return nonceStr;
+        }
     }
 }

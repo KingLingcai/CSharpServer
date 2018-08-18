@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Senparc.Weixin.WxOpen.AdvancedAPIs.Sns;
+using Senparc.Weixin.WxOpen.Containers;
 using HexiUtils;
 using SongyuanServer.Business;
 
@@ -87,7 +89,8 @@ namespace SongyuanServer.Controllers
             string examination, string vaccineNote, string kidCredentialType, string kidIDNumber, string kidNation, string kidNationality,
             string gangaotai, string area, string areaDetail, string residenceNature, string nonagricultureType, string disabled,
             string disabledType, string leftChild, string onlyChild, string migrantWorkerChild, string orphan, string healthCondition,
-            string bloodType, string teacherName, string patriarchName, string websiteName, string examDate, string kyId)
+            string bloodType, string teacherName, string patriarchName, string websiteName, string examDate, string kanyuanID, string sessionId,
+            string shareNumber)
         {
             StatusReport sr = new StatusReport();
             //如果未指定幼儿园，返回错误信息
@@ -106,6 +109,25 @@ namespace SongyuanServer.Controllers
                 return Json(sr);
             }
 
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                sr.status = "Fail";
+                sr.result = "sessionId不存在";
+                sr.parameters = sessionId;
+                return Json(sr);
+            }
+            SessionBag sessionBag = null;
+            sessionBag = SessionContainer.GetSession(sessionId);
+            if (sessionBag == null)
+            {
+                sr.status = "Fail";
+                sr.result = "session已失效";
+                return Json(sr);
+            }
+            string openid = sessionBag.OpenId;
+
+            sr = WXUserDal.SetUserInfo(openid, guardianName, bagPhone,kindergartenName,name,relation);
+
             //如果数据满足条件，调用SignUpDal.SetSignUpData方法，将数据存入数据库中
             sr = SignUpDal.SetSignUpData(kindergartenName, name, gender, bagPhone, birth, address, source, 
                 guardianName, relation,guardianPhone, guardianCredentialType, guardianIdNumber, occupation, job, 
@@ -115,8 +137,19 @@ namespace SongyuanServer.Controllers
                 healthRemarks, foodDragRemarks, healthCareNote, examination, vaccineNote, kidCredentialType, kidIDNumber, 
                 kidNation, kidNationality, gangaotai, area, areaDetail, residenceNature, nonagricultureType, disabled, 
                 disabledType, leftChild, onlyChild, migrantWorkerChild, orphan,healthCondition, bloodType, teacherName, 
-                patriarchName, websiteName, examDate, kyId);
-
+                patriarchName, websiteName, examDate, kanyuanID,openid,shareNumber);
+            //if (sr.status == "Success")
+            //{
+            //    string data = sr.data.ToString();
+            //    StatusReport report = new StatusReport();
+            //    report = KanyuanDataDal.GetPayInfo(name, bagPhone,kindergartenName);
+            //    if (report.status == "Success")
+            //    {
+            //        string totalFee = report.data.ToString();
+            //        report.data = new { totalFee = totalFee, signUpId = data.ToString() };
+            //        return Json(report);
+            //    }
+            //}
             return Json(sr) ;
         }
     }

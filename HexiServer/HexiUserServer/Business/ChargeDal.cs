@@ -11,23 +11,15 @@ namespace HexiUserServer.Business
 {
     public class ChargeDal
     {
-        public static Charge[] GetCharges(string ztCode, string roomNumber, string userName)
+        public static StatusReport GetCharges(string ztCode, string roomNumber, string userName)
         {
-
-            //string sqlString = 
-            //    " SELECT dbo.应收款.ID, dbo.应收款.计费年月, dbo.费用项目.费用名称, dbo.应收款.费用说明," +
-            //    " dbo.应收款.应收金额,dbo.应收款.收费状态, dbo.应收款.收款ID, dbo.应收款.收据ID, dbo.资源帐套表.帐套名称 " +
-            //    " FROM dbo.应收款 " +
-            //    " LEFT OUTER JOIN dbo.资源帐套表 ON dbo.应收款.帐套代码 = dbo.资源帐套表.帐套代码 " +
-            //    " LEFT OUTER JOIN dbo.费用项目 ON dbo.应收款.费用项目ID = dbo.费用项目.ID " +
-            //    " WHERE (dbo.应收款.占用者ID = @占用者ID) " +
-            //    " AND (dbo.应收款.房产单元ID = @房产单元ID) " +
-            //    " AND (dbo.应收款.帐套代码 = @帐套代码) " +
-            //    " AND (dbo.应收款.收费状态 IS NULL)";
-
-
-
-            string sqlString = " select 应收款ID as ID,计费年月,费用名称,费用说明,应收金额,收费状态,帐套名称 " +
+            StatusReport sr = new StatusReport()
+            {
+                status = "Success",
+                result = "成功"
+            };
+            Charge charge = new Charge();
+            string sqlString = " select 应收款ID as ID " +
                                 " from weixin.dbo.应收款APP" +
                                 " where 帐套代码 = @帐套代码 " +
                                 " and 房号 = @房号 " +
@@ -38,86 +30,61 @@ namespace HexiUserServer.Business
                 new SqlParameter("@占用者名称", userName),
                 new SqlParameter("@房号", roomNumber),
                 new SqlParameter("@帐套代码", ztCode));
-
-
-            List<ChargeDetail> cdList = new List<ChargeDetail>();
-
+            if (dt.Rows.Count == 0)
+            {
+                sr.status = "Fail";
+                sr.result = "未查询到符合条件的记录";
+                return sr;
+            }
+            List<int?> idList = new List<int?>();
             foreach (DataRow row in dt.Rows)
             {
-                ChargeDetail cd = new ChargeDetail()
+
+                int? id = DataTypeHelper.GetIntValue(row["ID"]);
+                idList.Add(id);
+            }
+            charge.Ids = idList.ToArray();
+            
+            sqlString = "SELECT 资源编号, 占用者名称, SUM(应收金额) AS 应收总额, MIN(计费年月) + '-' + MAX(计费年月) + 费用名称 AS 费用名称 " +
+                "FROM weixin.dbo.应收款APP " +
+                " where 帐套代码 = @帐套代码 " +
+                " and 房号 = @房号 " +
+                " and 占用者名称 = @占用者名称 " +
+                " and 收费状态 IS NULL " +
+                "GROUP BY 资源编号, 占用者名称, 费用名称 ";
+            dt = SQLHelper.ExecuteQuery("wyt", sqlString,
+                new SqlParameter("@占用者名称", userName),
+                new SqlParameter("@房号", roomNumber),
+                new SqlParameter("@帐套代码", ztCode));
+            if (dt.Rows.Count == 0)
+            {
+                sr.status = "Fail";
+                sr.result = "未查询到符合条件的记录";
+                return sr;
+            }
+            List<ChargeDetail> chargeList = new List<ChargeDetail>();
+            foreach(DataRow dr in dt.Rows)
+            {
+                ChargeDetail chargeDetail = new ChargeDetail()
                 {
-                    Id = DataTypeHelper.GetIntValue(row["ID"]),
-                    ChargeTime = DataTypeHelper.GetStringValue(row["计费年月"]),
-                    ChargeName = DataTypeHelper.GetStringValue(row["费用名称"]),
-                    ChargeInfo = DataTypeHelper.GetStringValue(row["费用说明"]),
-                    Charge = DataTypeHelper.GetDoubleValue(row["应收金额"]),
-                    ChargeStatus = DataTypeHelper.GetStringValue(row["收费状态"])
+                    ChargeName = DataTypeHelper.GetStringValue(dr["费用名称"]),
+                    Charge = DataTypeHelper.GetDoubleValue(dr["应收总额"])
                 };
-                cdList.Add(cd);
+                chargeList.Add(chargeDetail);
             }
-
-            ChargeDetail[] cdArray = cdList.ToArray();
-
-            if (cdArray.Length == 0)
-            {
-                return null;
-            }
-            /////////////////////////////////////////////////
-            string chargeName = cdArray[0].ChargeName;
-
-            List<Charge> chargeList = new List<Charge>();
-
-            int i = 0;
-            while (i < cdArray.Length)
-            {
-                //string chargeTime = cdArray[0].ChargeTime;
-                //int k = 0;
-                //while (k < cdArray.Length)
-                //{
-                //    ChargeResult chargeResult = new ChargeResult();
-
-                //}
-
-                Charge charge = new Charge();
-                charge.ChargeName = chargeName;
-                List<ChargeDetail> list = new List<ChargeDetail>();
-
-                for (int j = i; j < cdArray.Length; j++)
-                {
-                    if (cdArray[j].ChargeName == chargeName)
-                    {
-                        list.Add(cdArray[j]);
-                        if (j == cdArray.Length - 1)
-                        {
-                            charge.ChargeDetails = list.ToArray();
-                            i = cdArray.Length;
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        charge.ChargeDetails = list.ToArray();
-                        chargeName = cdArray[j].ChargeName;
-                        i = j;
-                        break;
-                    }
-                }
-                chargeList.Add(charge);
-            }
-            //ChargeResult chargeResult = new ChargeResult();
-            //chargeResult.Charges = chargeList.ToArray();
-            return chargeList.ToArray();
-            ///////////////////////////////////////////////////
+            charge.ChargeDetail = chargeList.ToArray();
+            sr.data = charge;
+            return sr;
         }
-        public static StatusReport SetCharges(string datetime, string proprietorName, string[] chargeIds)
+        public static StatusReport SetCharges(string datetime, string proprietorName, string tradeNumber, string[] chargeIds)
         {
             StatusReport sr = new StatusReport();
             string sqlString = "update weixin.dbo.应收款APP " +
                                 "set 收费状态 = '已收费', " +
                                 " 收费日期 = @收费日期, " +
                                 " 付款方式 = @付款方式, " +
-                                " 收款人 = @收款人 " +
-
+                                " 收款人 = @收款人, " +
+                                " 备注 = @备注 " +
                                 " where 应收款ID in (";
             foreach (string ID in chargeIds)
             {
@@ -128,6 +95,7 @@ namespace HexiUserServer.Business
             sr = SQLHelper.Update("wyt", sqlString, 
                 new SqlParameter("@收费日期", datetime), 
                 new SqlParameter("@收款人", proprietorName),
+                new SqlParameter("@备注", tradeNumber),
                 new SqlParameter("@付款方式","小程序微信支付"));
             sr.parameters = sqlString;
             return sr;
@@ -213,3 +181,93 @@ FROM      dbo.应收款 LEFT OUTER JOIN
                 dbo.费用项目 ON dbo.应收款.费用项目ID = dbo.费用项目.ID
 WHERE   (dbo.应收款.占用者ID = '6') AND (dbo.应收款.收费状态 IS NULL)
  */
+
+
+
+
+
+
+//public static Charge[] GetCharges(string ztCode, string roomNumber, string userName)
+//{
+//    string sqlString = " select 应收款ID as ID,计费年月,费用名称,费用说明,应收金额,收费状态,帐套名称 " +
+//                        " from weixin.dbo.应收款APP" +
+//                        " where 帐套代码 = @帐套代码 " +
+//                        " and 房号 = @房号 " +
+//                        " and 占用者名称 = @占用者名称 " +
+//                        " and 收费状态 IS NULL";
+
+//    DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlString,
+//        new SqlParameter("@占用者名称", userName),
+//        new SqlParameter("@房号", roomNumber),
+//        new SqlParameter("@帐套代码", ztCode));
+
+
+//    List<ChargeDetail> cdList = new List<ChargeDetail>();
+
+//    foreach (DataRow row in dt.Rows)
+//    {
+//        ChargeDetail cd = new ChargeDetail()
+//        {
+//            Id = DataTypeHelper.GetIntValue(row["ID"]),
+//            ChargeTime = DataTypeHelper.GetStringValue(row["计费年月"]),
+//            ChargeName = DataTypeHelper.GetStringValue(row["费用名称"]),
+//            ChargeInfo = DataTypeHelper.GetStringValue(row["费用说明"]),
+//            Charge = DataTypeHelper.GetDoubleValue(row["应收金额"]),
+//            ChargeStatus = DataTypeHelper.GetStringValue(row["收费状态"])
+//        };
+//        cdList.Add(cd);
+//    }
+
+//    ChargeDetail[] cdArray = cdList.ToArray();
+
+//    if (cdArray.Length == 0)
+//    {
+//        return null;
+//    }
+//    ///////////////////////////////////////////////
+//    string chargeName = cdArray[0].ChargeName;
+
+//    List<Charge> chargeList = new List<Charge>();
+
+//    int i = 0;
+//    while (i < cdArray.Length)
+//    {
+//        string chargeTime = cdArray[0].ChargeTime;
+//        int k = 0;
+//        while (k < cdArray.Length)
+//        {
+//            ChargeResult chargeResult = new ChargeResult();
+
+//        }
+
+//        Charge charge = new Charge();
+//        charge.ChargeName = chargeName;
+//        List<ChargeDetail> list = new List<ChargeDetail>();
+
+//        for (int j = i; j < cdArray.Length; j++)
+//        {
+//            if (cdArray[j].ChargeName == chargeName)
+//            {
+//                list.Add(cdArray[j]);
+//                if (j == cdArray.Length - 1)
+//                {
+//                    charge.ChargeDetails = list.ToArray();
+//                    i = cdArray.Length;
+//                    break;
+//                }
+//            }
+//            else
+//            {
+//                charge.ChargeDetails = list.ToArray();
+//                chargeName = cdArray[j].ChargeName;
+//                i = j;
+//                break;
+//            }
+//        }
+//        chargeList.Add(charge);
+//    }
+//    ChargeResult chargeResult = new ChargeResult();
+//    chargeResult.Charges = chargeList.ToArray();
+//    return chargeList.ToArray();
+//    /////////////////////////////////////////////////
+//}

@@ -14,23 +14,36 @@ namespace HexiUserServer.Models
     }
 
 
+    //public class Charge
+    //{
+    //    public string ChargeName { get; set; }//费用名称
+    //    public ChargeDetail[] ChargeDetails { get; set; }//应收金额
+    //}
+
     public class Charge
     {
-        public string ChargeName { get; set; }//费用名称
-        public ChargeDetail[] ChargeDetails { get; set; }//应收金额
+        public int?[] Ids { get; set; }
+        public ChargeDetail[] ChargeDetail { get; set; }
+
     }
 
     public class ChargeDetail
     {
-        public int? Id { get; set; }//应收款.ID
-        public string ChargeTime { get; set; }//计费年月
         public string ChargeName { get; set; }//费用名称
-        public string ChargeInfo { get; set; }//费用说明
         public double? Charge { get; set; }//应收金额
-        public string ChargeStatus { get; set; }//收费状态
-        public int? ChargedId { get; set; }//收款ID
-        public int? ReceiptId { get; set; }//收据ID
     }
+
+    //public class ChargeDetail
+    //{
+    //    public int? Id { get; set; }//应收款.ID
+    //    public string ChargeTime { get; set; }//计费年月
+    //    public string ChargeName { get; set; }//费用名称
+    //    public string ChargeInfo { get; set; }//费用说明
+    //    public double? Charge { get; set; }//应收金额
+    //    public string ChargeStatus { get; set; }//收费状态
+    //    public int? ChargedId { get; set; }//收款ID
+    //    public int? ReceiptId { get; set; }//收据ID
+    //}
 }
 /*
  * SELECT   dbo.应收款.ID, dbo.应收款.计费年月, dbo.费用项目.费用名称, dbo.应收款.费用说明, dbo.应收款.应收金额, 

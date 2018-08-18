@@ -20,6 +20,7 @@ namespace HexiServer.Models
         public string AmountMonth { get; set; }
         public string ChargeWay { get; set; }
         public string ChargeName { get; set; }
+        public string ChargeDate { get; set; }
         public string StartMonth { get; set; }
         public string EndMonth { get; set; }
         public string Cashier { get; set; }

@@ -7,9 +7,9 @@ namespace HexiUserServer.Models
 {
     public class Common
     {
-        public static string Appid = "wx3bfed4fd2abe0355";
-        public static string AppSecret = "c3f2f5000af95c0fa3236c277d5b6d72";
-        public static string Mchid = "1492807892";
-        public static string Mchkey = "guangzhouhexiruanjiangongsigzhxw";
+        public static string Appid = "wx8c6a728869074a32";
+        public static string AppSecret = "d193a5ec385860dd295f90bac1d93a5c";
+        public static string Mchid = "1497790862";
+        public static string Mchkey = "bejingyanqiaowuyesuzhoufengongsi";
     }
 }

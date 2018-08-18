@@ -21,14 +21,14 @@ namespace HexiServer.Controllers
         /// <param name="isCharge"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult OnGetChargedList(string homeNumber, string name, string ztcode, string startMonth, string endMonth, string isCharge)
+        public ActionResult OnGetChargedList(string homeNumber, string buildingNumber, string name, string ztcode, string startMonth, string endMonth)
         {
             StatusReport sr = new StatusReport();
-            if (string.IsNullOrEmpty(ztcode) || string.IsNullOrEmpty(startMonth) || string.IsNullOrEmpty(endMonth) || string.IsNullOrEmpty(isCharge))
+            if (string.IsNullOrEmpty(ztcode) || string.IsNullOrEmpty(startMonth) || string.IsNullOrEmpty(endMonth))
             {
                 return Json(new {status = "Fail" , result = "信息不完整" });
             }
-            return Json(ChargeDal.GetChargedList(homeNumber, name, ztcode, startMonth, endMonth));
+            return Json(ChargeDal.GetChargedList(homeNumber, buildingNumber, name, ztcode, startMonth, endMonth));
         }
 
         
@@ -59,14 +59,14 @@ namespace HexiServer.Controllers
         /// <param name="ztcode"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult OnGetChargeList(string homeNumber, string name, string ztcode)
+        public ActionResult OnGetChargeList(string homeNumber, string name, string ztcode, string buildingNumber)
         {
             StatusReport sr = new StatusReport();
             if (string.IsNullOrEmpty(ztcode))
             {
                 return Json(new { status = "Fail", result = "信息不完整" });
             }
-            return Json(ChargeDal.GetChargeList(homeNumber, name, ztcode));
+            return Json(ChargeDal.GetChargeList(homeNumber, name, ztcode, buildingNumber));
         }
 
         /// <summary>
@@ -88,10 +88,10 @@ namespace HexiServer.Controllers
 
 
         [HttpPost]
-        public ActionResult OnSetCharges(string datetime, string name, string[] chargeIds)
+        public ActionResult OnSetCharges(string datetime, string name, string[] chargeIds, string paymentMethod)
         {
             //return Json(new { datetime = datetime, proprietorName = proprietorName, chargeIds = chargeIds });
-            return Json(ChargeDal.SetCharges(datetime, name, chargeIds));
+            return Json(ChargeDal.SetCharges(datetime, name, chargeIds, paymentMethod));
         }
     }
 }

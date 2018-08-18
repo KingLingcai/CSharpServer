@@ -45,5 +45,43 @@ namespace HexiUserServer.Controllers
             }
             return Json(sr);
         }
+
+        public ActionResult OnSetRepairImage()
+        {
+            StatusReport sr = new StatusReport();
+            if (Request.Files.Count == 0)
+            {
+                sr.status = "Fail";
+                sr.result = "没有图片";
+                return Json(sr);
+            }
+            try
+            {
+                string mainPath = "F:\\wytws\\Files\\jczl_fwrwgl\\";
+                string imagePath = mainPath + Request.Files.AllKeys[0];
+                string sqlImagePath = Request.Files.AllKeys[0];
+                HttpPostedFileBase uploadImage = (Request.Files[0]);
+                uploadImage.SaveAs(imagePath);
+                string ID = Request.Form["id"];
+                string func = Request.Form["func"];
+                string index = Request.Form["index"];
+                sr = RepairDal.SetRepairImage(ID, func, index, sqlImagePath);
+                return Json(sr);
+            }
+            catch (NotImplementedException exp)
+            {
+                sr.status = "Fail";
+                sr.result = exp.Message;
+                return Json(sr);
+            }
+        }
+
+
+        public ActionResult OnEvaluation(string evaluation, string isSatisfying, string id)
+        {
+            StatusReport sr = new StatusReport();
+            sr = ComplaintDal.Evaluation(evaluation, isSatisfying, id);
+            return Json(sr);
+        }
     }
 }

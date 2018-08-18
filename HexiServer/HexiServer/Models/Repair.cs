@@ -80,9 +80,17 @@ namespace HexiServer.Models
         /// </summary>
         public string OperatePerson { get; set; }//操作人
         /// <summary>
+        /// 是否入户
+        /// </summary>
+        public string NeedIn { get; set; }//是否入户
+        /// <summary>
         /// 完成时间
         /// </summary>
         public string CompleteTime { get; set; }//完成时间
+        /// <summary>
+        /// 收费类别
+        /// </summary>
+        public string ChargeType { get; set; }//收费类别
         /// <summary>
         /// 材料费
         /// </summary>
@@ -91,6 +99,10 @@ namespace HexiServer.Models
         /// 人工费
         /// </summary>
         public double? LaborExpense { get; set; }//人工费
+        /// <summary>
+        /// 是否已收
+        /// </summary>
+        public string IsPaid { get; set; }//是否已收
         /// <summary>
         /// 是否阅读
         /// </summary>
@@ -111,5 +123,45 @@ namespace HexiServer.Models
         /// 处理后照片1，2，3
         /// </summary>
         public string[] AfterImage { get; set; }//处理后照片1，2，3
+        /// <summary>
+        /// 延期原因
+        /// </summary>
+        public string LateReason { get; set; }//延期原因
+        /// <summary>
+        /// 预计延期到
+        /// </summary>
+        public string LateTime { get; set; }//预计延期到
+        /// <summary>
+        /// 是否满意
+        /// </summary>
+        public string IsSatisfying { get; set; }//是否满意
+        /// <summary>
+        /// 业主确认完成  
+        /// </summary>
+        public string AffirmComplete { get; set; }//业主确认完成
+        /// <summary>
+        /// 业主确认完成时间  
+        /// </summary>
+        public string AffirmCompleteTime { get; set; }//业主确认完成时间
+        /// <summary>
+        /// 业主评价  
+        /// </summary>
+        public string AffirmCompleteEvaluation { get; set; }//业主评价
+        /// <summary>
+        /// 回访人  
+        /// </summary>
+        public string CallBackPerson { get; set; }//回访人
+        /// <summary>
+        /// 回访时间  
+        /// </summary>
+        public string CallBackTime { get; set; }//回访时间
+        /// <summary>
+        /// 回访意见  
+        /// </summary>
+        public string CallBackEvaluation { get; set; }//回访意见
+        /// <summary>
+        /// 身份
+        /// </summary>
+        public string Identity { get; set; }
     }
 }

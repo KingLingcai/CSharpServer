@@ -51,8 +51,8 @@ namespace HexiServer.Controllers
                 return Json(sr);
             }
             try
-            {
-                string mainPath = "D:\\wximages\\";
+            { 
+                string mainPath = "F:\\wytws\\Files\\bywj\\";
                 string imagePath = mainPath + Request.Files.AllKeys[0];
                 string sqlImagePath = Request.Files.AllKeys[0];
                 HttpPostedFileBase uploadImage = (Request.Files[0]);
@@ -78,5 +78,25 @@ namespace HexiServer.Controllers
             sr = EquipmentDal.SearchEquipment(operationNumber);
             return Json(sr);
         }
+
+        public ActionResult OnSearchEquipmentMaintain(string operationNumber)
+        {
+            StatusReport sr = new StatusReport();
+            sr = EquipmentDal.SearchEquipmentMaintain(operationNumber);
+            return Json(sr);
+        }
     }
 }
+
+
+/*
+ * 数据库名称: 
+wordpress510
+
+数据库用户名: 
+wordpressuser383
+
+数据库密码: 
+CBj|OfDsX_g?
+
+*/

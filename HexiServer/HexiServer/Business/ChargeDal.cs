@@ -12,20 +12,21 @@ namespace HexiServer.Business
 {
     public class ChargeDal
     {
-        public static StatusReport GetChargedList(string homeNumber, string name, string ztcode, string startMonth, string endMonth)
+        public static StatusReport GetChargedList(string homeNumber, string buildingNumber, string name, string ztcode, string startMonth, string endMonth)
         {
             StatusReport sr = new StatusReport();
             string sqlString = "SELECT 房产单元编号, 占用者名称, SUM(应收金额) AS 已收总额, 帐套代码 " +
                                 "FROM dbo.小程序_已收查询 " +
                                 "WHERE 帐套代码 = " + ztcode +
                                 (string.IsNullOrEmpty(homeNumber) ? "" : "and (房产单元编号 like '%" + homeNumber + "%') ") +
+                                (string.IsNullOrEmpty(buildingNumber) ? "" : "and (所属楼宇 like '%" + buildingNumber + "%') ") +
                                 (string.IsNullOrEmpty(name) ? "" : "and (占用者名称 like '%" + name + "%') ") +
                                 " and 计费开始年月 >= " + startMonth +
                                 " and 计费开始年月 <= " + endMonth +
                                 " GROUP BY 房产单元编号, 占用者名称, 帐套代码 " +
                                 " ORDER BY 占用者名称 ";
 
-            DataTable dt = SQLHelper.ExecuteQuery("wyt",sqlString);
+            DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlString);
             if (dt.Rows.Count == 0)
             {
                 sr.status = "Fail";
@@ -34,7 +35,7 @@ namespace HexiServer.Business
             }
             List<Charged> chargedList = new List<Charged>();
 
-            foreach(DataRow row in dt.Rows)
+            foreach (DataRow row in dt.Rows)
             {
                 Charged c = new Charged()
                 {
@@ -48,25 +49,27 @@ namespace HexiServer.Business
             sr.status = "Success";
             sr.result = "成功";
             sr.data = chargedList.ToArray();
-            return sr; 
+            return sr;
         }
 
-        public static StatusReport GetChargeList(string homeNumber, string name, string ztcode)
+        public static StatusReport GetChargeList(string homeNumber, string name, string ztcode, string buildingNumber)
         {
             StatusReport sr = new StatusReport();
             string sqlString = "SELECT 资源编号, 占用者名称, SUM(应收金额) AS 已收总额, 帐套代码 " +
-                                "FROM 应收款APP " +
+                                "FROM 小程序_未收查询 " +
                                 "WHERE 帐套代码 = " + ztcode +
                                 " and 收费状态 is null " +
                                 (string.IsNullOrEmpty(homeNumber) ? "" : "and (资源编号 like '%" + homeNumber + "%') ") +
+                                (string.IsNullOrEmpty(buildingNumber) ? "" : "and (所属楼宇 like '%" + buildingNumber + "%') ") +
                                 (string.IsNullOrEmpty(name) ? "" : "and (占用者名称 like '%" + name + "%') ") +
                                 "GROUP BY 资源编号, 占用者名称, 帐套代码 " +
                                 "ORDER BY 占用者名称";
-            DataTable dt = SQLHelper.ExecuteQuery("wx",sqlString);
+            DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlString);
             if (dt.Rows.Count == 0)
             {
                 sr.status = "Fail";
                 sr.result = "未查询到任何记录";
+                sr.parameters = sqlString;
                 return sr;
             }
             List<Charged> chargedList = new List<Charged>();
@@ -91,17 +94,17 @@ namespace HexiServer.Business
         public static StatusReport GetChargedDetail(string homeNumber, string name, string ztcode, string startMonth, string endMonth)
         {
             StatusReport sr = new StatusReport();
-            string sqlString = "SELECT 应收金额, 计费年月, 付款方式, 费用名称, 计费开始年月, 计费截至年月,收款人 " +
+            string sqlString = "SELECT 应收金额, 计费年月, 付款方式, 费用名称, 计费开始年月, 计费截至年月, 收款人, 收费日期 " +
                 "FROM dbo.小程序_已收查询 " +
                 "WHERE 房产单元编号 = @房产单元编号 and 占用者名称 = @占用者名称 and 帐套代码 = @帐套代码 " +
                 "and 计费开始年月 >= @计费开始年月 and 计费开始年月 <= @计费截止年月 " +
-                "ORDER BY 计费年月 ";
-            DataTable dt = SQLHelper.ExecuteQuery("wyt",sqlString,
+                "ORDER BY 计费年月,费用名称 ";
+            DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlString,
                 new SqlParameter("@房产单元编号", homeNumber),
                 new SqlParameter("@占用者名称", name),
                 new SqlParameter("@帐套代码", ztcode),
                 new SqlParameter("@计费开始年月", startMonth),
-                new SqlParameter("@计费截止年月",endMonth));
+                new SqlParameter("@计费截止年月", endMonth));
 
             if (dt.Rows.Count == 0)
             {
@@ -117,6 +120,7 @@ namespace HexiServer.Business
                     AmountReceivable = DataTypeHelper.GetDoubleValue(row["应收金额"]),
                     AmountMonth = string.IsNullOrEmpty(DataTypeHelper.GetStringValue(row["计费年月"])) ? "其他费用" : DataTypeHelper.GetStringValue(row["计费年月"]),
                     ChargeName = DataTypeHelper.GetStringValue(row["费用名称"]),
+                    ChargeDate = FormatDate(DataTypeHelper.GetDateStringValue(row["收费日期"])),
                     StartMonth = DataTypeHelper.GetStringValue(row["计费开始年月"]),
                     EndMonth = DataTypeHelper.GetStringValue(row["计费截至年月"]),
                     Cashier = DataTypeHelper.GetStringValue(row["收款人"]),
@@ -136,7 +140,7 @@ namespace HexiServer.Business
             int i = 0;
             while (i < cdArray.Length)
             {
-                ChargedResult cr = new ChargedResult(); 
+                ChargedResult cr = new ChargedResult();
                 cr.AmountMonth = month;
                 List<ChargedDetail> list = new List<ChargedDetail>();
 
@@ -188,9 +192,10 @@ namespace HexiServer.Business
                                 " where 帐套代码 = @帐套代码 " +
                                 " and 房号 = @房号 " +
                                 " and 占用者名称 = @占用者名称 " +
-                                " and 收费状态 IS NULL";
+                                " and 收费状态 IS NULL " +
+                                " order by 费用名称";
 
-            DataTable dt = SQLHelper.ExecuteQuery("wx",sqlString,
+            DataTable dt = SQLHelper.ExecuteQuery("wx", sqlString,
                 new SqlParameter("@占用者名称", userName),
                 new SqlParameter("@房号", roomNumber),
                 new SqlParameter("@帐套代码", ztCode));
@@ -275,7 +280,7 @@ namespace HexiServer.Business
             ///////////////////////////////////////////////////
         }
 
-        public static StatusReport SetCharges(string datetime, string name, string[] chargeIds)
+        public static StatusReport SetCharges(string datetime, string name, string[] chargeIds, string paymentMethod)
         {
             StatusReport sr = new StatusReport();
             string sqlString = "update weixin.dbo.应收款APP " +
@@ -294,9 +299,22 @@ namespace HexiServer.Business
             sr = SQLHelper.Update("wyt", sqlString,
                 new SqlParameter("@收费日期", datetime),
                 new SqlParameter("@收款人", name),
-                new SqlParameter("@付款方式", "小程序现金收款"));
+                new SqlParameter("@付款方式", paymentMethod));
             sr.parameters = sqlString;
             return sr;
+        }
+
+
+        public static StatusReport GetChargeStatistics(string ztcode, string level)
+        {
+            StatusReport sr = new StatusReport();
+            return sr;
+        }
+
+
+        private static string FormatDate(string date)
+        {
+            return date.Split(' ')[0];
         }
 
 
@@ -321,5 +339,9 @@ namespace HexiServer.Business
 
         //    }
         //}
+        private static void test1()
+        {
+            Func<string, int> func = (string text) => text.Length;
+        }
     }
-                }
+}

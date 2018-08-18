@@ -9,9 +9,12 @@ namespace HexiUtils
 {
     public class SQLHelper
     {
-        //private static string wytConnectionString = "Data Source=192.168.13.1;Initial Catalog=f2wyt;Integrated Security=false;User ID=sa;Password=!1asdfgh";//连接字符串
-        private static string wytConnectionString = "Data Source=192.168.0.111;Initial Catalog=wytnetsz;Integrated Security=false;User ID=sa;Password=101128";//连接字符串
-        private static string wxConnectionString = "Data Source=192.168.0.111;Initial Catalog=weixin;Integrated Security=false;User ID=sa;Password=101128";
+
+        //private static string wytConnectionString = "Data Source=192.168.13.1;Initial Catalog=f2wyt;Integrated Security=false;User ID=sa;Password=!1asdfgh";//松园服务器连接字符串
+        private static string wytConnectionString = "Data Source=192.168.0.102;Initial Catalog=wytnetsz;Integrated Security=false;User ID=sa;Password=101128";//苏州本地连接字符串
+        private static string wxConnectionString = "Data Source=192.168.0.102;Initial Catalog=weixin;Integrated Security=false;User ID=sa;Password=101128";//苏州本地连接字符串
+        //private static string wytConnectionString = "Data Source=192.168.1.199;Initial Catalog=wytnet;Integrated Security=false;User ID=sa;Password=Yq123";//苏州服务器连接字符串
+        //private static string wxConnectionString = "Data Source=192.168.1.199;Initial Catalog=weixin;Integrated Security=false;User ID=sa;Password=Yq123";//苏州服务器连接字符串
         /**
          * 该静态方法，用于根据传入的sql语句和相关参数，在数据库中查询
          * 数据，并以表的数据表（DataTable）的形式返回查询到的数据。
