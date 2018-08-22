@@ -167,7 +167,6 @@ namespace HexiServer.Business
             return sr;
         }
 
-
         public static StatusReport SearchEquipmentMaintain(string operationNumber)
         {
             StatusReport sr = new StatusReport();
@@ -229,8 +228,6 @@ namespace HexiServer.Business
             sr.parameters = sqlstring;
             return sr;
         }
-
-
 
         public static StatusReport GetEquipmentStatistics (string ztcode, string level)
         {
@@ -312,8 +309,100 @@ namespace HexiServer.Business
 
         }
 
+        public static StatusReport GetEquipmentReportAbstractList()
+        {
+            StatusReport sr = new StatusReport();
+            string sqlstring =
+            " SELECT " +
+            " COUNT(CASE WHEN 是否完成 IS NULL AND (datediff(day, 工作日期, GETDATE()) > 宽限上延天数) AND datediff(day, 工作日期, GETDATE()) >= 0 THEN ID ELSE NULL END) AS 过期未完成数, " +
+            " 帐套名称, " +
+            " 帐套代码 "+
+            " FROM dbo.小程序_设备管理 " +
+            " GROUP BY 帐套名称,帐套代码 ";
+            DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlstring);
+            if (dt.Rows.Count == 0)
+            {
+                sr.status = "Fail";
+                sr.result = "未查询到任何数据";
+                return sr;
+            }
+            List<EquipmentReportCompany> ercList = new List<EquipmentReportCompany>();
+            foreach(DataRow dr in dt.Rows)
+            {
+                EquipmentReportCompany erc = new EquipmentReportCompany();
+                erc.ztCode = DataTypeHelper.GetStringValue(dr["帐套代码"]);
+                erc.ztName = DataTypeHelper.GetStringValue(dr["帐套名称"]);
+                erc.countTimeout = DataTypeHelper.GetStringValue(dr["过期未完成数"]);
+                ercList.Add(erc);
+            }
+            sr.status = "Success";
+            sr.result = "成功";
+            sr.data = ercList.ToArray();
+            return sr;
+        }
 
+        public static StatusReport GetEquipmentReport(string ztcode)
+        {
+            StatusReport sr = new StatusReport();
+            string done  = " where (帐套代码 = @帐套代码) AND 是否完成 is null " +
+                    " and (datediff(day,工作日期,GETDATE())> 宽限上延天数) and datediff(day,工作日期,GETDATE())>= 0 " +
+                    " ORDER BY ID DESC";
+            string sqlstring = " SELECT ID, 分类, 设备运行编号, 设备编号, 设备型号, 设备名称, 系统名称, 出厂日期, " +
+                               " 使用日期, 设备价格, 出厂序号, 设计寿命, 卡号, 安装地点, 产地, 设备保养管理代号, 设备保养管理内容, " +
+                               " 设备保养管理日期, 工作名称, 工作日期, 是否完成, 录入日期, 录入人, 完成说明, 序次, 保养前照片, 保养中照片, 保养后照片, " +
+                               " 宽限上延天数,宽限下延天数 " +
+                               " FROM dbo.小程序_设备管理 ";
+            sqlstring += done;
 
+            DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlstring,
+                new SqlParameter("@帐套代码", ztcode));
+            if (dt.Rows.Count == 0)
+            {
+                sr.status = "Fail";
+                sr.result = "未查询到任何数据";
+                sr.parameters = sqlstring;
+                return sr;
+            }
+            List<Equipment> equipmentList = new List<Equipment>();
+            foreach (DataRow dr in dt.Rows)
+            {
+                Equipment equipment = new Equipment();
+                equipment.ID = DataTypeHelper.GetIntValue(dr["ID"]);
+                equipment.Classify = DataTypeHelper.GetStringValue(dr["分类"]);
+                equipment.OperationNumber = DataTypeHelper.GetStringValue(dr["设备运行编号"]);
+                equipment.Number = DataTypeHelper.GetStringValue(dr["设备编号"]);
+                equipment.Name = DataTypeHelper.GetStringValue(dr["设备名称"]);
+                equipment.SystemName = DataTypeHelper.GetStringValue(dr["系统名称"]);
+                equipment.ProductionDate = DataTypeHelper.GetStringValue(dr["出厂日期"]);
+                equipment.UseDate = DataTypeHelper.GetStringValue(dr["使用日期"]);
+                equipment.price = DataTypeHelper.GetDoubleValue(dr["设备价格"]);
+                equipment.ProductionNumber = DataTypeHelper.GetStringValue(dr["出厂序号"]);
+                equipment.DesignedLife = DataTypeHelper.GetStringValue(dr["设计寿命"]);
+                equipment.CardNumber = DataTypeHelper.GetStringValue(dr["卡号"]);
+                equipment.UseAddress = DataTypeHelper.GetStringValue(dr["安装地点"]);
+                equipment.ProductionAddress = DataTypeHelper.GetStringValue(dr["产地"]);
+                equipment.MaintainNumber = DataTypeHelper.GetStringValue(dr["设备保养管理代号"]);
+                equipment.MaintainContent = DataTypeHelper.GetStringValue(dr["设备保养管理内容"]);
+                equipment.MaintainDate = DataTypeHelper.GetDateStringValue(dr["设备保养管理日期"]);
+                equipment.WorkDate = DataTypeHelper.GetDateStringValue(dr["工作日期"]);
+                equipment.IsDone = DataTypeHelper.GetBooleanValue(dr["是否完成"]) == true ? 1 : 0;
+                equipment.InputDate = DataTypeHelper.GetDateStringValue(dr["录入日期"]);
+                equipment.InputMan = DataTypeHelper.GetStringValue(dr["录入人"]);
+                equipment.DoneInfo = DataTypeHelper.GetStringValue(dr["完成说明"]);
+                equipment.BeforeImage = DataTypeHelper.GetStringValue(dr["保养前照片"]);
+                equipment.MiddleImage = DataTypeHelper.GetStringValue(dr["保养中照片"]);
+                equipment.AfterImage = DataTypeHelper.GetStringValue(dr["保养后照片"]);
+                equipment.Order = DataTypeHelper.GetBooleanValue(dr["序次"]) == true ? "1" : "0";
+                equipment.BeforeDays = DataTypeHelper.GetIntValue(dr["宽限上延天数"]);
+                equipment.AfterDays = DataTypeHelper.GetIntValue(dr["宽限下延天数"]);
+                equipmentList.Add(equipment);
+            }
+            sr.status = "Success";
+            sr.result = "成功";
+            sr.data = equipmentList.ToArray();
+            sr.parameters = sqlstring;
+            return sr;
+        }
 
         //TODO: 待完善
         private static string GetPercent(string value1, string value2)

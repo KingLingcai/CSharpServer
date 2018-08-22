@@ -20,7 +20,7 @@ namespace HexiUtils
             }
             else
             {
-                return (string)row;
+                return Convert.ToString(row);
             }
         }
 
@@ -37,7 +37,7 @@ namespace HexiUtils
             }
             else
             {
-                return (DateTime)row;
+                return Convert.ToDateTime(row);
             }
         }
 
@@ -54,7 +54,7 @@ namespace HexiUtils
             }
             else
             {
-                DateTime dt = (DateTime)row;
+                DateTime dt = Convert.ToDateTime(row);
                 //string dstring = dt.ToString("yyyy-MM-dd HH:mm:ss");
                 string dstring = dt.ToString("yyyy-MM-dd");
                 return dstring;

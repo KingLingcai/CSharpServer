@@ -121,4 +121,34 @@ namespace HexiServer.Models
         public int? AfterDays { get; set; }
 
     }
+
+
+    public class EquipmentStatistics
+    {
+        public string ztName { get; set; }
+        public string countFinished { get; set; }
+        public string countUnfinished { get; set; }
+        public string countShouldFinished { get; set; }
+        public string rateFinished { get; set; }
+        public string rateUnfinished { get; set; }
+    }
+
+    public class EquipmentStatisticsCompany
+    {
+        public string countFinished { get; set; }
+        public string countUnfinished { get; set; }
+        public string countShouldFinished { get; set; }
+        public string rateFinished { get; set; }
+        public string rateUnfinished { get; set; }
+
+        public EquipmentStatistics[] equipmentStatisticsProjects { get; set; }
+    }
+
+
+    public class EquipmentReportCompany
+    {
+        public string ztName { get; set; }
+        public string ztCode { get; set; }
+        public string countTimeout { get; set; }
+    }
 }

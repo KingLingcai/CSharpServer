@@ -132,15 +132,11 @@
     <Compile Include="Models\Charged.cs" />
     <Compile Include="Models\Comman.cs" />
     <Compile Include="Models\Complain.cs" />
-    <Compile Include="Models\ComplainStatistics.cs" />
     <Compile Include="Models\Employee.cs" />
     <Compile Include="Models\Equipment.cs" />
-    <Compile Include="Models\EquipmentStatistics.cs" />
     <Compile Include="Models\Jurisdiction.cs" />
     <Compile Include="Models\Proprietor.cs" />
     <Compile Include="Models\Repair.cs" />
-    <Compile Include="Models\RepairReportProject.cs" />
-    <Compile Include="Models\RepairStatistics.cs" />
     <Compile Include="Models\Status.cs" />
     <Compile Include="Models\StatusReport.cs" />
     <Compile Include="Models\WXUser.cs" />

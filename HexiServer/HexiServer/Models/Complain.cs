@@ -44,6 +44,14 @@ namespace HexiServer.Models
         /// </summary>
         public string Number { get; set; }
         /// <summary>
+        /// 发单人
+        /// </summary>
+        public string SendPerson { get; set; }//发单人
+        /// <summary>
+        /// 接单人
+        /// </summary>
+        public string ReceivePerson { get; set; }//接单人
+        /// <summary>
         /// 处理完成日期
         /// </summary>
         public string FinishDate { get; set; }
@@ -87,5 +95,88 @@ namespace HexiServer.Models
         /// 业主评价  
         /// </summary>
         public string AffirmCompleteEvaluation { get; set; }//业主评价
+    }
+
+
+
+
+    public class ComplainStatistics
+    {
+        public string name { get; set; }
+        public string countReceive { get; set; }
+        public string countValid { get; set; }
+        public string countInvalid { get; set; }
+        public string countFinished { get; set; }
+        public string countUnfinished { get; set; }
+        public string countClosed { get; set; }
+        public string rateValid { get; set; }
+        public string rateInvalid { get; set; }
+        public string rateFinished { get; set; }
+        public string rateUnfinished { get; set; }
+        public string rateClosed { get; set; }
+    }
+
+    public class ComplainStatisticsProject
+    {
+        public string ztName { get; set; }
+        public string countReceive { get; set; }
+        public string countValid { get; set; }
+        public string countInvalid { get; set; }
+        public string countFinished { get; set; }
+        public string countUnfinished { get; set; }
+        public string countClosed { get; set; }
+        public string rateValid { get; set; }
+        public string rateInvalid { get; set; }
+        public string rateFinished { get; set; }
+        public string rateUnfinished { get; set; }
+        public string rateClosed { get; set; }
+        public ComplainStatistics[] complainStatisticsPersonal { get; set; }
+    }
+
+    public class ComplainStatisticsCompany
+    {
+
+        public string countReceive { get; set; }
+        public string countValid { get; set; }
+        public string countInvalid { get; set; }
+        public string countFinished { get; set; }
+        public string countUnfinished { get; set; }
+        public string countClosed { get; set; }
+        public string rateValid { get; set; }
+        public string rateInvalid { get; set; }
+        public string rateFinished { get; set; }
+        public string rateUnfinished { get; set; }
+        public string rateClosed { get; set; }
+        public ComplainStatisticsProject[] complainStatisticsProject { get; set; }
+    }
+
+
+
+
+    public class ComplainReportStatistics
+    {
+        public string ztName { get; set; }
+        public string countUnfinished { get; set; }
+        public string countTimeout { get; set; }
+    }
+
+    public class ComplainReportStatisticsCompany
+    {
+        public string countUnfinished { get; set; }
+        public string countTimeout { get; set; }
+        public ComplainReportStatistics[] complainReportStatistics { get; set; }
+    }
+
+    //public class ComplainReport
+    //{
+    //    public Complain[] complains { get; set; }
+    //}
+
+    public class ComplainReport : Complain
+    {
+
+        public string ZTName { get; set; }
+        public string ZTCode { get; set; }
+        public string type { get; set; }
     }
 }

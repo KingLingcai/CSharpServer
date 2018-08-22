@@ -28,11 +28,31 @@ namespace HexiServer.Controllers
                 case "工单上报":
                     sr = RepairDal.GetRepairReport(ztcode, level);
                     break;
-                case "设备统计":
-                    sr = EquipmentDal.GetEquipmentStatistics(ztcode, level);
+                case "设备上报":
+                    if (level == "公司")
+                    {
+                        sr = EquipmentDal.GetEquipmentReportAbstractList();
+                    }
+                    else if (level == "一线")
+                    {
+                        sr.status = "Fail";
+                        sr.result = "没有此权限";
+                    }
+                    else
+                    {
+                        sr = EquipmentDal.GetEquipmentReport(ztcode);
+                    }
                     break;
-                case "投诉统计":
-                    sr = ComplainDal.GetComplainStatistics(ztcode, level, before);
+                case "投诉上报":
+                    if (level == "一线" || level == "助理" || level == "项目经理")
+                    {
+                        sr.status = "Fail";
+                        sr.result = "没有此权限";
+                    }
+                    else
+                    {
+                        sr = ComplainDal.GetComplainReport();
+                    }
                     break;
                 case "设备故障统计":
 

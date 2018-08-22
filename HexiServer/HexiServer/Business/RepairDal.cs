@@ -554,75 +554,66 @@ namespace HexiServer.Business
             return sr;
              
         }
-
-
         public static StatusReport GetRepairReport(string ztcode, string level)
         {
             StatusReport sr = new StatusReport();
-            string sqlStr =
-                " select " +
-                " ID,序号,部门,地址,报修人,联系电话,服务项目,服务类别," +
-                " 紧急程度,报修说明,报修时间,预约服务时间,谈好上门时间,发单人,接单人,派工时间," +
-                " 到场时间,操作人,完成时间,收费类别,材料费,人工费,是否已收,是否阅读,状态,完成情况及所耗物料,报修前照片1," +
-                " 报修前照片2,报修前照片3,处理后照片1,处理后照片2,处理后照片3,延期原因,预计延期到,回访人,回访意见,回访时间, " +
-                " 是否满意,业主确认完成,业主确认完成时间,是否满意,业主评价,是否入户 " +
-                " from 小程序_工单管理 ";
+
             string sqlString = "";
             string condition = "";
             if (level == "助理")
             {
                 DataTable dt = null;
-                List<Repair> repairList = null;
-                List<RepairReportProject> rrpList = new List<RepairReportProject>();
-                RepairReportProject rrp = null;
-                condition = " where 帐套代码 = @帐套代码 and isnull(完成时间,'') = '' " +
-                    " and left(CONVERT(varchar(10),getdate(),112),8) = left(CONVERT(varchar(10),报修时间,112),8) " +
-                    " and cast(left(CONVERT(varchar(20),getdate(),114),2) as int) >= 17 ";//当日未完工
-                sqlString = sqlStr + condition;
+                List<RepairReport> repairList = null;
+                //List<RepairReportProject> rrpList = new List<RepairReportProject>();
+                //RepairReportProject rrp = null;
+                sqlString =
+                " select " +
+                " ID,序号,部门,地址,报修人,联系电话,服务项目,服务类别," +
+                " 紧急程度,报修说明,报修时间,预约服务时间,谈好上门时间,发单人,接单人,派工时间," +
+                " 到场时间,操作人,完成时间,收费类别,材料费,人工费,是否已收,是否阅读,状态,完成情况及所耗物料,报修前照片1," +
+                " 报修前照片2,报修前照片3,处理后照片1,处理后照片2,处理后照片3,延期原因,预计延期到,回访人,回访意见,回访时间, " +
+                " 是否满意,业主确认完成,业主确认完成时间,是否满意,业主评价,是否入户, " +
+                " case " +
+                " when isnull(完成时间,'') = '' and left(CONVERT(varchar(10),getdate(),112),8) = left(CONVERT(varchar(10),报修时间,112),8)  and cast(left(CONVERT(varchar(20),getdate(),114),2) as int) >= 17 then '当日未完成' " +
+                " when  ((预估完成时间 is not null and isnull(完成时间,'') = '' and DATEDIFF (hour, 预估完成时间, getdate()) >= 0) or (预估完成时间 is not null  and DATEDIFF (hour, 预估完成时间, 完成时间) > 0 and DATEDIFF (hour, 预估完成时间, getdate()) >= 0)) then '超过预估完成时间' " +
+                " end " +
+                " as 上报原因 " +
+                " from 小程序_工单管理 where ((isnull(完成时间,'') = '' " +
+                " and left(CONVERT(varchar(10),getdate(),112),8) = left(CONVERT(varchar(10),报修时间,112),8) " +
+                " and cast(left(CONVERT(varchar(20),getdate(),114),2) as int) >= 17 ) " +
+                " or (((预估完成时间 is not null and isnull(完成时间,'') = '' " +
+                " and DATEDIFF (hour, 预估完成时间, getdate()) >= 0) " +
+                " or (预估完成时间 is not null " +
+                " and DATEDIFF (hour, 预估完成时间, 完成时间) > 0 " +
+                " and DATEDIFF (hour, 预估完成时间, getdate()) >= 0)))) " +
+                " and 帐套代码 = @帐套代码";
                 dt = SQLHelper.ExecuteQuery("wyt", sqlString,
                 new SqlParameter("@帐套代码", ztcode));
-
-                rrp = new RepairReportProject();
-                rrp.type = "当日未完成";
-                if (dt.Rows.Count != 0)
+                if (dt.Rows.Count == 0)
                 {
-                    rrp = new RepairReportProject();
-                    rrp.type = "当日未完成";
-                    repairList = GetRepair(dt);
-                    rrp.repairs = repairList.ToArray();
-                   
+                    sr.status = "Fail";
+                    sr.result = "未查询到任何记录";
+                    return sr;
                 }
-                rrpList.Add(rrp);
-
-                condition = " where " +
-                    "  帐套代码 = @帐套代码 and ((预估完成时间 is not null " +
-                    " and isnull(完成时间,'') = '' " +
-                    " and DATEDIFF (hour, 预估完成时间, getdate()) >= 0) " +
-                    " or (预估完成时间 is not null " +
-                    " and DATEDIFF (hour, 预估完成时间, 完成时间) > 0" +
-                    " and DATEDIFF (hour, 预估完成时间, getdate()) >= 0)) ";//超过预估完成时间
-                sqlString = sqlStr + condition;
-                dt = SQLHelper.ExecuteQuery("wyt", sqlString,
-                new SqlParameter("@帐套代码", ztcode));
-                rrp = new RepairReportProject();
-                rrp.type = "超过预估完成时间";
-                if (dt.Rows.Count != 0)
-                {
-                    repairList = GetRepair(dt);
-                    rrp.repairs = repairList.ToArray();
-                }
-                rrpList.Add(rrp);
-                sr.status = "success";
+                repairList = GetRepairReport(dt);
+                sr.status = "Success";
                 sr.result = "成功";
-                sr.data = rrpList.ToArray();
+                sr.data = repairList.ToArray();
                 return sr;
             }
             else
             {
-                condition = " where  帐套代码 = @帐套代码 and  是否满意 = '不满意' ";
-                RepairReportCompany rrc = new RepairReportCompany();
-                rrc.type = "业主不满意";
-                sqlString = sqlStr + condition;
+                sqlString =
+                " select " +
+                " ID,序号,部门,地址,报修人,联系电话,服务项目,服务类别," +
+                " 紧急程度,报修说明,报修时间,预约服务时间,谈好上门时间,发单人,接单人,派工时间," +
+                " 到场时间,操作人,完成时间,收费类别,材料费,人工费,是否已收,是否阅读,状态,完成情况及所耗物料,报修前照片1," +
+                " 报修前照片2,报修前照片3,处理后照片1,处理后照片2,处理后照片3,延期原因,预计延期到,回访人,回访意见,回访时间, " +
+                " 是否满意,业主确认完成,业主确认完成时间,是否满意,业主评价,是否入户, " +
+                " case when 是否满意 = '不满意' then '业主确认不满意' end as 上报原因 " +
+                " from 小程序_工单管理 " +
+                " where 是否满意 = '不满意' " +
+                " and 帐套代码 = @帐套代码";
                 DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlString,
                                 new SqlParameter("@帐套代码", ztcode));
                 if (dt.Rows.Count == 0)
@@ -631,23 +622,106 @@ namespace HexiServer.Business
                     sr.result = "未查询到任何数据";
                     return sr;
                 }
-                List<Repair> repairList = GetRepair(dt);
-                rrc.repairs = repairList.ToArray();
-                sr.status = "success";
+                List<RepairReport> repairList = GetRepairReport(dt);
+                sr.status = "Success";
                 sr.result = "成功";
-                sr.data = rrc;
+                sr.data = repairList.ToArray();
                 return sr;
             }
         }
 
-        private static List<Repair> GetRepair(DataTable dt)
+        //public static StatusReport GetRepairReport1(string ztcode, string level)
+        //{
+        //    StatusReport sr = new StatusReport();
+        //    string sqlStr =
+        //        " select " +
+        //        " ID,序号,部门,地址,报修人,联系电话,服务项目,服务类别," +
+        //        " 紧急程度,报修说明,报修时间,预约服务时间,谈好上门时间,发单人,接单人,派工时间," +
+        //        " 到场时间,操作人,完成时间,收费类别,材料费,人工费,是否已收,是否阅读,状态,完成情况及所耗物料,报修前照片1," +
+        //        " 报修前照片2,报修前照片3,处理后照片1,处理后照片2,处理后照片3,延期原因,预计延期到,回访人,回访意见,回访时间, " +
+        //        " 是否满意,业主确认完成,业主确认完成时间,是否满意,业主评价,是否入户 " +
+        //        " from 小程序_工单管理 ";
+        //    string sqlString = "";
+        //    string condition = "";
+        //    if (level == "助理")
+        //    {
+        //        DataTable dt = null;
+        //        List<Repair> repairList = null;
+        //        List<RepairReportProject> rrpList = new List<RepairReportProject>();
+        //        RepairReportProject rrp = null;
+        //        condition = " where 帐套代码 = @帐套代码 and isnull(完成时间,'') = '' " +
+        //            " and left(CONVERT(varchar(10),getdate(),112),8) = left(CONVERT(varchar(10),报修时间,112),8) " +
+        //            " and cast(left(CONVERT(varchar(20),getdate(),114),2) as int) >= 17 ";//当日未完工
+        //        sqlString = sqlStr + condition;
+        //        dt = SQLHelper.ExecuteQuery("wyt", sqlString,
+        //        new SqlParameter("@帐套代码", ztcode));
+
+        //        rrp = new RepairReportProject();
+        //        rrp.type = "当日未完成";
+        //        if (dt.Rows.Count != 0)
+        //        {
+        //            rrp = new RepairReportProject();
+        //            rrp.type = "当日未完成";
+        //            repairList = GetRepair(dt);
+        //            rrp.repairs = repairList.ToArray();
+                   
+        //        }
+        //        rrpList.Add(rrp);
+
+        //        condition = " where " +
+        //            "  帐套代码 = @帐套代码 and ((预估完成时间 is not null " +
+        //            " and isnull(完成时间,'') = '' " +
+        //            " and DATEDIFF (hour, 预估完成时间, getdate()) >= 0) " +
+        //            " or (预估完成时间 is not null " +
+        //            " and DATEDIFF (hour, 预估完成时间, 完成时间) > 0" +
+        //            " and DATEDIFF (hour, 预估完成时间, getdate()) >= 0)) ";//超过预估完成时间
+        //        sqlString = sqlStr + condition;
+        //        dt = SQLHelper.ExecuteQuery("wyt", sqlString,
+        //        new SqlParameter("@帐套代码", ztcode));
+        //        rrp = new RepairReportProject();
+        //        rrp.type = "超过预估完成时间";
+        //        if (dt.Rows.Count != 0)
+        //        {
+        //            repairList = GetRepair(dt);
+        //            rrp.repairs = repairList.ToArray();
+        //        }
+        //        rrpList.Add(rrp);
+        //        sr.status = "success";
+        //        sr.result = "成功";
+        //        sr.data = rrpList.ToArray();
+        //        return sr;
+        //    }
+        //    else
+        //    {
+        //        condition = " where  帐套代码 = @帐套代码 and  是否满意 = '不满意' ";
+        //        RepairReportCompany rrc = new RepairReportCompany();
+        //        rrc.type = "业主不满意";
+        //        sqlString = sqlStr + condition;
+        //        DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlString,
+        //                        new SqlParameter("@帐套代码", ztcode));
+        //        if (dt.Rows.Count == 0)
+        //        {
+        //            sr.status = "Fail";
+        //            sr.result = "未查询到任何数据";
+        //            return sr;
+        //        }
+        //        List<Repair> repairList = GetRepair(dt);
+        //        rrc.repairs = repairList.ToArray();
+        //        sr.status = "Success";
+        //        sr.result = "成功";
+        //        sr.data = rrc;
+        //        return sr;
+        //    }
+        //}
+
+        private static List<RepairReport> GetRepairReport(DataTable dt)
         {
-            List<Repair> repairList = new List<Repair>();
+            List<RepairReport> repairList = new List<RepairReport>();
             foreach (DataRow row in dt.Rows)
             {
                 List<string> beforeList = new List<string>();
                 List<string> afterList = new List<string>();
-                Repair r = new Repair();
+                RepairReport r = new RepairReport();
                 r.Id = DataTypeHelper.GetIntValue(row["ID"]);
                 r.SerialNumber = DataTypeHelper.GetStringValue(row["序号"]);
                 r.Department = DataTypeHelper.GetStringValue(row["部门"]);
@@ -686,6 +760,7 @@ namespace HexiServer.Business
                 r.status = string.IsNullOrEmpty(r.CallBackPerson) ? r.status : "已回访";
                 r.CompleteStatus = DataTypeHelper.GetStringValue(row["完成情况及所耗物料"]);
                 r.LateTime = DataTypeHelper.GetDateStringValue(row["预计延期到"]);
+                r.type = DataTypeHelper.GetStringValue(row["上报原因"]);
                 r.LateReason = DataTypeHelper.GetStringValue(row["延期原因"]);
                 beforeList.Add(DataTypeHelper.GetStringValue(row["报修前照片1"]));
                 beforeList.Add(DataTypeHelper.GetStringValue(row["报修前照片2"]));

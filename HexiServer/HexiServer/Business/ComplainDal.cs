@@ -44,7 +44,7 @@ namespace HexiServer.Business
                 condition = " where 分类 = @分类 and 状态 = '已完成' " +
                             " order by ID desc ";
             }
-            string sqlString = " select top 100 ID,投诉接待日期,投诉方式,投诉人姓名,地址,投诉内容,联系电话,投诉处理单编号,处理完成日期,处理完成情况,登记人,责任部门," +
+            string sqlString = " select top 100 ID,投诉接待时间,投诉方式,投诉人姓名,地址,投诉内容,联系电话,投诉处理单编号,处理完成日期,处理完成情况,登记人,责任部门," +
                                " 投诉前照片1,投诉前照片2,投诉前照片3,处理后照片1,处理后照片2,处理后照片3,状态,业主确认解决,确认时间,是否满意,业主评价 " +
                                " from 基础资料_顾客投诉处理登记表 ";
             sqlString += condition;
@@ -67,7 +67,7 @@ namespace HexiServer.Business
                 Complain complaint = new Complain()
                 {
                     Id = DataTypeHelper.GetIntValue(dr["ID"]),
-                    ReceptionDate = DataTypeHelper.GetDateStringValue(dr["投诉接待日期"]),
+                    ReceptionDate = DataTypeHelper.GetDateStringValue(dr["投诉接待时间"]),
                     Way = DataTypeHelper.GetStringValue(dr["投诉方式"]),
                     Name = DataTypeHelper.GetStringValue(dr["投诉人姓名"]),
                     Address = DataTypeHelper.GetStringValue(dr["地址"]),
@@ -83,7 +83,7 @@ namespace HexiServer.Business
                     AffirmComplete = DataTypeHelper.GetStringValue(dr["业主确认解决"]),
                     AffirmCompleteTime = DataTypeHelper.GetDateStringValue(dr["确认时间"]),
                     AffirmCompleteEvaluation = DataTypeHelper.GetStringValue(dr["业主评价"])
-                    
+
                 };
                 beforeList.Add(DataTypeHelper.GetStringValue(dr["投诉前照片1"]));
                 beforeList.Add(DataTypeHelper.GetStringValue(dr["投诉前照片2"]));
@@ -112,7 +112,7 @@ namespace HexiServer.Business
             sr.parameters = index;
             return sr;
         }
-        
+
         public static StatusReport Evaluation(string evaluation, string isSatisfying, string id)
         {
             StatusReport sr = new StatusReport();
@@ -140,10 +140,10 @@ namespace HexiServer.Business
                     " COUNT(CASE WHEN 状态 = '关闭' THEN ID ELSE NULL END) AS 关闭数 " +
                     " FROM dbo.基础资料_顾客投诉处理登记表 " +
                     " LEFT OUTER JOIN dbo.资源帐套表 ON LEFT(dbo.基础资料_顾客投诉处理登记表.分类, 2) = dbo.资源帐套表.帐套代码 " +
-                    " WHERE 帐套代码 = @帐套代码 and left(CONVERT(varchar(10),投诉接待日期,112),6) >=left(CONVERT(varchar(10),dateadd(month,@before,GETDATE()),112),6) " +
+                    " WHERE 帐套代码 = @帐套代码 and left(CONVERT(varchar(10),投诉接待时间,112),6) >=left(CONVERT(varchar(10),dateadd(month,@before,GETDATE()),112),6) " +
                     " GROUP BY dbo.资源帐套表.帐套名称,接单人 " +
                     " ORDER BY dbo.资源帐套表.帐套名称,接单人 ";
-                DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlString, 
+                DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlString,
                     new SqlParameter("@帐套代码", ztCode),
                     new SqlParameter("@before", -Convert.ToInt32(before)));
                 if (dt.Rows.Count == 0)
@@ -154,7 +154,7 @@ namespace HexiServer.Business
                 }
                 ComplainStatisticsProject csp = new ComplainStatisticsProject();
                 List<ComplainStatistics> csList = new List<ComplainStatistics>();
-                foreach(DataRow dr in dt.Rows)
+                foreach (DataRow dr in dt.Rows)
                 {
                     ComplainStatistics cs = new ComplainStatistics();
                     //cs.ztName = Convert.ToString(dr["帐套名称"]);
@@ -202,7 +202,7 @@ namespace HexiServer.Business
                     " COUNT(CASE WHEN 状态 = '关闭' THEN ID ELSE NULL END) AS 关闭数 " +
                     " FROM dbo.基础资料_顾客投诉处理登记表 " +
                     " LEFT OUTER JOIN dbo.资源帐套表 ON LEFT(dbo.基础资料_顾客投诉处理登记表.分类, 2) = dbo.资源帐套表.帐套代码 " +
-                    " WHERE left(CONVERT(varchar(10),投诉接待日期,112),6) >=left(CONVERT(varchar(10),dateadd(month,@before,GETDATE()),112),6) " +
+                    " WHERE left(CONVERT(varchar(10),投诉接待时间,112),6) >=left(CONVERT(varchar(10),dateadd(month,@before,GETDATE()),112),6) " +
                     " GROUP BY dbo.资源帐套表.帐套名称 " +
                     " ORDER BY dbo.资源帐套表.帐套名称 ";
                 DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlString,
@@ -249,6 +249,127 @@ namespace HexiServer.Business
                 sr.data = csc;
                 return sr;
             }
+        }
+
+        public static StatusReport GetComplainReportStatistics(string level)
+        {
+            StatusReport sr = new StatusReport();
+            if (level == "公司")
+            {
+                string sqlString =
+                    " SELECT " +
+                    " COUNT(CASE WHEN 业主确认解决 = '否' THEN ID ELSE NULL END) AS 业主确认未解决数, " +
+                    " COUNT(CASE WHEN DATEDIFF(hour, 接单时间, getdate()) >= 48 AND 状态 <> '已完成' AND  状态 <> '无效投诉' THEN ID ELSE NULL END) AS 超时数, " +
+                    " dbo.资源帐套表.帐套代码, " +
+                    " dbo.资源帐套表.帐套名称 " +
+                    " FROM dbo.基础资料_顾客投诉处理登记表 " +
+                    " LEFT OUTER JOIN dbo.资源帐套表 " +
+                    " ON LEFT(dbo.基础资料_顾客投诉处理登记表.分类, 2) = dbo.资源帐套表.帐套代码 " +
+                    " GROUP BY dbo.资源帐套表.帐套代码, dbo.资源帐套表.帐套名称 ";
+                DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlString);
+                if (dt.Rows.Count == 0)
+                {
+                    sr.status = "Fail";
+                    sr.result = "未查询到任何数据";
+                    return sr;
+                }
+                ComplainReportStatisticsCompany crsc = new ComplainReportStatisticsCompany();
+                List<ComplainReportStatistics> crsList = new List<ComplainReportStatistics>();
+                foreach (DataRow dr in dt.Rows)
+                {
+                    ComplainReportStatistics crs = new ComplainReportStatistics();
+                    crs.ztName = DataTypeHelper.GetStringValue(dr["帐套名称"]);
+                    crs.countTimeout = DataTypeHelper.GetStringValue(dr["超时数"]);
+                    crs.countUnfinished = DataTypeHelper.GetStringValue(dr["业主确认未解决数"]);
+                    crsc.countTimeout = Convert.ToString(Convert.ToDecimal(crsc.countTimeout) + Convert.ToDecimal(crs.countTimeout));
+                    crsc.countUnfinished = Convert.ToString(Convert.ToDecimal(crsc.countUnfinished) + Convert.ToDecimal(crs.countUnfinished));
+                    crsList.Add(crs);
+                }
+                crsc.complainReportStatistics = crsList.ToArray();
+                sr.status = "Success";
+                sr.result = "成功";
+                sr.data = crsc;
+                return sr;
+            }
+            else
+            {
+                sr.status = "Fail";
+                sr.result = "没有此权限";
+                return sr;
+            }
+        }
+
+        public static StatusReport GetComplainReport()
+        {
+            StatusReport sr = new StatusReport();
+            ComplainReport[] crcArr = null;
+            DataTable dt = null;
+            string sqlString = " SELECT ID, 投诉接待时间, 投诉方式, 投诉人姓名, 地址, 投诉内容, " +
+                " 联系电话, 投诉处理单编号, 处理完成日期, 处理完成情况, 登记人, 责任部门, 投诉前照片1, 投诉前照片2, 投诉前照片3, " +
+                " 处理后照片1, 处理后照片2, 处理后照片3, 状态, 业主确认解决, 确认时间,  是否满意, 业主评价, 未解决原因, 发单人, " +
+                " 接单人, 不受理原因, dbo.资源帐套表.帐套代码,  dbo.资源帐套表.帐套名称," +
+                " case when 业主确认解决 = '未解决'then '业主确认未解决' when DATEDIFF(hour, 接单时间, getdate()) >= 48 AND 状态 <> '已完成' AND  状态 <> '无效投诉' then '处理超时' end as 上报原因 " +
+                " FROM dbo.基础资料_顾客投诉处理登记表 " +
+                " LEFT OUTER JOIN dbo.资源帐套表 ON LEFT(分类, 2) = dbo.资源帐套表.帐套代码 " +
+                " where (业主确认解决 = '未解决' ) or ( DATEDIFF(hour, 接单时间, getdate()) >= 48 AND 状态 <> '已完成' AND  状态 <> '无效投诉') " +
+                " order by 帐套代码,上报原因 ";
+            dt = SQLHelper.ExecuteQuery("wyt", sqlString);
+            if (dt.Rows.Count == 0)
+            {
+                sr.status = "Fail";
+                sr.result = "查询条件错误或没有数据";
+                return sr;
+            }
+            crcArr = GetComplains(dt);
+            sr.status = "Success";
+            sr.result = "成功";
+            sr.data = crcArr;
+            return sr;
+        }
+
+        private static ComplainReport[] GetComplains(DataTable dt)
+        {
+            List<ComplainReport> complainList = new List<ComplainReport>();
+            foreach (DataRow dr in dt.Rows)
+            {
+                List<string> beforeList = new List<string>();
+                List<string> afterList = new List<string>();
+                ComplainReport complaint = new ComplainReport()
+                {
+                    Id = DataTypeHelper.GetIntValue(dr["ID"]),
+                    ReceptionDate = DataTypeHelper.GetDateStringValue(dr["投诉接待时间"]),
+                    Way = DataTypeHelper.GetStringValue(dr["投诉方式"]),
+                    Name = DataTypeHelper.GetStringValue(dr["投诉人姓名"]),
+                    Address = DataTypeHelper.GetStringValue(dr["地址"]),
+                    Content = DataTypeHelper.GetStringValue(dr["投诉内容"]),
+                    Phone = DataTypeHelper.GetStringValue(dr["联系电话"]),
+                    Number = DataTypeHelper.GetStringValue(dr["投诉处理单编号"]),
+                    FinishDate = DataTypeHelper.GetDateStringValue(dr["处理完成日期"]),
+                    FinishStatus = DataTypeHelper.GetStringValue(dr["处理完成情况"]),
+                    Registrant = DataTypeHelper.GetStringValue(dr["登记人"]),
+                    Department = DataTypeHelper.GetStringValue(dr["责任部门"]),
+                    Status = DataTypeHelper.GetStringValue(dr["状态"]),
+                    IsSatisfying = DataTypeHelper.GetStringValue(dr["是否满意"]),
+                    AffirmComplete = DataTypeHelper.GetStringValue(dr["业主确认解决"]),
+                    AffirmCompleteTime = DataTypeHelper.GetDateStringValue(dr["确认时间"]),
+                    AffirmCompleteEvaluation = DataTypeHelper.GetStringValue(dr["业主评价"]),
+                    SendPerson = DataTypeHelper.GetStringValue(dr["发单人"]),
+                    ReceivePerson = DataTypeHelper.GetStringValue(dr["接单人"]),
+                    ZTCode = DataTypeHelper.GetStringValue(dr["帐套代码"]),
+                    ZTName = DataTypeHelper.GetStringValue(dr["帐套名称"]),
+                    type = DataTypeHelper.GetStringValue(dr["上报原因"])
+                };
+                beforeList.Add(DataTypeHelper.GetStringValue(dr["投诉前照片1"]));
+                beforeList.Add(DataTypeHelper.GetStringValue(dr["投诉前照片2"]));
+                beforeList.Add(DataTypeHelper.GetStringValue(dr["投诉前照片3"]));
+                complaint.BeforeImage = beforeList.ToArray();
+                afterList.Add(DataTypeHelper.GetStringValue(dr["处理后照片1"]));
+                afterList.Add(DataTypeHelper.GetStringValue(dr["处理后照片2"]));
+                afterList.Add(DataTypeHelper.GetStringValue(dr["处理后照片3"]));
+                complaint.AfterImage = afterList.ToArray();
+                complainList.Add(complaint);
+            }
+            return complainList.ToArray();
         }
 
 
