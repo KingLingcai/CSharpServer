@@ -229,6 +229,98 @@ namespace HexiServer.Business
             return sr;
         }
 
+        public static StatusReport GetEquipmentTrouble(string classify, string isDone)
+        {
+            StatusReport sr = new StatusReport();
+            string done = "";
+            if (isDone == "0")
+            {
+                done = " where (left(分类,2) = @分类) AND 完成时间 is null ORDER BY ID DESC ";
+            }
+            else
+            {
+                done = " where  (left(分类,2) = @分类)  AND  完成时间 is not null ORDER BY ID DESC ";
+            }
+            string sqlstring = " SELECT ID, 设备名称, 分类, 设备编号, 发生时间, 故障描述, 状态, 维修人, 维修时限, 接单时间, " +
+                " 维修说明, 完成时间, 维修前照片1, 维修前照片2, 维修前照片3, 处理后照片1, 处理后照片2, 处理后照片3 " +
+                " FROM dbo.基础资料_设备故障记录 ";
+            sqlstring += done;
+
+            DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlstring,
+                new SqlParameter("@分类", classify));
+            if (dt.Rows.Count == 0)
+            {
+                sr.status = "Fail";
+                sr.result = "未查询到任何数据";
+                sr.parameters = sqlstring;
+                return sr;
+            }
+            List<EquipmentTrouble> equipmentList = new List<EquipmentTrouble>();
+            foreach (DataRow dr in dt.Rows)
+            {
+                EquipmentTrouble equipment = new EquipmentTrouble();
+                List<string> beforeList = new List<string>();
+                List<string> afterList = new List<string>();
+                equipment.id = DataTypeHelper.GetIntValue(dr["ID"]);
+                equipment.classify = DataTypeHelper.GetStringValue(dr["分类"]);
+                equipment.name = DataTypeHelper.GetStringValue(dr["设备名称"]);
+                equipment.number = DataTypeHelper.GetStringValue(dr["设备编号"]);
+                equipment.brokenTime = DataTypeHelper.GetDateStringValue(dr["发生时间"]);
+                equipment.brokenInfo = DataTypeHelper.GetStringValue(dr["故障描述"]);
+                equipment.status = DataTypeHelper.GetStringValue(dr["状态"]);
+                equipment.repairMan = DataTypeHelper.GetStringValue(dr["维修人"]);
+                equipment.repairTimeLimit = DataTypeHelper.GetStringValue(dr["维修时限"]);
+                equipment.receiveTime = DataTypeHelper.GetDateStringValue(dr["接单时间"]);
+                equipment.repairInfo = DataTypeHelper.GetStringValue(dr["维修说明"]);
+                equipment.finishTime = DataTypeHelper.GetDateStringValue(dr["完成时间"]);
+                beforeList.Add(DataTypeHelper.GetStringValue(dr["维修前照片1"]));
+                beforeList.Add(DataTypeHelper.GetStringValue(dr["维修前照片2"]));
+                beforeList.Add(DataTypeHelper.GetStringValue(dr["维修前照片3"]));
+                equipment.beforeImage = beforeList.ToArray();
+                afterList.Add(DataTypeHelper.GetStringValue(dr["处理后照片1"]));
+                afterList.Add(DataTypeHelper.GetStringValue(dr["处理后照片2"]));
+                afterList.Add(DataTypeHelper.GetStringValue(dr["处理后照片3"]));
+                equipment.afterImage = afterList.ToArray();
+                equipmentList.Add(equipment);
+            }
+            sr.status = "Success";
+            sr.result = "成功";
+            sr.data = equipmentList.ToArray();
+            sr.parameters = sqlstring;
+            return sr;
+        }
+
+        public static StatusReport SetEquipmentTrouble(string id, string isDone, string fee, string doneInfo, string doneTime)
+        {
+            StatusReport sr = new StatusReport();
+            string sqlstring = "update dbo.基础资料_设备故障记录 set " +
+                                "状态 = @状态, " +
+                                "维修说明 = @维修说明, " +
+                                "费用 = @费用, " +
+                                "完成时间 = @完成时间, " +
+                                "where ID = @ID";
+            sr = SQLHelper.Update("wyt", sqlstring,
+                new SqlParameter("@状态", isDone),
+                new SqlParameter("@维修说明", doneInfo),
+                new SqlParameter("@费用", fee),
+                new SqlParameter("@完成时间", doneTime),
+                new SqlParameter("@ID", id));
+            return sr;
+        }
+
+        public static StatusReport SetEquipmentTroubleImage(string ID, string func, string index, string sqlImagePath)
+        {
+            StatusReport sr = new StatusReport();
+            string itemName = func == "before" ? "报修前照片" + index.ToString() : "处理后照片" + index.ToString();
+            string sqlString = " update 基础资料_设备故障记录 set " + itemName + " = @路径 " +
+                               " where ID = @ID ";
+            sr = SQLHelper.Update("wyt", sqlString,
+                new SqlParameter("@路径", sqlImagePath),
+                new SqlParameter("@ID", ID));
+            sr.parameters = index;
+            return sr;
+        }
+        
         public static StatusReport GetEquipmentStatistics (string ztcode, string level)
         {
             StatusReport sr = new StatusReport();
@@ -421,5 +513,10 @@ namespace HexiServer.Business
             }
         }
 
+
+
+
+
+       
     }
 }

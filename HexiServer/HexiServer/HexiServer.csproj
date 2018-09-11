@@ -108,10 +108,12 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Business\ChargeDal.cs" />
     <Compile Include="Business\ComplainDal.cs" />
+    <Compile Include="Business\DecorationDal.cs" />
     <Compile Include="Business\EmployeeDal.cs" />
     <Compile Include="Business\EquipmentDal.cs" />
     <Compile Include="Business\ProprietorDal.cs" />
     <Compile Include="Business\RepairDal.cs" />
+    <Compile Include="Business\RequestPaymentFlowDal.cs" />
     <Compile Include="Business\WXPayDal.cs" />
     <Compile Include="Common\DataTypeHelper.cs" />
     <Compile Include="Common\RequestHelper.cs" />
@@ -119,6 +121,7 @@
     <Compile Include="Common\UserHelper.cs" />
     <Compile Include="Controllers\ChargeController.cs" />
     <Compile Include="Controllers\ComplainController.cs" />
+    <Compile Include="Controllers\DecorationController.cs" />
     <Compile Include="Controllers\EquipmentController.cs" />
     <Compile Include="Controllers\ProprietorController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
@@ -132,11 +135,13 @@
     <Compile Include="Models\Charged.cs" />
     <Compile Include="Models\Comman.cs" />
     <Compile Include="Models\Complain.cs" />
+    <Compile Include="Models\Decoration.cs" />
     <Compile Include="Models\Employee.cs" />
     <Compile Include="Models\Equipment.cs" />
     <Compile Include="Models\Jurisdiction.cs" />
     <Compile Include="Models\Proprietor.cs" />
     <Compile Include="Models\Repair.cs" />
+    <Compile Include="Models\RequestPaymentSheet.cs" />
     <Compile Include="Models\Status.cs" />
     <Compile Include="Models\StatusReport.cs" />
     <Compile Include="Models\WXUser.cs" />
@@ -158,6 +163,8 @@
     <Folder Include="App_Data\" />
     <Folder Include="Views\Charge\" />
     <Folder Include="Views\Complain\" />
+    <Folder Include="Views\Decoration\" />
+    <Folder Include="Views\EquipmentTrouble\" />
     <Folder Include="Views\Equipment\" />
     <Folder Include="Views\Proprietor\" />
     <Folder Include="Views\Report\" />

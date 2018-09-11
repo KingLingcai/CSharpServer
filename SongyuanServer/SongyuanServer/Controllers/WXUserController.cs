@@ -4,6 +4,7 @@ using Senparc.Weixin.WxOpen.AdvancedAPIs.Sns;
 using Senparc.Weixin.WxOpen.Containers;
 using SongyuanServer.Models;
 using SongyuanServer.Business;
+using System.IO;
 
 namespace SongyuanServer.Controllers
 {
@@ -34,7 +35,11 @@ namespace SongyuanServer.Controllers
                     {
                         if (userId != receiverId)
                         {
-                            sr = WXShareDal.SetShareInfo(receiverId, shareNumber, userId, shareTime, kindergartenName);
+                            sr = WXShareDal.SetShareInfo(receiverId, shareNumber, userId, userName, shareTime, kindergartenName);
+                            using (StreamWriter sw = new StreamWriter("D:\\1_importTemp\\TestFile1.txt"))
+                            {
+                                sw.WriteLine(sr.result.ToString());
+                            }
                         }
                     }
                     sr.data = new { success = true, msg = "OK", sessionId = sessionBag.Key, user = user };

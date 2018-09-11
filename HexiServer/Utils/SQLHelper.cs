@@ -11,8 +11,10 @@ namespace HexiUtils
     {
 
         //private static string wytConnectionString = "Data Source=192.168.13.1;Initial Catalog=f2wyt;Integrated Security=false;User ID=sa;Password=!1asdfgh";//松园服务器连接字符串
-        private static string wytConnectionString = "Data Source=192.168.0.102;Initial Catalog=wytnetsz;Integrated Security=false;User ID=sa;Password=101128";//苏州本地连接字符串
-        private static string wxConnectionString = "Data Source=192.168.0.102;Initial Catalog=weixin;Integrated Security=false;User ID=sa;Password=101128";//苏州本地连接字符串
+        //private static string wytConnectionString = "Data Source=192.168.0.102;Initial Catalog=wyt;Integrated Security=false;User ID=sa;Password=101128";//松园本地连接字符串
+        //private static string wxConnectionString = "Data Source=192.168.0.102;Initial Catalog=wyt;Integrated Security=false;User ID=sa;Password=101128";//松园本地连接字符串
+        private static string wytConnectionString = "Data Source=192.168.1.100;Initial Catalog=wytnetsz;Integrated Security=false;User ID=sa;Password=101128";//苏州本地连接字符串
+        private static string wxConnectionString = "Data Source=192.168.1.100;Initial Catalog=weixin;Integrated Security=false;User ID=sa;Password=101128";//苏州本地连接字符串
         //private static string wytConnectionString = "Data Source=192.168.1.199;Initial Catalog=wytnet;Integrated Security=false;User ID=sa;Password=Yq123";//苏州服务器连接字符串
         //private static string wxConnectionString = "Data Source=192.168.1.199;Initial Catalog=weixin;Integrated Security=false;User ID=sa;Password=Yq123";//苏州服务器连接字符串
         /**

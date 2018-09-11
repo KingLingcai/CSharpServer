@@ -38,22 +38,22 @@ namespace SongyuanServer.Business
         //    }
         //}
 
-        public static StatusReport SetShareInfo (string receiverId,string shareNumber, string userId, string shareTime, string kindergartenName)
+        public static StatusReport SetShareInfo (string receiverId,string shareNumber, string userId, string userName, string shareTime, string kindergartenName)
         {
             StatusReport sr = new StatusReport();
             string dbName = kindergartenName == "松园幼儿园" ? "wyt" : "ydal";
             string sqlString =
                 "if not exists (select ID from 基础_分享 where 分享单编号 = @分享单编号) " +
                 " begin " +
-                " insert into 基础_分享(分享单编号) " +
-                " select @分享单编号 " +
+                " insert into 基础_分享(分享单编号, 分享人姓名) " +
+                " select @分享单编号,@分享人姓名 " +
                 " select @@identity " +
                 " end " +
                 " else " +
                 " begin " +
                 " select ID from 基础_分享 where 分享单编号 = @分享单编号" +
                 " end ";
-            sr = SQLHelper.Insert(dbName, sqlString, new SqlParameter("@分享单编号", shareNumber));
+            sr = SQLHelper.Insert(dbName, sqlString, new SqlParameter("@分享单编号", shareNumber), new SqlParameter("@分享人姓名", userName));
             if (!string.IsNullOrEmpty(sr.data.ToString()))
             {
                 StatusReport report = new StatusReport();

@@ -35,6 +35,7 @@ namespace SongyuanServer.Business
                 user.id = id;
                 user.name = DataTypeHelper.GetStringValue(dr["对应员工"]);
                 user.identity = DataTypeHelper.GetStringValue(dr["用户身份"]);
+                sr.status = "Success";
                 sr.data = user;
                 //sr.data = new { ID = id, name = DataTypeHelper.GetStringValue(dr["对应员工"]), identity = DataTypeHelper.GetStringValue(dr["用户身份"]) };
             }
@@ -73,7 +74,7 @@ namespace SongyuanServer.Business
         {
             StatusReport sr = new StatusReport();
             string dbName = kindergartenName == "松园幼儿园" ? "wyt" : "ydal";
-            string sqlString = "select 姓名 from 基础_小程序用户 where openid = @openid and 用户身份 = '老师'";
+            string sqlString = "select 对应员工,员工联系方式 from 基础_小程序用户 where openid = @openid and 用户身份 = '老师'";
             DataTable dt = SQLHelper.ExecuteQuery(dbName, sqlString, new SqlParameter("@openid", openid));
             if (dt.Rows.Count == 0)
             {
@@ -84,7 +85,7 @@ namespace SongyuanServer.Business
             DataRow dr = dt.Rows[0];
             sr.status = "Success";
             sr.result = "成功";
-            sr.data = DataTypeHelper.GetStringValue(dr["姓名"]);
+            sr.data = new { name = DataTypeHelper.GetStringValue(dr["对应员工"]), phone = DataTypeHelper.GetStringValue(dr["员工联系方式"]) };
             return sr;
         }
     }

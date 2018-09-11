@@ -85,6 +85,20 @@ namespace HexiServer.Controllers
             sr = EquipmentDal.SearchEquipmentMaintain(operationNumber);
             return Json(sr);
         }
+
+        [HttpPost]
+        public ActionResult OnGetEquipmentTrouble(string classify, string isDone)
+        {
+            StatusReport sr = new StatusReport();
+            if (string.IsNullOrEmpty(classify) || string.IsNullOrEmpty(isDone))
+            {
+                sr.status = "Fail";
+                sr.result = "信息不完整";
+                return Json(sr);
+            }
+            sr = EquipmentDal.GetEquipmentTrouble(classify, isDone);
+            return Json(sr);
+        }
     }
 }
 

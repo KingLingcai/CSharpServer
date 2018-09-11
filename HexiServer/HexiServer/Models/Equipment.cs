@@ -122,6 +122,65 @@ namespace HexiServer.Models
 
     }
 
+    public class EquipmentTrouble
+    {
+        /// <summary>
+        /// ID
+        /// </summary>
+        public int? id { get; set; }
+        /// <summary>
+        /// 设备名称
+        /// </summary>
+        public string name { get; set; }
+        /// <summary>
+        /// 分类
+        /// </summary>
+        public string classify { get; set; }
+        /// <summary>
+        /// 设备编号
+        /// </summary>
+        public string number { get; set; }
+        /// <summary>
+        /// 发生时间
+        /// </summary>
+        public string brokenTime { get; set; }
+        /// <summary>
+        /// 故障描述
+        /// </summary>
+        public string brokenInfo { get; set; }
+        /// <summary>
+        /// 状态
+        /// </summary>
+        public string status { get; set; }
+        /// <summary>
+        /// 维修人
+        /// </summary>
+        public string repairMan { get; set; }
+        /// <summary>
+        /// 维修时限
+        /// </summary>
+        public string repairTimeLimit { get; set; }
+        /// <summary>
+        /// 接单时间
+        /// </summary>
+        public string receiveTime { get; set; }
+        /// <summary>
+        /// 维修说明
+        /// </summary>
+        public string repairInfo { get; set; }
+        /// <summary>
+        /// 完成时间
+        /// </summary>
+        public string finishTime { get; set; }
+        /// <summary>
+        /// 维修前照片
+        /// </summary>
+        public string[] beforeImage { get; set; } //报修前照片1，2，3
+        /// <summary>
+        /// 处理后照片
+        /// </summary>
+        public string[] afterImage { get; set; } //报修前照片1，2，3
+    }
 
     public class EquipmentStatistics
     {
