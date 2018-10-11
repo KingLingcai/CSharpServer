@@ -243,7 +243,7 @@ namespace HexiServer.Business
             }
             string sqlstring = " SELECT ID, 设备名称, 分类, 设备编号, 发生时间, 故障描述, 状态, 维修人, 维修时限, 接单时间, " +
                 " 维修说明, 完成时间, 维修前照片1, 维修前照片2, 维修前照片3, 处理后照片1, 处理后照片2, 处理后照片3 " +
-                " FROM dbo.基础资料_设备故障记录 ";
+                " FROM dbo.基础资料_设备故障管理 ";
             sqlstring += done;
 
             DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlstring,
@@ -290,17 +290,17 @@ namespace HexiServer.Business
             return sr;
         }
 
-        public static StatusReport SetEquipmentTrouble(string id, string isDone, string fee, string doneInfo, string doneTime)
+        public static StatusReport SetEquipmentTrouble(string id, string fee, string doneInfo, string doneTime)
         {
             StatusReport sr = new StatusReport();
-            string sqlstring = "update dbo.基础资料_设备故障记录 set " +
+            string sqlstring = "update dbo.基础资料_设备故障管理 set " +
                                 "状态 = @状态, " +
                                 "维修说明 = @维修说明, " +
                                 "费用 = @费用, " +
-                                "完成时间 = @完成时间, " +
+                                "完成时间 = @完成时间 " +
                                 "where ID = @ID";
             sr = SQLHelper.Update("wyt", sqlstring,
-                new SqlParameter("@状态", isDone),
+                new SqlParameter("@状态", "已完成"),
                 new SqlParameter("@维修说明", doneInfo),
                 new SqlParameter("@费用", fee),
                 new SqlParameter("@完成时间", doneTime),
@@ -487,6 +487,183 @@ namespace HexiServer.Business
                 equipment.Order = DataTypeHelper.GetBooleanValue(dr["序次"]) == true ? "1" : "0";
                 equipment.BeforeDays = DataTypeHelper.GetIntValue(dr["宽限上延天数"]);
                 equipment.AfterDays = DataTypeHelper.GetIntValue(dr["宽限下延天数"]);
+                equipmentList.Add(equipment);
+            }
+            sr.status = "Success";
+            sr.result = "成功";
+            sr.data = equipmentList.ToArray();
+            sr.parameters = sqlstring;
+            return sr;
+        }
+
+        public static StatusReport GetEquipmentTroubleStatistics(string ztcode, string level)
+        {
+            StatusReport sr = new StatusReport();
+            string condition = "";
+            string order = "";
+            string group = "";
+            string sqlString = " SELECT " +
+                " dbo.资源帐套表.帐套代码, " +
+                " dbo.资源帐套表.帐套名称, " +
+                " COUNT(CASE WHEN 接单时间 IS NULL THEN NULL ELSE 1 END) AS 接单数, " +
+                " COUNT(CASE WHEN DATEDIFF(hh, 接单时间, ISNULL(完成时间, '1990/1/1')) > 0 AND DATEDIFF(hh, 接单时间, ISNULL(完成时间, '1990/1/1')) <= 8 THEN 1 ELSE NULL END) AS [8小时内完成数], " +
+                " COUNT(CASE WHEN DATEDIFF(hh, 接单时间, ISNULL(完成时间, '1990/1/1')) > 8 AND DATEDIFF(hh, 接单时间, ISNULL(完成时间, '1990/1/1')) <= 24 THEN 1 ELSE NULL END)  AS [8到24小时内完成数], " +
+                " COUNT(CASE WHEN DATEDIFF(hh, 接单时间, ISNULL(完成时间, '1990/1/1')) >= 24 THEN 1 ELSE NULL END) AS [24小时以上完成数] " +
+                " FROM dbo.基础资料_设备故障管理 LEFT OUTER JOIN dbo.资源帐套表 ON LEFT(dbo.基础资料_设备故障管理.分类, 2) = dbo.资源帐套表.帐套代码 ";
+
+            if (level == "助理" || level == "项目经理")
+            {
+                condition = " WHERE (dbo.基础资料_设备故障管理.接单时间 IS NOT NULL) AND 帐套代码 = @帐套代码 ";
+                order = " order by 帐套代码 ";
+                group = " GROUP BY dbo.资源帐套表.帐套代码, dbo.资源帐套表.帐套名称, dbo.基础资料_设备故障管理.分类";
+                sqlString = sqlString + condition + group + order;
+                DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlString, new SqlParameter("@帐套代码", ztcode));
+                if (dt.Rows.Count == 0)
+                {
+                    sr.status = "Fail";
+                    sr.result = "未查询到符合条件的记录";
+                    return sr;
+                }
+                DataRow dr = dt.Rows[0];
+                EquipmentTroubleStatistics ets = new EquipmentTroubleStatistics();
+                ets.ztName = Convert.ToString(dr["帐套名称"]);
+                ets.countReceive = Convert.ToString(dr["接单数"]);
+                ets.count8 = Convert.ToString(dr["8小时内完成数"]);
+                ets.count8to24 = Convert.ToString(dr["8到24小时内完成数"]);
+                ets.count24 = Convert.ToString(dr["24小时以上完成数"]);
+                ets.rate8 = GetPercent(ets.count8, ets.countReceive);
+                ets.rate8to24 = GetPercent(ets.count8to24, ets.countReceive);
+                ets.rate24 = GetPercent(ets.count24, ets.countReceive);
+                sr.status = "Success";
+                sr.result = "成功";
+                sr.data = ets;
+                return sr;
+            }
+            else
+            {
+                condition = " WHERE (dbo.基础资料_设备故障管理.接单时间 IS NOT NULL) ";
+                order = " order by 帐套代码 ";
+                group = " GROUP BY dbo.资源帐套表.帐套代码, dbo.资源帐套表.帐套名称, dbo.基础资料_设备故障管理.分类";
+                sqlString = sqlString + condition + group + order;
+                DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlString, new SqlParameter("@帐套代码", ztcode));
+                if (dt.Rows.Count == 0)
+                {
+                    sr.status = "Fail";
+                    sr.result = "未查询到符合条件的记录";
+                    return sr;
+                }
+                EquipmentTroubleStatisticsCompany esc = new EquipmentTroubleStatisticsCompany();
+                List<EquipmentTroubleStatistics> esList = new List<EquipmentTroubleStatistics>();
+                foreach (DataRow dr in dt.Rows)
+                {
+                    EquipmentTroubleStatistics es = new EquipmentTroubleStatistics();
+                    es.ztName = Convert.ToString(dr["帐套名称"]);
+                    es.countReceive = Convert.ToString(dr["接单数"]);
+                    es.count8 = Convert.ToString(dr["8小时内完成数"]);
+                    es.count8to24 = Convert.ToString(dr["8到24小时内完成数"]);
+                    es.count24 = Convert.ToString(dr["24小时以上完成数"]);
+                    es.rate8 = GetPercent(es.count8, es.countReceive);
+                    es.rate8to24 = GetPercent(es.count8to24, es.countReceive);
+                    es.rate24 = GetPercent(es.count24, es.countReceive);
+                    esc.countReceive = Convert.ToString(Convert.ToDecimal(esc.countReceive) + Convert.ToDecimal(es.countReceive));
+                    esc.count8 = Convert.ToString(Convert.ToDecimal(esc.count8) + Convert.ToDecimal(es.count8));
+                    esc.count8to24 = Convert.ToString(Convert.ToDecimal(esc.count8to24) + Convert.ToDecimal(es.count8to24));
+                    esc.count24 = Convert.ToString(Convert.ToDecimal(esc.count24) + Convert.ToDecimal(es.count24));
+                    esList.Add(es);
+                }
+                esc.rate8 = GetPercent(esc.count8, esc.countReceive);
+                esc.rate8to24 = GetPercent(esc.count8to24, esc.countReceive);
+                esc.rate24 = GetPercent(esc.count24, esc.countReceive);
+                esc.equipmentTroubleStatisticsProjects = esList.ToArray();
+
+                sr.status = "Success";
+                sr.result = "成功";
+                sr.data = esc;
+                return sr;
+            }
+
+        }
+
+        public static StatusReport GetEquipmentTroubleReportAbstractList()
+        {
+            StatusReport sr = new StatusReport();
+            string sqlstring =
+            " SELECT " +
+            " dbo.资源帐套表.帐套代码, " +
+            " dbo.资源帐套表.帐套名称, " +
+            " COUNT(CASE WHEN DATEDIFF(hh, 接单时间, ISNULL(完成时间, '1990/1/1')) > CONVERT(int, LEFT(维修时限, LEN(维修时限) - 2)) THEN 1 ELSE NULL END) AS 未按时完成数 " +
+            " FROM dbo.基础资料_设备故障管理 " +
+            " LEFT OUTER JOIN dbo.资源帐套表 ON LEFT(dbo.基础资料_设备故障管理.分类, 2) = dbo.资源帐套表.帐套代码 " +
+            " GROUP BY dbo.资源帐套表.帐套代码, dbo.资源帐套表.帐套名称 ";
+            DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlstring);
+            if (dt.Rows.Count == 0)
+            {
+                sr.status = "Fail";
+                sr.result = "未查询到任何数据";
+                return sr;
+            }
+            List<EquipmentTroubleReportCompany> ercList = new List<EquipmentTroubleReportCompany>();
+            foreach (DataRow dr in dt.Rows)
+            {
+                EquipmentTroubleReportCompany erc = new EquipmentTroubleReportCompany();
+                erc.ztCode = DataTypeHelper.GetStringValue(dr["帐套代码"]);
+                erc.ztName = DataTypeHelper.GetStringValue(dr["帐套名称"]);
+                erc.countTimeout = DataTypeHelper.GetStringValue(dr["未按时完成数"]);
+                ercList.Add(erc);
+            }
+            sr.status = "Success";
+            sr.result = "成功";
+            sr.data = ercList.ToArray();
+            return sr;
+        }
+
+        public static StatusReport GetEquipmentTroubleReport(string ztcode)
+        {
+            StatusReport sr = new StatusReport();
+            string done = " where (left(分类,2) = @分类) " +
+                " AND (完成时间 is not null) " +
+                " AND ( DATEDIFF(hh, 接单时间, ISNULL(完成时间, '1990/1/1')) > CONVERT(int, LEFT(维修时限, LEN(维修时限) - 2))) " +
+                " ORDER BY ID DESC ";
+            string sqlstring = " SELECT ID, 设备名称, 分类, 设备编号, 发生时间, 故障描述, 状态, 维修人, 维修时限, 接单时间, " +
+                " 维修说明, 完成时间, 维修前照片1, 维修前照片2, 维修前照片3, 处理后照片1, 处理后照片2, 处理后照片3 " +
+                " FROM dbo.基础资料_设备故障管理 ";
+            sqlstring += done;
+
+            DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlstring,
+                new SqlParameter("@分类", ztcode));
+            if (dt.Rows.Count == 0)
+            {
+                sr.status = "Fail";
+                sr.result = "未查询到任何数据";
+                sr.parameters = sqlstring;
+                return sr;
+            }
+            List<EquipmentTrouble> equipmentList = new List<EquipmentTrouble>();
+            foreach (DataRow dr in dt.Rows)
+            {
+                EquipmentTrouble equipment = new EquipmentTrouble();
+                List<string> beforeList = new List<string>();
+                List<string> afterList = new List<string>();
+                equipment.id = DataTypeHelper.GetIntValue(dr["ID"]);
+                equipment.classify = DataTypeHelper.GetStringValue(dr["分类"]);
+                equipment.name = DataTypeHelper.GetStringValue(dr["设备名称"]);
+                equipment.number = DataTypeHelper.GetStringValue(dr["设备编号"]);
+                equipment.brokenTime = DataTypeHelper.GetDateStringValue(dr["发生时间"]);
+                equipment.brokenInfo = DataTypeHelper.GetStringValue(dr["故障描述"]);
+                equipment.status = DataTypeHelper.GetStringValue(dr["状态"]);
+                equipment.repairMan = DataTypeHelper.GetStringValue(dr["维修人"]);
+                equipment.repairTimeLimit = DataTypeHelper.GetStringValue(dr["维修时限"]);
+                equipment.receiveTime = DataTypeHelper.GetDateStringValue(dr["接单时间"]);
+                equipment.repairInfo = DataTypeHelper.GetStringValue(dr["维修说明"]);
+                equipment.finishTime = DataTypeHelper.GetDateStringValue(dr["完成时间"]);
+                beforeList.Add(DataTypeHelper.GetStringValue(dr["维修前照片1"]));
+                beforeList.Add(DataTypeHelper.GetStringValue(dr["维修前照片2"]));
+                beforeList.Add(DataTypeHelper.GetStringValue(dr["维修前照片3"]));
+                equipment.beforeImage = beforeList.ToArray();
+                afterList.Add(DataTypeHelper.GetStringValue(dr["处理后照片1"]));
+                afterList.Add(DataTypeHelper.GetStringValue(dr["处理后照片2"]));
+                afterList.Add(DataTypeHelper.GetStringValue(dr["处理后照片3"]));
+                equipment.afterImage = afterList.ToArray();
                 equipmentList.Add(equipment);
             }
             sr.status = "Success";

@@ -11,6 +11,7 @@ namespace HexiServer.Models
         public int? registerId { get; set; }//登记ID
         public int? businessId { get; set; }//业务ID
         public int? linkId { get; set; }//环节ID
+        public int? documentId { get; set; }//文档表ID
         public int? userId { get; set; }//人员ID
         public int? lastId { get; set; }//上一实例ID
         public string createTime { get; set; }//创建日期
@@ -60,6 +61,21 @@ namespace HexiServer.Models
         public string requestNumber { get; set; }//请款编号
         public string requestMonth { get; set; }//请款月份
         public string budgeType { get; set; }//预算类别
+        public decimal? requestSum { get; set; }//请款金额
+        public ItemOfExpenditure[] itemOfExpenditures { get; set; }//支出项目
+    }
 
+    public class ItemOfExpenditure
+    {
+        public int? budgeId { get; set; }//预算ID
+        public string budgeNumber { get; set; }//预算编号
+        public string itemName { get; set; }//项目名称
+        public decimal? monthBudgeSum { get; set; }//月累计预算金额
+        public decimal? budgeUsableSum { get; set; }//本次付款前本项月累计预算使用金额
+        public decimal? budgeRemainingSum { get; set; }//本次付款前本项月累计预算余额
+        public decimal? requestSum { get; set; }//请款金额
+        public decimal? paySum { get; set; }//实付金额
+        public decimal? yearBudgeSum { get; set; }//年度预算金额
+        public decimal? yearRemainingSum { get; set; }//年累计预算余额
     }
 }

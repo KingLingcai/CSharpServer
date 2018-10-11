@@ -203,8 +203,38 @@ namespace HexiServer.Models
         public EquipmentStatistics[] equipmentStatisticsProjects { get; set; }
     }
 
-
     public class EquipmentReportCompany
+    {
+        public string ztName { get; set; }
+        public string ztCode { get; set; }
+        public string countTimeout { get; set; }
+    }
+
+    public class EquipmentTroubleStatistics
+    {
+        public string ztName { get; set; }
+        public string countReceive { get; set; }
+        public string count8 { get; set; }
+        public string count8to24 { get; set; }
+        public string count24 { get; set; }
+        public string rate8 { get; set; }
+        public string rate8to24 { get; set; }
+        public string rate24 { get; set; }
+    }
+
+    public class EquipmentTroubleStatisticsCompany
+    {
+        public string countReceive { get; set; }
+        public string count8 { get; set; }
+        public string count8to24 { get; set; }
+        public string count24 { get; set; }
+        public string rate8 { get; set; }
+        public string rate8to24 { get; set; }
+        public string rate24 { get; set; }
+        public EquipmentTroubleStatistics[] equipmentTroubleStatisticsProjects { get; set; }
+    }
+
+    public class EquipmentTroubleReportCompany
     {
         public string ztName { get; set; }
         public string ztCode { get; set; }

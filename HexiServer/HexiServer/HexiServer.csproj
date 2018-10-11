@@ -125,6 +125,7 @@
     <Compile Include="Controllers\EquipmentController.cs" />
     <Compile Include="Controllers\ProprietorController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
+    <Compile Include="Controllers\RequestPaymentFlowController.cs" />
     <Compile Include="Controllers\StatisticsController.cs" />
     <Compile Include="Controllers\WorkOrderController.cs" />
     <Compile Include="Controllers\WxOpenController.cs" />
@@ -168,6 +169,7 @@
     <Folder Include="Views\Equipment\" />
     <Folder Include="Views\Proprietor\" />
     <Folder Include="Views\Report\" />
+    <Folder Include="Views\RequestPaymentFlow\" />
     <Folder Include="Views\Statistics\" />
     <Folder Include="Views\WorkOrder\" />
     <Folder Include="wxImages\equipment\" />

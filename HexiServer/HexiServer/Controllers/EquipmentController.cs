@@ -99,18 +99,29 @@ namespace HexiServer.Controllers
             sr = EquipmentDal.GetEquipmentTrouble(classify, isDone);
             return Json(sr);
         }
+
+        public ActionResult OnSetEquipmentTrouble(string id, string fee, string doneTime, string doneInfo)
+        {
+            StatusReport sr = new StatusReport();
+            //if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(doneTime) || string.IsNullOrEmpty(doneInfo) || string.IsNullOrEmpty(fee))
+            //{
+            //    sr.status = "Fail";
+            //    sr.result = "信息不完整";
+            //    return Json(sr);
+            //}
+            sr = EquipmentDal.SetEquipmentTrouble(id, fee, doneInfo, doneTime);
+            return Json(sr);
+        }
+
+        //[HttpPost]
+        //public ActionResult OnGetEquipmentTroubleStatistics(string ztcode, string level)
+        //{
+        //    StatusReport sr = new StatusReport();
+        //    sr = EquipmentDal.GetEquipmentTroubleStatistics(ztcode,level);
+        //    return Json(sr);
+        //}
+
     }
 }
 
 
-/*
- * 数据库名称: 
-wordpress510
-
-数据库用户名: 
-wordpressuser383
-
-数据库密码: 
-CBj|OfDsX_g?
-
-*/

@@ -22,9 +22,6 @@ namespace HexiServer.Controllers
             }
             switch (func)
             {
-                case "收费统计":
-
-                    break;
                 case "工单上报":
                     sr = RepairDal.GetRepairReport(ztcode, level);
                     break;
@@ -43,6 +40,21 @@ namespace HexiServer.Controllers
                         sr = EquipmentDal.GetEquipmentReport(ztcode);
                     }
                     break;
+                case "设备故障上报":
+                    if (level == "公司")
+                    {
+                        sr = EquipmentDal.GetEquipmentTroubleReportAbstractList();
+                    }
+                    else if (level == "一线")
+                    {
+                        sr.status = "Fail";
+                        sr.result = "没有此权限";
+                    }
+                    else
+                    {
+                        sr = EquipmentDal.GetEquipmentTroubleReport(ztcode);
+                    }
+                    break;
                 case "投诉上报":
                     if (level == "一线" || level == "助理" || level == "项目经理")
                     {
@@ -53,9 +65,6 @@ namespace HexiServer.Controllers
                     {
                         sr = ComplainDal.GetComplainReport();
                     }
-                    break;
-                case "设备故障统计":
-
                     break;
             }
 

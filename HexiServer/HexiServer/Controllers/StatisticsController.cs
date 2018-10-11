@@ -35,7 +35,7 @@ namespace HexiServer.Controllers
                     sr = ComplainDal.GetComplainStatistics(ztcode,level, before);
                     break;
                 case "设备故障统计":
-
+                    sr = EquipmentDal.GetEquipmentTroubleStatistics(ztcode, level);
                     break;
             }
 
