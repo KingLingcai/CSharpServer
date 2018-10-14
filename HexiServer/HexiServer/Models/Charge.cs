@@ -31,6 +31,54 @@ namespace HexiServer.Models
         public int? ChargedId { get; set; }//收款ID
         public int? ReceiptId { get; set; }//收据ID
     }
+
+    public class ChargeStatisticsBase
+    {
+        public string chargeType { get; set; }//费用种类
+        public string ztCode { get; set; }//帐套代码
+        public string ztName { get; set; }//帐套名称
+        public string group { get; set; }//所属组团
+        public string building { get; set; }//所属楼宇
+        public string unit { get; set; }//所属单元
+        public decimal? carryOverThisYearNow { get; set; }//结转本年当期
+        public decimal? carryOverThisYearAfter { get; set; }//结转本年后期
+        public decimal? carryOverAfterYear { get; set; }//结转以后年度
+        public decimal? beforeYearCarryOverReceived { get; set; }//上年结转实收合计
+        public decimal? recoveredAfter { get; set; }//追缴前期
+        public decimal? receivedThisYearNow { get; set; }//实收本年当期
+        public decimal? receivedThisYearAfter { get; set; }//实收本年后期
+        public decimal? receivedAfterYear { get; set; }//实收以后年度
+        public decimal? nowReceived { get; set; }//当期实收合计
+        public decimal? receivedNow { get; set; }//实收当期合计
+        public decimal? nowShouldReceived { get; set; }//当期应收
+        public decimal? addupShouldReceived { get; set; }//累计应收
+        public decimal? addupReceived { get; set; }//累计实收
+        public decimal? thisYearAfterShouldReceive { get; set; }//本年后期应收
+        public decimal? receivedAfterShouldReceived { get; set; }//实收后期应收
+        public string month { get; set; }//统计月份
+        public string date { get; set; }//报送日期
+    }
+
+    public class ChargeStatisticsUnit : ChargeStatisticsBase { }
+
+    public class ChargeStatisticsBuilding : ChargeStatisticsBase
+    {
+        public ChargeStatisticsUnit[] csUnits { get; set; }
+    }
+
+    public class ChargeStatisticsGroup : ChargeStatisticsBase
+    {
+        public ChargeStatisticsBuilding[] csBuildings { get; set; }
+    }
+
+    public class ChargeStatisticsProject : ChargeStatisticsBase
+    {
+        public ChargeStatisticsGroup[] csGroups { get; set; }
+    }
+
+
+
+
 }
 /*
  * SELECT   dbo.应收款.ID, dbo.应收款.计费年月, dbo.费用项目.费用名称, dbo.应收款.费用说明, dbo.应收款.应收金额, 

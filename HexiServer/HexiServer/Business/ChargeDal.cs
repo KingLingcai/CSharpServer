@@ -171,6 +171,7 @@ namespace HexiServer.Business
             sr.data = resList.ToArray();
             return sr;
         }
+
         public static StatusReport GetCharges(string ztCode, string roomNumber, string userName)
         {
 
@@ -304,13 +305,130 @@ namespace HexiServer.Business
             return sr;
         }
 
+        //public static StatusReport GetChargeStatistics(string ztCode, string level, string userCode, string month)
+        //{
+        //    StatusReport sr = new StatusReport();
+        //    DataTable dt = new DataTable();
+        //    ChargeStatisticsBase[] csbs = null;
+        //    sr.status = "Fail";
+        //    sr.result = "未查询到任何数据";
+        //    string sqlString = " SELECT ID,费用种类,帐套代码,帐套名称,所属组团,所属楼宇,所属单元,结转本年当期,结转本年后期, " +
+        //                " 结转以后年度,上年结转实收合计,追缴前期 ,实收本年当期 ,实收本年后期,实收以后年度 ,当期实收合计,实收当期合计, " +
+        //                " 当期应收,累计应收,累计实收 ,本年后期应收,实收后期应收,统计月份,报送日期 " +
+        //                " FROM dbo.报送_物业管理费绩效考核统计表 ";
+        //    switch (level)
+        //    {
+        //        case "一线":
+        //            sqlString +=
+        //                " WHERE (帐套代码 = @帐套代码) AND (所属组团 = @所属组团) AND (统计月份 = @统计月份) " +
+        //                " ORDER BY 帐套代码,所属组团,所属楼宇,所属单元 ";
+        //            dt = SQLHelper.ExecuteQuery("weixin", sqlString,
+        //                new SqlParameter("@帐套代码", ztCode),
+        //                new SqlParameter("@所属组团", userCode),
+        //                new SqlParameter("@统计月份", month));
+        //            csbs = GetCsbs(dt);
+        //            if (csbs.Length == 0)
+        //            {
+        //                return sr;
+        //            }
 
-        public static StatusReport GetChargeStatistics(string ztcode, string level)
+        //            break;
+        //        case "助理":
+        //        case "项目经理":
+        //            sqlString +=
+        //                " WHERE (帐套代码 = @帐套代码) AND (统计月份 = @统计月份) " +
+        //                " ORDER BY 帐套代码,所属组团,所属楼宇,所属单元 ";
+        //            dt = SQLHelper.ExecuteQuery("weixin", sqlString,
+        //                new SqlParameter("@帐套代码", ztCode),
+        //                new SqlParameter("@所属组团", userCode),
+        //                new SqlParameter("@统计月份", month));
+        //            csbs = GetCsbs(dt);
+        //            if (csbs.Length == 0)
+        //            {
+        //                return sr;
+        //            }
+        //            break;
+        //        case "公司":
+        //            sqlString +=
+        //                " WHERE (统计月份 = @统计月份) " +
+        //                " ORDER BY 帐套代码,所属组团,所属楼宇,所属单元 ";
+        //            dt = SQLHelper.ExecuteQuery("weixin", sqlString,
+        //                new SqlParameter("@帐套代码", ztCode),
+        //                new SqlParameter("@所属组团", userCode),
+        //                new SqlParameter("@统计月份", month));
+        //            csbs = GetCsbs(dt);
+        //            if (csbs.Length == 0)
+        //            {
+        //                return sr;
+        //            }
+        //            break;
+        //    }
+        //    return sr;
+        //}
+
+        public static StatusReport GetGroupChargeStatistics(string ztCode, string userCode, string month)
         {
             StatusReport sr = new StatusReport();
+            DataTable dt = new DataTable();
+            ChargeStatisticsBase[] csbs = null;
+            sr.status = "Fail";
+            sr.result = "未查询到任何数据";
+            string sqlString = " SELECT 实收当期合计,当期应收,累计应收,累计实收,实收后期应收 " +
+                        " FROM 视图_物业管理费绩效考核统计表_区中所有楼宇 " +
+                        " WHERE(帐套代码 = @帐套代码) AND(所属组团 = @所属组团) AND(统计月份 = @统计月份) " +
+                        " ORDER BY 帐套代码,所属组团,所属楼宇,所属单元 "; 
+            dt = SQLHelper.ExecuteQuery("weixin", sqlString,
+                        new SqlParameter("@帐套代码", ztCode),
+                        new SqlParameter("@所属组团", userCode),
+                        new SqlParameter("@统计月份", month));
+            csbs = GetCsbs(dt);
+            if (csbs.Length == 0)
+            {
+                return sr;
+            }
+            
             return sr;
         }
 
+        private static ChargeStatisticsBase[] GetCsbs(DataTable dt)
+        {
+            if (dt.Rows.Count == 0)
+            {
+                return null;
+            }
+            List<ChargeStatisticsBase> csbList = new List<ChargeStatisticsBase>();
+            foreach (DataRow dr in dt.Rows)
+            {
+                ChargeStatisticsBase csb = new ChargeStatisticsBase()
+                {
+                    chargeType = DataTypeHelper.GetStringValue(dr["费用种类"]),
+                    ztCode = DataTypeHelper.GetStringValue(dr["帐套代码"]),
+                    ztName = DataTypeHelper.GetStringValue(dr["帐套名称"]),
+                    group = DataTypeHelper.GetStringValue(dr["所属组团"]),
+                    building = DataTypeHelper.GetStringValue(dr["所属楼宇"]),
+                    unit = DataTypeHelper.GetStringValue(dr["所属单元"]),
+                    carryOverThisYearNow = DataTypeHelper.GetDecimalValue(dr["结转本年当期"]),
+                    carryOverThisYearAfter = DataTypeHelper.GetDecimalValue(dr["结转本年后期"]),
+                    carryOverAfterYear = DataTypeHelper.GetDecimalValue(dr["结转以后年度"]),
+                    beforeYearCarryOverReceived = DataTypeHelper.GetDecimalValue(dr["上年结转实收合计"]),
+                    recoveredAfter = DataTypeHelper.GetDecimalValue(dr["追缴前期"]),
+                    receivedThisYearNow = DataTypeHelper.GetDecimalValue(dr["实收本年当期"]),
+                    receivedThisYearAfter = DataTypeHelper.GetDecimalValue(dr["实收本年后期"]),
+                    receivedAfterYear = DataTypeHelper.GetDecimalValue(dr["实收以后年度"]),
+                    nowReceived = DataTypeHelper.GetDecimalValue(dr["当期实收合计"]),
+                    receivedNow = DataTypeHelper.GetDecimalValue(dr["实收当期合计"]),
+                    nowShouldReceived = DataTypeHelper.GetDecimalValue(dr["当期应收"]),
+                    addupShouldReceived = DataTypeHelper.GetDecimalValue(dr["累计应收"]),
+                    addupReceived = DataTypeHelper.GetDecimalValue(dr["累计实收"]),
+                    thisYearAfterShouldReceive = DataTypeHelper.GetDecimalValue(dr["本年后期应收"]),
+                    receivedAfterShouldReceived = DataTypeHelper.GetDecimalValue(dr["实收后期应收"]),
+                    month = DataTypeHelper.GetStringValue(dr["统计月份"]),
+                    date = DataTypeHelper.GetDateStringValue(dr["报送日期"])
+                };
+                csbList.Add(csb);
+            }
+            return csbList.ToArray();
+        }
 
         private static string FormatDate(string date)
         {
@@ -339,9 +457,18 @@ namespace HexiServer.Business
 
         //    }
         //}
-        private static void test1()
-        {
-            Func<string, int> func = (string text) => text.Length;
-        }
+        
     }
 }
+
+
+/**
+ * 实收当期合计 （已有字段）
+ * 当期应收 （已有字段）
+ * 累计欠费 （累计应收 - 累计实收）
+ * 本期收缴率 （实收当期合计 / 当期应收）
+ * 累计收费率 （累计实收 / 累计应收）
+ * 预收费率 （实收后期应收 / 当期应收）
+ * 
+ * 需查询的字段： 实收当期合计、当期应收、 累计应收、累计实收、实收后期应收
+ **/
