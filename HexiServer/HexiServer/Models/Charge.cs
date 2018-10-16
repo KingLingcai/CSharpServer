@@ -40,21 +40,35 @@ namespace HexiServer.Models
         public string group { get; set; }//所属组团
         public string building { get; set; }//所属楼宇
         public string unit { get; set; }//所属单元
-        public decimal? carryOverThisYearNow { get; set; }//结转本年当期
-        public decimal? carryOverThisYearAfter { get; set; }//结转本年后期
-        public decimal? carryOverAfterYear { get; set; }//结转以后年度
-        public decimal? beforeYearCarryOverReceived { get; set; }//上年结转实收合计
-        public decimal? recoveredAfter { get; set; }//追缴前期
-        public decimal? receivedThisYearNow { get; set; }//实收本年当期
-        public decimal? receivedThisYearAfter { get; set; }//实收本年后期
-        public decimal? receivedAfterYear { get; set; }//实收以后年度
-        public decimal? nowReceived { get; set; }//当期实收合计
+                                        //public decimal? carryOverThisYearNow { get; set; }//结转本年当期
+                                        //public decimal? carryOverThisYearAfter { get; set; }//结转本年后期
+                                        //public decimal? carryOverAfterYear { get; set; }//结转以后年度
+                                        //public decimal? beforeYearCarryOverReceived { get; set; }//上年结转实收合计
+                                        //public decimal? recoveredAfter { get; set; }//追缴前期
+                                        //public decimal? receivedThisYearNow { get; set; }//实收本年当期
+                                        //public decimal? receivedThisYearAfter { get; set; }//实收本年后期
+                                        //public decimal? receivedAfterYear { get; set; }//实收以后年度
+                                        //public decimal? nowReceived { get; set; }//当期实收合计
+                                        /**
+                                * 实收当期合计 （已有字段）
+                                * 当期应收 （已有字段）
+                                * 累计欠费 （累计应收 - 累计实收）
+                                * 本期收缴率 （实收当期合计 / 当期应收）
+                                * 累计收费率 （累计实收 / 累计应收）
+                                * 预收费率 （实收后期应收 / 当期应收）
+                                * 
+                                * 需查询的字段： 实收当期合计、当期应收、 累计应收、累计实收、实收后期应收
+                                **/
         public decimal? receivedNow { get; set; }//实收当期合计
         public decimal? nowShouldReceived { get; set; }//当期应收
         public decimal? addupShouldReceived { get; set; }//累计应收
         public decimal? addupReceived { get; set; }//累计实收
-        public decimal? thisYearAfterShouldReceive { get; set; }//本年后期应收
+        //public decimal? thisYearAfterShouldReceive { get; set; }//本年后期应收
         public decimal? receivedAfterShouldReceived { get; set; }//实收后期应收
+        public decimal addupNotReceived { get; set; }//累计欠费
+        public string rateNowReceived { get; set; }//本期收缴率
+        public string rateAddupReceived { get; set; }//累计收费率
+        public string rateBeforeReceived { get; set; }//预收费率
         public string month { get; set; }//统计月份
         public string date { get; set; }//报送日期
     }
@@ -74,6 +88,11 @@ namespace HexiServer.Models
     public class ChargeStatisticsProject : ChargeStatisticsBase
     {
         public ChargeStatisticsGroup[] csGroups { get; set; }
+    }
+
+    public class ChargeStatisticsCompany : ChargeStatisticsBase
+    {
+        public ChargeStatisticsProject[] csProjects { get; set; }
     }
 
 

@@ -11,7 +11,7 @@ namespace HexiServer.Controllers
     public class StatisticsController : Controller
     {
         // GET: Statistics
-        public ActionResult OnGetStatistics(string ztcode, string level, string func, string username, string before)
+        public ActionResult OnGetStatistics(string ztcode, string level, string func, string username, string before,string month)
         {
             StatusReport sr = new StatusReport();
             if (string.IsNullOrEmpty(level) || string.IsNullOrEmpty(func))
@@ -23,7 +23,7 @@ namespace HexiServer.Controllers
             switch (func)
             {
                 case "收费统计":
-
+                    sr = ChargeDal.GetChargeStatistics(ztcode, level, username, month);
                     break;
                 case "工单统计":
                     sr = RepairDal.GetRepairStatistics(ztcode, level, username, before);

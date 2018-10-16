@@ -93,5 +93,11 @@ namespace HexiServer.Controllers
             //return Json(new { datetime = datetime, proprietorName = proprietorName, chargeIds = chargeIds });
             return Json(ChargeDal.SetCharges(datetime, name, chargeIds, paymentMethod));
         }
+
+
+        public ActionResult OnGetChargeStatistics(string ztCode, string level, string userCode, string month)
+        {
+            return Json(ChargeDal.GetChargeStatistics(ztCode, level, userCode, month),JsonRequestBehavior.AllowGet);
+        }
     }
 }
