@@ -15,7 +15,7 @@ namespace HexiServer.Business
         {
             StatusReport sr = new StatusReport();
             string done = "";
-            if (isDone == "0")
+            if (isDone == "0")//待处理
             {
                 done = " where (分类 = @分类) AND 是否完成 is null " +
                     " and (CONVERT(nvarchar, 工作日期, 111) = CONVERT(nvarchar, GETDATE(), 111) " +
@@ -23,11 +23,11 @@ namespace HexiServer.Business
                     " or (datediff(day,GETDATE(),工作日期)<=宽限下延天数) and datediff(day,GETDATE(),工作日期)>=0) " +
                     " ORDER BY ID DESC";
             }
-            else if (isDone == "1")
+            else if (isDone == "1")//已处理
             {
                 done = " where  (分类 = @分类)  AND  (是否完成 = 1) ORDER BY ID DESC ";
             }
-            else
+            else//过期
             {
                 done = " where (分类 = @分类) AND 是否完成 is null " +
                     " and (datediff(day,工作日期,GETDATE())> 宽限上延天数) and datediff(day,工作日期,GETDATE())>= 0 " +
@@ -170,12 +170,12 @@ namespace HexiServer.Business
         public static StatusReport SearchEquipmentMaintain(string operationNumber)
         {
             StatusReport sr = new StatusReport();
-            string sqlstring = " SELECT ID, 分类, 设备运行编号, 设备编号, 设备型号, 设备名称, 系统名称, 出厂日期, " +
+            string sqlstring = " SELECT ID, 分类,设备编号, 设备型号, 设备名称, 系统名称, 出厂日期, " +
                                " 使用日期, 设备价格, 出厂序号, 设计寿命, 卡号, 安装地点, 产地, 设备保养管理代号, 设备保养管理内容, " +
                                " 设备保养管理日期, 工作名称, 工作日期, 是否完成, 录入日期, 录入人, 完成说明, 序次, 保养前照片, 保养后照片, " +
                                " 宽限上延天数,宽限下延天数 " +
                                " FROM dbo.小程序_设备管理 " +
-                               " WHERE 设备运行编号 = @设备运行编号 " +
+                               " WHERE 设备编号 = @设备编号 " +
                                " AND (是否完成 is null " +
                                " and (CONVERT(nvarchar, 工作日期, 111) = CONVERT(nvarchar, GETDATE(), 111) " +
                                " or (datediff(day,工作日期,GETDATE())<= 宽限上延天数) and datediff(day,工作日期,GETDATE())>= 0 " +
@@ -195,7 +195,7 @@ namespace HexiServer.Business
                 Equipment equipment = new Equipment();
                 equipment.ID = DataTypeHelper.GetIntValue(dr["ID"]);
                 equipment.Classify = DataTypeHelper.GetStringValue(dr["分类"]);
-                equipment.OperationNumber = DataTypeHelper.GetStringValue(dr["设备运行编号"]);
+                //equipment.OperationNumber = DataTypeHelper.GetStringValue(dr["设备运行编号"]);
                 equipment.Number = DataTypeHelper.GetStringValue(dr["设备编号"]);
                 equipment.Name = DataTypeHelper.GetStringValue(dr["设备名称"]);
                 equipment.SystemName = DataTypeHelper.GetStringValue(dr["系统名称"]);
@@ -289,7 +289,7 @@ namespace HexiServer.Business
             sr.parameters = sqlstring;
             return sr;
         }
-
+        
         public static StatusReport SetEquipmentTrouble(string id, string fee, string doneInfo, string doneTime)
         {
             StatusReport sr = new StatusReport();
@@ -331,7 +331,8 @@ namespace HexiServer.Business
                 " 帐套名称, " +
                 " COUNT(CASE WHEN LEFT(CONVERT(varchar(10), 工作日期, 112), 6) = LEFT(CONVERT(varchar(10), getdate(), 112), 6) THEN ID ELSE NULL END) AS 本月应保养数, " +
                 " COUNT(CASE WHEN LEFT(CONVERT(varchar(10), 工作日期, 112), 6)= LEFT(CONVERT(varchar(10), getdate(), 112), 6) AND isnull(是否完成, 0) = 1 THEN ID ELSE NULL END) AS 本月已保养数, " +
-                " COUNT(CASE WHEN LEFT(CONVERT(varchar(10), 工作日期, 112), 6) = LEFT(CONVERT(varchar(10),getdate(), 112), 6) AND isnull(是否完成, 0) = 0 THEN ID ELSE NULL END) AS 本月未保养数 " +
+                " COUNT(CASE WHEN LEFT(CONVERT(varchar(10), 工作日期, 112), 6) = LEFT(CONVERT(varchar(10),getdate(), 112), 6) AND isnull(是否完成, 0) = 0 THEN ID ELSE NULL END) AS 本月未保养数, " +
+                //" 是否完成 is null  and (datediff(day,工作日期,GETDATE())> 宽限上延天数) and datediff(day,工作日期,GETDATE())>= 0 " +
                 " FROM dbo.小程序_设备管理";
 
             if (level == "助理" || level == "项目经理")

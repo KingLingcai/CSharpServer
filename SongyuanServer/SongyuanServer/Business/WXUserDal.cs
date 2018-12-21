@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Data;
 using System.Data.SqlClient;
-using HexiUtils;
+using SongyuanUtils;
 using SongyuanServer.Models;
 
 namespace SongyuanServer.Business
@@ -14,7 +14,7 @@ namespace SongyuanServer.Business
         public static StatusReport SetNewUser (string openId, string kindergartenName)
         {
             StatusReport sr = new StatusReport();
-            string dbName = kindergartenName == "松园幼儿园" ? "wyt" : "ydal";
+            string dbName = kindergartenName == "松园幼儿园" ? "cloudsy" : "cloudyd";
             string sqlString = " if not exists (select ID from 基础_小程序用户 where openid = @openid) " +
                 " begin " +
                 " insert into 基础_小程序用户 (openid) select @openid " +
@@ -45,7 +45,7 @@ namespace SongyuanServer.Business
         public static StatusReport SetWXInfo(string openId, string nickName, int gender, string kindergartenName)
         {
             StatusReport sr = new StatusReport();
-            string dbName = kindergartenName == "松园幼儿园" ? "wyt" : "ydal";
+            string dbName = kindergartenName == "松园幼儿园" ? "cloudsy" : "cloudyd";
             string sqlString = "update 基础_小程序用户 set 微信昵称 = @微信昵称,性别 = @性别 where openid = @openid " +
                 " select @@identity";
             sr = SQLHelper.Update(dbName, sqlString,
@@ -58,7 +58,7 @@ namespace SongyuanServer.Business
         public static StatusReport SetUserInfo(string openId, string relateName, string phoneNumber, string kindergartenName, string name, string relation)
         {
             StatusReport sr = new StatusReport();
-            string dbName = kindergartenName == "松园幼儿园" ? "wyt" : "ydal";
+            string dbName = kindergartenName == "松园幼儿园" ? "cloudsy" : "cloudyd";
             string sqlString = "update 基础_小程序用户 set 姓名 = @姓名, 手机号 = @手机号, 用户说明 = @用户说明 where openid = @openid " +
                 " select @@identity";
             sr = SQLHelper.Update(dbName, sqlString,
@@ -73,7 +73,7 @@ namespace SongyuanServer.Business
         public static StatusReport GetMyInfo(string kindergartenName, string openid)
         {
             StatusReport sr = new StatusReport();
-            string dbName = kindergartenName == "松园幼儿园" ? "wyt" : "ydal";
+            string dbName = kindergartenName == "松园幼儿园" ? "localsy" : "localyd";
             string sqlString = "select 对应员工,员工联系方式 from 基础_小程序用户 where openid = @openid and 用户身份 = '老师'";
             DataTable dt = SQLHelper.ExecuteQuery(dbName, sqlString, new SqlParameter("@openid", openid));
             if (dt.Rows.Count == 0)

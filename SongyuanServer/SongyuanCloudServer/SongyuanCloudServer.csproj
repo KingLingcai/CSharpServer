@@ -51,6 +51,18 @@
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Senparc.Weixin, Version=4.22.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Senparc.Weixin.4.22.1\lib\net45\Senparc.Weixin.dll</HintPath>
+    </Reference>
+    <Reference Include="Senparc.Weixin.MP, Version=14.14.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Senparc.Weixin.MP.14.14.0\lib\net45\Senparc.Weixin.MP.dll</HintPath>
+    </Reference>
+    <Reference Include="Senparc.Weixin.WxOpen, Version=1.10.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Senparc.Weixin.WxOpen.1.10.5\lib\net45\Senparc.Weixin.WxOpen.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Web.DynamicData" />
@@ -97,10 +109,31 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Business\EmployeeDal.cs" />
+    <Compile Include="Business\KanyuanDataDal.cs" />
+    <Compile Include="Business\SignUpDal.cs" />
+    <Compile Include="Business\WXPayDal.cs" />
+    <Compile Include="Business\WXShareDal.cs" />
+    <Compile Include="Business\WXUserDal.cs" />
+    <Compile Include="Controllers\EmployeeController.cs" />
+    <Compile Include="Controllers\KanyuanController.cs" />
     <Compile Include="Controllers\SendDataController.cs" />
+    <Compile Include="Controllers\SignUpController.cs" />
+    <Compile Include="Controllers\WXPayController.cs" />
+    <Compile Include="Controllers\WXShareController.cs" />
+    <Compile Include="Controllers\WXUserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\ChargeInfo.cs" />
+    <Compile Include="Models\Comman.cs" />
+    <Compile Include="Models\KanyuanData.cs" />
+    <Compile Include="Models\ShareInfo.cs" />
+    <Compile Include="Models\SignUp.cs" />
+    <Compile Include="Models\User.cs" />
+    <Compile Include="Models\WXPayResult.cs" />
+    <Compile Include="Models\WXUnifiedOrder.cs" />
+    <Compile Include="Models\WXUnifiedOrderResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -118,13 +151,18 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
+    <Folder Include="Views\Employee\" />
+    <Folder Include="Views\Kanyuan\" />
     <Folder Include="Views\SendData\" />
+    <Folder Include="Views\SignUp\" />
+    <Folder Include="Views\WXPay\" />
+    <Folder Include="Views\WXShare\" />
+    <Folder Include="Views\WXUser\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\HexiServer\Utils\HexiUtils.csproj">
-      <Project>{c919ff5d-aeda-420d-a8b5-f52b474d979e}</Project>
-      <Name>HexiUtils</Name>
+    <ProjectReference Include="..\SongyuanUtils\SongyuanUtils.csproj">
+      <Project>{de20555e-55f1-4138-a573-83dcd7e97067}</Project>
+      <Name>SongyuanUtils</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

@@ -163,6 +163,14 @@ namespace HexiServer.Models
         /// 身份
         /// </summary>
         public string Identity { get; set; }
+
+        public RepairCaution[] Cautions { get; set; }
+    }
+
+    public class RepairCaution
+    {
+        public string number { get; set; }
+        public string content { get; set; }
     }
 
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using HexiUtils;
+using SongyuanUtils;
 using Senparc.Weixin.WxOpen.AdvancedAPIs.Sns;
 using Senparc.Weixin.WxOpen.Containers;
 using SongyuanServer.Business;
@@ -117,7 +117,7 @@ namespace SongyuanServer.Controllers
             StatusReport sr = new StatusReport();
             StreamReader reader = new StreamReader(Request.InputStream);
             string value = reader.ReadToEnd();
-            using (StreamWriter sw = new StreamWriter("D:\\1_importTemp\\TestFile.txt"))
+            using (StreamWriter sw = new StreamWriter("C:\\1_importTemp\\TestFile.txt"))
             {
                 sw.WriteLine(value);
             }

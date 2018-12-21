@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using Senparc.Weixin.WxOpen.AdvancedAPIs.Sns;
 using Senparc.Weixin.WxOpen.Containers;
-using HexiUtils;
+using SongyuanUtils;
 using SongyuanServer.Business;
 
 namespace SongyuanServer.Controllers

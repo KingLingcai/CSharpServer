@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Data;
 using System.Data.SqlClient;
-using HexiUtils;
+using SongyuanUtils;
 using SongyuanServer.Models;
 using System.Collections.Specialized;
 using System.Collections;
@@ -41,7 +41,7 @@ namespace SongyuanServer.Business
         public static StatusReport SetShareInfo (string receiverId,string shareNumber, string userId, string userName, string shareTime, string kindergartenName)
         {
             StatusReport sr = new StatusReport();
-            string dbName = kindergartenName == "松园幼儿园" ? "wyt" : "ydal";
+            string dbName = kindergartenName == "松园幼儿园" ? "cloudsy" : "cloudyd";
             string sqlString =
                 "if not exists (select ID from 基础_分享 where 分享单编号 = @分享单编号) " +
                 " begin " +
@@ -110,7 +110,7 @@ namespace SongyuanServer.Business
         public static StatusReport GetShareInfoList(string kindergartenName, string userName)
         {
             StatusReport sr = new StatusReport();
-            string dbName = kindergartenName == "松园幼儿园" ? "wyt" : "ydal";
+            string dbName = kindergartenName == "松园幼儿园" ? "localsy" : "localyd";
             string sqlString = "";
             if (userName == "崔道远")
             {
@@ -161,7 +161,7 @@ namespace SongyuanServer.Business
         public static StatusReport GetShareDetail(string kindergartenName, string id)
         {
             StatusReport sr = new StatusReport();
-            string dbName = kindergartenName == "松园幼儿园" ? "wyt" : "ydal";
+            string dbName = kindergartenName == "松园幼儿园" ? "localsy" : "localyd";
             string sqlString = "select 发单人ID,接单人ID,接单人姓名,接单人手机号,接单人微信昵称,接单人性别,count(姓名) as 报名人数 " +
                 "from 小程序_分享情况 " +
                 "where 发单人ID = " + id +
@@ -198,7 +198,7 @@ namespace SongyuanServer.Business
         public static StatusReport GetSignupDetail(string kindergartenName, string shareId, string receiverId)
         {
             StatusReport sr = new StatusReport();
-            string dbName = kindergartenName == "松园幼儿园" ? "wyt" : "ydal";
+            string dbName = kindergartenName == "松园幼儿园" ? "localsy" : "localyd";
             string sqlString = " select 姓名,监护人,与幼儿关系,书包电话,报名日期,是否已交费 " +
                 " from 小程序_分享情况 " +
                 " where 姓名 is not null and 发单人ID = " + shareId + "and 接单人ID = " + receiverId;

@@ -14,14 +14,14 @@ namespace HexiUserServer.Business
         public static StatusReport SetAdvise (string ztName, string name,string phone, string roomNumber,string type,string content, string submitDate)
         {
             StatusReport sr = new StatusReport();
-            string sqlstring = " insert into 基础资料_表扬建议管理 (分类,姓名,联系电话,房号,表扬建议,内容,提交时间) " +
-                               " select @分类,@姓名,@联系电话,@房号,@表扬建议,@内容,@提交时间 " +
+            string sqlstring = " insert into 基础资料_表扬建议管理 (分类,姓名,联系电话,地址,表扬建议,内容,提交时间) " +
+                               " select @分类,@姓名,@联系电话,@地址,@表扬建议,@内容,@提交时间 " +
                                " SELECT @@IDENTITY ";
             sr = SQLHelper.Insert("wyt", sqlstring,
                 new SqlParameter("@分类", ztName),
                 new SqlParameter("@姓名", name),
                 new SqlParameter("@联系电话", phone),
-                new SqlParameter("@房号", roomNumber),
+                new SqlParameter("@地址", roomNumber),
                 new SqlParameter("@表扬建议", type),
                 new SqlParameter("@内容", content),
                 new SqlParameter("@提交时间", submitDate));
@@ -31,7 +31,7 @@ namespace HexiUserServer.Business
         public static StatusReport GetAdvise (string ztName,string phone)
         {
             StatusReport sr = new StatusReport();
-            string sqlstring = " select ID,分类,姓名,联系电话,房号,表扬建议,内容,提交时间,照片1,照片2,照片3 " +
+            string sqlstring = " select ID,分类,姓名,联系电话,地址,表扬建议,内容,提交时间,照片1,照片2,照片3 " +
                                " from 基础资料_表扬建议管理 " +
                                " where 分类 = @分类 and 联系电话 = @联系电话" +
                                " order by ID desc ";
@@ -53,7 +53,7 @@ namespace HexiUserServer.Business
                 advise.classify = DataTypeHelper.GetStringValue(dr["分类"]);
                 advise.Name = DataTypeHelper.GetStringValue(dr["姓名"]);
                 advise.Phone = DataTypeHelper.GetStringValue(dr["联系电话"]);
-                advise.RoomNumber = DataTypeHelper.GetStringValue(dr["房号"]);
+                advise.RoomNumber = DataTypeHelper.GetStringValue(dr["地址"]);
                 advise.Type = DataTypeHelper.GetStringValue(dr["表扬建议"]); 
                 advise.Content = DataTypeHelper.GetStringValue(dr["内容"]);
                 advise.SubmitDate = DataTypeHelper.GetDateStringValue(dr["提交时间"]);

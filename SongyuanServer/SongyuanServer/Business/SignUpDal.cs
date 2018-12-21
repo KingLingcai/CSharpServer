@@ -1,4 +1,4 @@
-﻿using HexiUtils;
+﻿using SongyuanUtils;
 using SongyuanServer.Models;
 using System;
 using System.Data;
@@ -88,7 +88,7 @@ namespace SongyuanServer.Business
             string shareNumber)
         {
             StatusReport sr = new StatusReport();
-            string dbName = kindergartenName == "松园幼儿园" ? "wyt" : "ydal";
+            string dbName = kindergartenName == "松园幼儿园" ? "cloudsy" : "cloudyd";
             string sqlStr = "select ID from 基础_看园管理 where 姓名 = @姓名 and 联系电话 = @联系电话";
             string kanyuanId = null;
             DataTable dt = SQLHelper.ExecuteQuery(dbName, sqlStr, new SqlParameter("@姓名", name), new SqlParameter("@联系电话", bagPhone));
@@ -191,7 +191,7 @@ namespace SongyuanServer.Business
             {
                 return null;
             }
-            string dbName = kindergartenName == "松园幼儿园" ? "wyt" : "ydal";
+            string dbName = kindergartenName == "松园幼儿园" ? "localsy" : "localyd";
             string sqlString = "select 姓名,监护人 from 基础_小程序报名 where ID = @id";
             DataTable dt = SQLHelper.ExecuteQuery(dbName, sqlString, new SqlParameter("@id", id));
             if (dt.Rows.Count == 0)

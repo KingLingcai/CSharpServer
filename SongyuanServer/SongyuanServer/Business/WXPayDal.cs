@@ -8,7 +8,7 @@ using System.Text;
 using System.Data;
 using System.Data.SqlClient;
 using Newtonsoft.Json;
-using HexiUtils;
+using SongyuanUtils;
 using SongyuanServer.Models;
 using System.Collections.Specialized;
 
@@ -21,7 +21,7 @@ namespace SongyuanServer.Business
         {
             StatusReport sr = new StatusReport();
             //string databaseName = "";
-            string dbName = kindergartenName == "松园幼儿园" ? "wyt" : "ydal";
+            string dbName = kindergartenName == "松园幼儿园" ? "localsy" : "localyd";
             string sqlString = "select 费用种类,费用名称,应收金额 from 基础_小程序收费设置 where 费用种类 = @费用种类";
             DataTable dt = SQLHelper.ExecuteQuery(dbName, sqlString, new SqlParameter("@费用种类", feeName));
             if (dt.Rows.Count == 0)
@@ -64,7 +64,7 @@ namespace SongyuanServer.Business
                 body = body,
                 detail = detail,
                 nonce_str = GetNonceStr(),
-                notify_url = "http://16y7e12590.iask.in/SYServer/WXPay/OnSetWXPayInfo",
+                notify_url = "http://daoyuanno1.cn/syServer/WXPay/OnSetWXPayInfo",
                 openid = openId,
                 out_trade_no = outTradeNo,
                 spbill_create_ip = "115.159.93.120",
@@ -90,7 +90,7 @@ namespace SongyuanServer.Business
         public static StatusReport SetCharge(string id, string tradeNumber, string totalCharge, string datetime, string fromPage, string kindergartenName)
         {
             StatusReport sr = new StatusReport();
-            string dbName = kindergartenName == "松园幼儿园" ? "wyt" : "ydal";
+            string dbName = kindergartenName == "松园幼儿园" ? "cloudsy" : "cloudyd";
             string sqlString = "";
             if (fromPage == "kanyuan")
             {
@@ -128,7 +128,7 @@ FROM      dbo.基础_小程序报名 LEFT OUTER JOIN
 
 
             StatusReport sr = new StatusReport();
-            string dbName = kindergartenName == "松园幼儿园" ? "wyt" : "ydal";
+            string dbName = kindergartenName == "松园幼儿园" ? "localsy" : "localyd";
             string sqlString = " select top 1 基础_小程序报名.ID,基础_小程序报名.姓名, 基础_小程序报名.保教费, 基础_小程序报名.伙食费, 基础_小程序报名.入园杂费, 基础_小程序报名.其他费用, 基础_看园管理.交费金额 as 看园定金" +
                 " from 基础_小程序报名 " +
                 " LEFT OUTER JOIN dbo.基础_看园管理 ON 基础_小程序报名.看园ID = 基础_看园管理.ID " +
@@ -173,7 +173,7 @@ FROM      dbo.基础_小程序报名 LEFT OUTER JOIN
                 " insert into 基础_小程序收费情况 (openid,费用名称,收费说明,付款银行,订单金额,现金支付金额,货币种类,商户号,订单编号,支付完成时间,微信支付单号) " +
                 " select @openid,@费用名称,@收费说明,@付款银行,@订单金额,@现金支付金额,@货币种类,@商户号,@订单编号,@支付完成时间,@微信支付单号" +
                 " select @@identity ";
-            sr = SQLHelper.Insert("wyt", sqlString,
+            sr = SQLHelper.Insert("cloudsy", sqlString,
                 new SqlParameter("openid", payResult.openid),
                 new SqlParameter("费用名称", payResult.fee_name),
                 new SqlParameter("收费说明", payResult.attach),
@@ -185,10 +185,10 @@ FROM      dbo.基础_小程序报名 LEFT OUTER JOIN
                 new SqlParameter("订单编号", payResult.out_trade_no),
                 new SqlParameter("支付完成时间", payResult.time_end),
                 new SqlParameter("微信支付单号", payResult.transaction_id));
-            using (StreamWriter sw = new StreamWriter("D:\\1_importTemp\\TestFile1.txt"))
-            {
-                sw.WriteLine(sr.result.ToString());
-            }
+            //using (StreamWriter sw = new StreamWriter("D:\\1_importTemp\\TestFile1.txt"))
+            //{
+            //    sw.WriteLine(sr.result.ToString());
+            //}
             return sr;
         }
 
@@ -319,7 +319,7 @@ FROM      dbo.基础_小程序报名 LEFT OUTER JOIN
             }
             catch (Exception exp)
             {
-                using (StreamWriter sw = new StreamWriter("D:\\1_importTemp\\TestFile5.txt"))
+                using (StreamWriter sw = new StreamWriter("C:\\1_importTemp\\TestFile5.txt"))
                 {
                     sw.WriteLine("error:" + exp.Message);
                 }

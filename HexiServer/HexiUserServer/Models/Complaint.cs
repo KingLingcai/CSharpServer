@@ -44,6 +44,14 @@ namespace HexiUserServer.Models
         /// </summary>
         public string Number { get; set; }
         /// <summary>
+        /// 发单人
+        /// </summary>
+        public string SendPerson { get; set; }//发单人
+        /// <summary>
+        /// 接单人
+        /// </summary>
+        public string ReceivePerson { get; set; }//接单人
+        /// <summary>
         /// 处理完成日期
         /// </summary>
         public string FinishDate { get; set; }
@@ -59,5 +67,38 @@ namespace HexiUserServer.Models
         /// 责任部门
         /// </summary>
         public string Department { get; set; }
+        /// <summary>
+        /// 投诉前照片
+        /// </summary>
+        public string[] BeforeImage { get; set; }
+        /// <summary>
+        /// 处理后照片
+        /// </summary>
+        public string[] AfterImage { get; set; }
+        /// <summary>
+        /// 状态
+        /// </summary>
+        public string Status { get; set; }
+        /// <summary>
+        /// 是否满意
+        /// </summary>
+        public string IsSatisfying { get; set; }//是否满意
+        /// <summary>
+        /// 业主确认完成  
+        /// </summary>
+        public string AffirmComplete { get; set; }//业主确认完成
+        /// <summary>
+        /// 确认时间  
+        /// </summary>
+        public string AffirmCompleteTime { get; set; }//业主确认完成时间
+        /// <summary>
+        /// 业主评价  
+        /// </summary>
+        public string AffirmCompleteEvaluation { get; set; }//业主评价
+        /// <summary>
+        /// 不受理原因
+        /// </summary>
+        public string CaseDeclinedReason { get; set; }
+
     }
 }

@@ -207,6 +207,12 @@ namespace HexiServer.Controllers
 
         }
 
+        [HttpPost]
+        public ActionResult OnGetFamilyMembers(int id)
+        {
+            return Json(ProprietorDal.GetFamilyMembers(id));
+        }
+
 
         private static string getCode()
         {

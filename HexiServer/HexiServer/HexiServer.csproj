@@ -111,6 +111,7 @@
     <Compile Include="Business\DecorationDal.cs" />
     <Compile Include="Business\EmployeeDal.cs" />
     <Compile Include="Business\EquipmentDal.cs" />
+    <Compile Include="Business\LookOverDal.cs" />
     <Compile Include="Business\ProprietorDal.cs" />
     <Compile Include="Business\RepairDal.cs" />
     <Compile Include="Business\RequestPaymentFlowDal.cs" />
@@ -123,6 +124,7 @@
     <Compile Include="Controllers\ComplainController.cs" />
     <Compile Include="Controllers\DecorationController.cs" />
     <Compile Include="Controllers\EquipmentController.cs" />
+    <Compile Include="Controllers\LookOverController.cs" />
     <Compile Include="Controllers\ProprietorController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\RequestPaymentFlowController.cs" />
@@ -140,6 +142,7 @@
     <Compile Include="Models\Employee.cs" />
     <Compile Include="Models\Equipment.cs" />
     <Compile Include="Models\Jurisdiction.cs" />
+    <Compile Include="Models\LookOver.cs" />
     <Compile Include="Models\Proprietor.cs" />
     <Compile Include="Models\Repair.cs" />
     <Compile Include="Models\RequestPaymentSheet.cs" />
@@ -167,6 +170,7 @@
     <Folder Include="Views\Decoration\" />
     <Folder Include="Views\EquipmentTrouble\" />
     <Folder Include="Views\Equipment\" />
+    <Folder Include="Views\LookOver\" />
     <Folder Include="Views\Proprietor\" />
     <Folder Include="Views\Report\" />
     <Folder Include="Views\RequestPaymentFlow\" />

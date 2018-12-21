@@ -40,4 +40,19 @@ namespace HexiUserServer.Models
         //public double? TotalArrearage { get; set; }//欠费总计
         //public string LicensePlateNumber { get; set; }//车牌号
     }
+
+    public class FamilyMember
+    {
+        public int? id { get; set; }
+        public int? pid { get; set; }
+        public string name { get; set; }
+        public string gender { get; set; }
+        public string birth { get; set; }
+        public string idType { get; set; }
+        public string idNumber { get; set; }
+        public string nation { get; set; }
+        public string relation { get; set; }
+        public string company { get; set; }
+        public string phone { get; set; }
+    }
 }

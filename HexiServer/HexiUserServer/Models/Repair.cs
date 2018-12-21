@@ -101,6 +101,22 @@ namespace HexiUserServer.Models
         /// </summary>
         public string status { get; set; }//状态
         /// <summary>
+        /// 是否满意
+        /// </summary>
+        public string IsSatisfying { get; set; }//是否满意
+        /// <summary>
+        /// 业主确认完成  
+        /// </summary>
+        public string AffirmComplete { get; set; }//业主确认完成
+        /// <summary>
+        /// 业主确认完成时间  
+        /// </summary>
+        public string AffirmCompleteTime { get; set; }//业主确认完成时间
+        /// <summary>
+        /// 业主评价  
+        /// </summary>
+        public string AffirmCompleteEvaluation { get; set; }//业主评价
+        /// <summary>
         /// 完成情况及所耗物料
         /// </summary>
         public string CompleteStatus { get; set; }//完成情况及所耗物料

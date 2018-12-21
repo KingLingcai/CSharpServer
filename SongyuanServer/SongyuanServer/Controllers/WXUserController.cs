@@ -1,5 +1,5 @@
 ﻿using System.Web.Mvc;
-using HexiUtils;
+using SongyuanUtils;
 using Senparc.Weixin.WxOpen.AdvancedAPIs.Sns;
 using Senparc.Weixin.WxOpen.Containers;
 using SongyuanServer.Models;
@@ -36,7 +36,7 @@ namespace SongyuanServer.Controllers
                         if (userId != receiverId)
                         {
                             sr = WXShareDal.SetShareInfo(receiverId, shareNumber, userId, userName, shareTime, kindergartenName);
-                            using (StreamWriter sw = new StreamWriter("D:\\1_importTemp\\TestFile1.txt"))
+                            using (StreamWriter sw = new StreamWriter("C:\\1_importTemp\\TestFile1.txt"))
                             {
                                 sw.WriteLine(sr.result.ToString());
                             }

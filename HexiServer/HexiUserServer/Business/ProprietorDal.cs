@@ -155,6 +155,45 @@ namespace HexiUserServer.Business
             return sr;
         }
 
+        public static StatusReport GetFamilyMembers(int id)
+        {
+            StatusReport sr = new StatusReport();
+            string sqlString = " select ID,PID,姓名,性别,出生日期,身份证件名称,身份证件号码, " +
+                " 国籍或地区,与登记占用者关系,工作单位,联系电话 " +
+                " from 占用资料_占用人员详情 " +
+                " where PID = (select ID from 占用资料 where 占用者ID = @占用者ID) "; 
+            DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlString, new SqlParameter("@占用者ID", id));
+            if (dt.Rows.Count == 0)
+            {
+                sr.status = "Fail";
+                sr.result = "未查询到符合条件的记录";
+                return sr;
+            }
+            List<FamilyMember> fmList = new List<FamilyMember>();
+            foreach (DataRow dr in dt.Rows)
+            {
+                FamilyMember fm = new FamilyMember()
+                {
+                    id = DataTypeHelper.GetIntValue(dr["ID"]),
+                    pid = DataTypeHelper.GetIntValue(dr["PID"]),
+                    name = DataTypeHelper.GetStringValue(dr["姓名"]),
+                    gender = DataTypeHelper.GetStringValue(dr["性别"]),
+                    birth = DataTypeHelper.GetDateStringValue(dr["出生日期"]),
+                    idType = DataTypeHelper.GetStringValue(dr["身份证件名称"]),
+                    idNumber = DataTypeHelper.GetStringValue(dr["身份证件号码"]),
+                    nation = DataTypeHelper.GetStringValue(dr["国籍或地区"]),
+                    relation = DataTypeHelper.GetStringValue(dr["与登记占用者关系"]),
+                    company = DataTypeHelper.GetStringValue(dr["工作单位"]),
+                    phone = DataTypeHelper.GetStringValue(dr["联系电话"])
+                };
+                fmList.Add(fm);
+            }
+            sr.status = "Success";
+            sr.result = "成功";
+            sr.data = fmList.ToArray();
+            return sr;
+        }
+
         public static StatusReport AddFamily(int id, string gender, string address, string birth, string company, string idNumber, string idType, string job, string nation, string nationality, string phoneNumber, string relation, string userName, string[] roomId)
         {
             StatusReport sr = new StatusReport();

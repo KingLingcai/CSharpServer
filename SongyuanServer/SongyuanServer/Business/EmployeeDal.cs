@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Data;
 using System.Data.SqlClient;
-using HexiUtils;
+using SongyuanUtils;
 
 namespace SongyuanServer.Business
 {
@@ -52,7 +52,7 @@ namespace SongyuanServer.Business
             StatusReport sr = new StatusReport();
 
             //设置数据库名
-            string dbName = kindergartenName == "松园幼儿园" ? "wyt" : "ydal";
+            string dbName = kindergartenName == "松园幼儿园" ? "cloudsy" : "cloudyd";
             //设置sql语句
             string sqlString = " if not exists(select * from 基础_小程序职工登记 where 姓名=@姓名 and 手机= @手机) " +
                                " insert into 基础_小程序职工登记 (姓名,出生日期,身份证号码,入职时间,住址,社保号,住房公积金帐号, " +

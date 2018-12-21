@@ -15,29 +15,65 @@ namespace HexiServer.Business
         public static StatusReport GetChargedList(string homeNumber, string buildingNumber, string name, string ztcode, string startMonth, string endMonth)
         {
             StatusReport sr = new StatusReport();
-            string sqlString = "SELECT 房产单元编号, 占用者名称, SUM(应收金额) AS 已收总额, 帐套代码 " +
+            string homeNumberCondition = string.IsNullOrEmpty(homeNumber) ? "" : " and (房产单元编号 like @房产单元编号) ";
+            string buildingNumberCondition = string.IsNullOrEmpty(buildingNumber) ? "" : " and (所属楼宇 like @所属楼宇) ";
+            string nameCondition = string.IsNullOrEmpty(name) ? "" : " and (占用者名称 like @占用者名称) ";
+            string sqlString = "" +
+                                "SELECT 房产单元编号, 占用者名称, SUM(应收金额) AS 已收总额, 帐套代码 " +
                                 "FROM dbo.小程序_已收查询 " +
-                                "WHERE 帐套代码 = " + ztcode +
-                                (string.IsNullOrEmpty(homeNumber) ? "" : "and (房产单元编号 like '%" + homeNumber + "%') ") +
-                                (string.IsNullOrEmpty(buildingNumber) ? "" : "and (所属楼宇 like '%" + buildingNumber + "%') ") +
-                                (string.IsNullOrEmpty(name) ? "" : "and (占用者名称 like '%" + name + "%') ") +
-                                " and 计费开始年月 >= " + startMonth +
-                                " and 计费开始年月 <= " + endMonth +
+                                "WHERE 帐套代码 = @帐套代码" +
+                                homeNumberCondition +
+                                buildingNumberCondition +
+                                nameCondition +
+                                " and 计费开始年月 >= @开始年月 " +
+                                " and 计费开始年月 <= @结束年月 " + 
                                 " GROUP BY 房产单元编号, 占用者名称, 帐套代码 " +
                                 " ORDER BY 占用者名称 ";
+            DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlString, 
+                new SqlParameter("@占用者名称","%" + name + "%"),
+                new SqlParameter("@房产单元编号", "%" + homeNumber + "%"),
+                new SqlParameter("@所属楼宇", "%" + buildingNumber + "%"),
+                new SqlParameter("@帐套代码", ztcode),
+                new SqlParameter("@开始年月", startMonth),
+                new SqlParameter("@结束年月", endMonth));
 
-            DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlString);
+
+            //string sqlString = "SELECT 房产单元编号, 占用者名称, SUM(应收金额) AS 已收总额, 帐套代码 " +
+            //                    "FROM dbo.小程序_已收查询 " +
+            //                    "WHERE 帐套代码 = " + ztcode +
+            //                    (string.IsNullOrEmpty(homeNumber) ? "" : "and (房产单元编号 like '%" + homeNumber + "%') ") +
+            //                    (string.IsNullOrEmpty(buildingNumber) ? "" : "and (所属楼宇 like '%" + buildingNumber + "%') ") +
+            //                    (string.IsNullOrEmpty(name) ? "" : "and (占用者名称 like '%" + name + "%') ") +
+            //                    " and 计费开始年月 >= " + startMonth +
+            //                    " and 计费开始年月 <= " + endMonth +
+            //                    " GROUP BY 房产单元编号, 占用者名称, 帐套代码 " +
+            //                    " ORDER BY 占用者名称 ";
+
+            //DataTable dt = SQLHelper.ExecuteQuery("wyt", sqlString);
             if (dt.Rows.Count == 0)
             {
                 sr.status = "Fail";
                 sr.result = "未查询到任何记录";
                 return sr;
             }
-            List<Charged> chargedList = new List<Charged>();
+            //List<Charged> chargedList = new List<Charged>();
+
+            //foreach (DataRow row in dt.Rows)
+            //{
+            //    Charged c = new Charged()
+            //    {
+            //        RoomNumber = DataTypeHelper.GetStringValue(row["房产单元编号"]),
+            //        Name = DataTypeHelper.GetStringValue(row["占用者名称"]),
+            //        Total = DataTypeHelper.GetDoubleValue(row["已收总额"]),
+            //        ZTCode = DataTypeHelper.GetStringValue(row["帐套代码"]),
+            //    };
+            //    chargedList.Add(c);
+            //}
+            List<object> chargedList = new List<object>();
 
             foreach (DataRow row in dt.Rows)
             {
-                Charged c = new Charged()
+                var c = new 
                 {
                     RoomNumber = DataTypeHelper.GetStringValue(row["房产单元编号"]),
                     Name = DataTypeHelper.GetStringValue(row["占用者名称"]),

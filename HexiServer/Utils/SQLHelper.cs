@@ -13,8 +13,8 @@ namespace HexiUtils
         //private static string wytConnectionString = "Data Source=192.168.13.1;Initial Catalog=f2wyt;Integrated Security=false;User ID=sa;Password=!1asdfgh";//松园服务器连接字符串
         //private static string wytConnectionString = "Data Source=192.168.0.102;Initial Catalog=wyt;Integrated Security=false;User ID=sa;Password=101128";//松园本地连接字符串
         //private static string wxConnectionString = "Data Source=192.168.0.102;Initial Catalog=wyt;Integrated Security=false;User ID=sa;Password=101128";//松园本地连接字符串
-        private static string wytConnectionString = "Data Source=192.168.1.100;Initial Catalog=wytnetsz;Integrated Security=false;User ID=sa;Password=101128";//苏州本地连接字符串
-        private static string wxConnectionString = "Data Source=192.168.1.100;Initial Catalog=weixin;Integrated Security=false;User ID=sa;Password=101128";//苏州本地连接字符串
+        private static string wytConnectionString = "Data Source=192.168.0.108;Initial Catalog=wytnetsz;Integrated Security=false;User ID=sa;Password=aBCD1234";//苏州本地连接字符串
+        private static string wxConnectionString = "Data Source=192.168.0.108;Initial Catalog=weixin;Integrated Security=false;User ID=sa;Password=aBCD1234";//苏州本地连接字符串
         //private static string wytConnectionString = "Data Source=192.168.1.199;Initial Catalog=wytnet;Integrated Security=false;User ID=sa;Password=Yq123";//苏州服务器连接字符串
         //private static string wxConnectionString = "Data Source=192.168.1.199;Initial Catalog=weixin;Integrated Security=false;User ID=sa;Password=Yq123";//苏州服务器连接字符串
         /**
@@ -157,6 +157,7 @@ namespace HexiUtils
                     using (SqlCommand cmd = connection.CreateCommand())
                     {
                         cmd.CommandText = sqlString;
+                        //cmd.CommandType
                         cmd.Parameters.AddRange(parameters);
                         int lines = cmd.ExecuteNonQuery();//执行插入操作，并返回受影响行数
                         if (lines < 1)
@@ -177,6 +178,15 @@ namespace HexiUtils
 
             }
             return sr;
+        }
+
+
+
+        private void DataSetTest ()
+        {
+            DataSet ds = new DataSet();
+            ds.DataSetName = "aTable";
+            DataTableCollection dtCollection = ds.Tables;
         }
     }
 }

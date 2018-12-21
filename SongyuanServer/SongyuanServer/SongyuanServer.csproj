@@ -170,9 +170,9 @@
     <Folder Include="Views\WXUser\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\HexiServer\Utils\HexiUtils.csproj">
-      <Project>{c919ff5d-aeda-420d-a8b5-f52b474d979e}</Project>
-      <Name>HexiUtils</Name>
+    <ProjectReference Include="..\SongyuanUtils\SongyuanUtils.csproj">
+      <Project>{de20555e-55f1-4138-a573-83dcd7e97067}</Project>
+      <Name>SongyuanUtils</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

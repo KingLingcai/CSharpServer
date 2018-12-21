@@ -48,6 +48,20 @@ namespace HexiServer.Business
                 return sr;
             }
 
+            //string sqlStr = " select 序号,内容 from 基础资料_服务任务管理设置_入户维修注意事项 where left(DefClass,2) = @分类 ";
+            //DataTable dtCaution = SQLHelper.ExecuteQuery("wyt", sqlStr, new SqlParameter("@分类", ztcode));
+            //List<RepairCaution> rcList = new List<RepairCaution>();
+            //if (dtCaution.Rows.Count != 0)
+            //{
+            //    foreach (DataRow drCaution in dtCaution.Rows)
+            //    {
+            //        RepairCaution rc = new RepairCaution();
+            //        rc.number = DataTypeHelper.GetStringValue(drCaution["序号"]);
+            //        rc.content = DataTypeHelper.GetStringValue(drCaution["内容"]);
+            //        rcList.Add(rc);
+            //    }
+            //}
+            
             List<Repair> repairList = new List<Repair>();
             foreach (DataRow row in dt.Rows)
             {
@@ -101,6 +115,7 @@ namespace HexiServer.Business
                 afterList.Add(DataTypeHelper.GetStringValue(row["处理后照片2"]));
                 afterList.Add(DataTypeHelper.GetStringValue(row["处理后照片3"]));
                 r.AfterImage = afterList.ToArray();
+                //r.Cautions = rcList.ToArray();
                 repairList.Add(r);
             }
             sr.status = "Success";

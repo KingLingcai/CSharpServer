@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Data;
 using System.Data.SqlClient;
-using HexiUtils;
+using SongyuanUtils;
 using SongyuanServer.Models;
 
 namespace SongyuanServer.Business
@@ -40,7 +40,7 @@ namespace SongyuanServer.Business
             StatusReport sr = new StatusReport();
 
             //根据幼儿园名称选择不同的数据库
-            string dbName = kindergartenName == "松园幼儿园" ? "wyt" : "ydal";
+            string dbName = kindergartenName == "松园幼儿园" ? "cloudsy" : "cloudyd";
 
             string sqlString = "if not exists(select * from 基础_看园管理 where 姓名=@姓名 and 联系电话=@联系电话) " +
                           " insert into 基础_看园管理(姓名,性别,出生年月日,家长姓名,家长与幼儿关系,联系电话,家庭住址," +
@@ -142,7 +142,7 @@ namespace SongyuanServer.Business
             StatusReport sr = new StatusReport();
 
             //根据幼儿园名称选择不同的数据库
-            string dbName = kindergartenName == "松园幼儿园" ? "wyt" : "ydal";
+            string dbName = kindergartenName == "松园幼儿园" ? "cloudsy" : "cloudyd";
             //string sqlString = " select ID,姓名,性别,出生年月日,家长姓名,家长与幼儿关系,联系电话,家庭住址,是否上过幼儿园, " +
             //                   " 家长性别,入托意愿,计划入学时间,是否政府摇号,是否预约看园,预约看园时间," +
             //                   " 是否有接待人,接待人姓名,是否校车接送 " +

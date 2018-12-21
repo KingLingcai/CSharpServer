@@ -46,7 +46,7 @@ namespace HexiUserServer.Controllers
             return Json(sr);
         }
 
-        public ActionResult OnSetRepairImage()
+        public ActionResult OnSetComplaintImage()
         {
             StatusReport sr = new StatusReport();
             if (Request.Files.Count == 0)
@@ -65,7 +65,7 @@ namespace HexiUserServer.Controllers
                 string ID = Request.Form["id"];
                 string func = Request.Form["func"];
                 string index = Request.Form["index"];
-                sr = RepairDal.SetRepairImage(ID, func, index, sqlImagePath);
+                sr = ComplaintDal.SetComplainImage(ID, func, index, sqlImagePath);
                 return Json(sr);
             }
             catch (NotImplementedException exp)
@@ -77,10 +77,10 @@ namespace HexiUserServer.Controllers
         }
 
 
-        public ActionResult OnEvaluation(string evaluation, string isSatisfying, string id)
+        public ActionResult OnEvaluation(string evaluation, string isSatisfying, string isFinish, string id)
         {
             StatusReport sr = new StatusReport();
-            sr = ComplaintDal.Evaluation(evaluation, isSatisfying, id);
+            sr = ComplaintDal.Evaluation(evaluation, isSatisfying, isFinish, id);
             return Json(sr);
         }
     }
