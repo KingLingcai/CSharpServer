@@ -311,7 +311,7 @@ namespace HexiServer.Business
         public static StatusReport SetEquipmentTroubleImage(string ID, string func, string index, string sqlImagePath)
         {
             StatusReport sr = new StatusReport();
-            string itemName = func == "before" ? "报修前照片" + index.ToString() : "处理后照片" + index.ToString();
+            string itemName = func == "before" ? "维修前照片" + index.ToString() : "处理后照片" + index.ToString();
             string sqlString = " update 基础资料_设备故障记录 set " + itemName + " = @路径 " +
                                " where ID = @ID ";
             sr = SQLHelper.Update("wyt", sqlString,
@@ -320,7 +320,7 @@ namespace HexiServer.Business
             sr.parameters = index;
             return sr;
         }
-        
+
         public static StatusReport GetEquipmentStatistics (string ztcode, string level)
         {
             StatusReport sr = new StatusReport();

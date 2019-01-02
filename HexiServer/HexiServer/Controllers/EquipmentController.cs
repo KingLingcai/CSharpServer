@@ -11,6 +11,12 @@ namespace HexiServer.Controllers
 {
     public class EquipmentController : Controller
     {
+        /// <summary>
+        /// 获取设备保养信息
+        /// </summary>
+        /// <param name="classify"></param>
+        /// <param name="isDone"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult OnGetEquipment(string classify, string isDone)
         {
@@ -25,7 +31,15 @@ namespace HexiServer.Controllers
             return Json(sr);
         }
 
-
+        /// <summary>
+        /// 提交设备保养信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="isDone"></param>
+        /// <param name="inputMan"></param>
+        /// <param name="doneInfo"></param>
+        /// <param name="inputDate"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult OnSetEquipment(string id, string isDone, string inputMan, string doneInfo, string inputDate)
         {
@@ -40,6 +54,10 @@ namespace HexiServer.Controllers
             return Json(sr);
         }
 
+        /// <summary>
+        /// 提交设备保养照片
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult OnSetEquipmentImage()
         {
@@ -72,6 +90,11 @@ namespace HexiServer.Controllers
             
         }
 
+        /// <summary>
+        /// 查询设备信息
+        /// </summary>
+        /// <param name="operationNumber"></param>
+        /// <returns></returns>
         public ActionResult OnSearchEquipment(string operationNumber)
         {
             StatusReport sr = new StatusReport();
@@ -86,6 +109,13 @@ namespace HexiServer.Controllers
             return Json(sr);
         }
 
+
+        /// <summary>
+        /// 获取设备故障信息
+        /// </summary>
+        /// <param name="classify"></param>
+        /// <param name="isDone"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult OnGetEquipmentTrouble(string classify, string isDone)
         {
@@ -100,17 +130,56 @@ namespace HexiServer.Controllers
             return Json(sr);
         }
 
+        /// <summary>
+        /// 提交设备故障维修情况
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="fee"></param>
+        /// <param name="doneTime"></param>
+        /// <param name="doneInfo"></param>
+        /// <returns></returns>
         public ActionResult OnSetEquipmentTrouble(string id, string fee, string doneTime, string doneInfo)
         {
             StatusReport sr = new StatusReport();
-            //if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(doneTime) || string.IsNullOrEmpty(doneInfo) || string.IsNullOrEmpty(fee))
-            //{
-            //    sr.status = "Fail";
-            //    sr.result = "信息不完整";
-            //    return Json(sr);
-            //}
             sr = EquipmentDal.SetEquipmentTrouble(id, fee, doneInfo, doneTime);
             return Json(sr);
+        }
+
+
+
+        /// <summary>
+        /// 提交设备故障维修照片
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult OnSetEquipmentTroubleImage()
+        {
+            StatusReport sr = new StatusReport();
+            if (Request.Files.Count == 0)
+            {
+                sr.status = "Fail";
+                sr.result = "没有图片";
+                return Json(sr);
+            }
+            try
+            {
+                string mainPath = "F:\\wytws\\Files\\jczl_fwrwgl\\";
+                string imagePath = mainPath + Request.Files.AllKeys[0];
+                string sqlImagePath = Request.Files.AllKeys[0];
+                HttpPostedFileBase uploadImage = (Request.Files[0]);
+                uploadImage.SaveAs(imagePath);
+                string ID = Request.Form["id"];
+                string func = Request.Form["func"];
+                string index = Request.Form["index"];
+                sr = EquipmentDal.SetEquipmentTroubleImage(ID, func, index, sqlImagePath);
+                return Json(sr);
+            }
+            catch (NotImplementedException exp)
+            {
+                sr.status = "Fail";
+                sr.result = exp.Message;
+                return Json(sr);
+            }
         }
 
         //[HttpPost]

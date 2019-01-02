@@ -30,9 +30,9 @@ namespace HexiServer.Business
                 " 紧急程度,报修说明,报修时间,预约服务时间,谈好上门时间,发单人,接单人,派工时间," +
                 " 到场时间,操作人,完成时间,收费类别,材料费,人工费,是否已收,是否阅读,状态,完成情况及所耗物料,报修前照片1," +
                 " 报修前照片2,报修前照片3,处理后照片1,处理后照片2,处理后照片3,延期原因,预计延期到,回访人,回访意见,回访时间, " +
-                " 是否满意,业主确认完成,业主确认完成时间,是否满意,业主评价,是否入户, case when 客服专员 = @接单人 then '客服专员' else '维修工' end as 身份 " +
+                " 是否满意,业主确认完成,业主确认完成时间,是否满意,业主评价,是否入户,接单人, case when 所属组团 = @接单人 then '客服专员' else '维修工' end as 身份 " +
                 " from 小程序_工单管理 " +
-                " where (接单人 = @接单人 or 客服专员 = @接单人) and left(分类,2) = @分类";
+                " where 接单人 is not null and (接单人 = @接单人 or 所属组团 = @接单人) and left(分类,2) = @分类";
             sqlString += orderStatusCondition;
             sqlString += (" order by " + orderType + " desc");
             //sqlString += orderType == "已完成" ? " order by 完成时间 desc " : " order by ID desc ";
