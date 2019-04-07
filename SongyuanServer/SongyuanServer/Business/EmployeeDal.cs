@@ -47,7 +47,7 @@ namespace SongyuanServer.Business
             string speciality, string college1, string college2, string college3, string eduStartTime1, string eduStartTime2,
             string eduStartTime3, string eduEndTime1, string eduEndTime2, string eduEndTime3, string work1, string work2,
             string work3, string workstartTime1, string workstartTime2, string workstartTime3, string workEndTime1,
-            string workEndTime2, string workEndTime3)
+            string workEndTime2, string workEndTime3, string gender)
         {
             StatusReport sr = new StatusReport();
 
@@ -59,12 +59,12 @@ namespace SongyuanServer.Business
                                " 工资发放方式,工资卡帐号,所属银行,无社保原因,工资金额,社保金额,手机,手机地址,电脑硬件地址,员工联系人, " +
                                " 联系人手机,学历,专业技术职称,部门,职务,资格,是否有健康证,审核状态,毕业院校,专业,特长, " +
                                " 入学时间1,毕业时间1,所在院校1,入学时间2,毕业时间2,所在院校2,入学时间3,毕业时间3,所在院校3, " +
-                               " 入职时间1,离职时间1,所在单位1,入职时间2,离职时间2,所在单位2,入职时间3,离职时间3,所在单位3) " +
+                               " 入职时间1,离职时间1,所在单位1,入职时间2,离职时间2,所在单位2,入职时间3,离职时间3,所在单位3,性别) " +
                                " select @姓名,@出生日期,@身份证号码,@入职时间,@住址,@社保号,@住房公积金帐号, " +
                                " @工资发放方式,@工资卡帐号,@所属银行,@无社保原因,@工资金额,@社保金额,@手机,@手机地址,@电脑硬件地址,@员工联系人,"  +
                                " @联系人手机,@学历,@专业技术职称,@部门,@职务,@资格,@是否有健康证,@审核状态,@毕业院校,@专业,@特长, " +
                                " @入学时间1,@毕业时间1,@所在院校1,@入学时间2,@毕业时间2,@所在院校2,@入学时间3,@毕业时间3,@所在院校3, " +
-                               " @入职时间1,@离职时间1,@所在单位1,@入职时间2,@离职时间2,@所在单位2,@入职时间3,@离职时间3,@所在单位3 " +
+                               " @入职时间1,@离职时间1,@所在单位1,@入职时间2,@离职时间2,@所在单位2,@入职时间3,@离职时间3,@所在单位3,@性别 " +
                                " select @@identity ";
             sr = SQLHelper.Insert(dbName, sqlString, new SqlParameter("@姓名", GetDBValue(name)),
                                                      new SqlParameter("@出生日期", GetDBValue(birth)),
@@ -111,7 +111,8 @@ namespace SongyuanServer.Business
                                                      new SqlParameter("@所在单位2", GetDBValue(work2)),
                                                      new SqlParameter("@入职时间3", GetDBValue(workstartTime3)),
                                                      new SqlParameter("@离职时间3", GetDBValue(workEndTime3)),
-                                                     new SqlParameter("@所在单位3", GetDBValue(work3)));
+                                                     new SqlParameter("@所在单位3", GetDBValue(work3)),
+                                                     new SqlParameter("@性别", GetDBValue(gender)));
             return sr;
         }
 

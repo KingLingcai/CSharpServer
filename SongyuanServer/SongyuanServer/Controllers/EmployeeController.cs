@@ -48,7 +48,7 @@ namespace SongyuanServer.Controllers
             string speciality, string college1, string college2, string college3, string eduStartTime1, string eduStartTime2,
             string eduStartTime3, string eduEndTime1, string eduEndTime2, string eduEndTime3, string work1, string work2,
             string work3, string workstartTime1, string workstartTime2, string workstartTime3, string workEndTime1,
-            string workEndTime2, string workEndTime3)
+            string workEndTime2, string workEndTime3, string gender)
         {
             StatusReport sr = new StatusReport();
 
@@ -73,7 +73,7 @@ namespace SongyuanServer.Controllers
                 payCheckAccount, bank, noSocialSecurityReason, payAmount, socialSecurityAmount, phoneNumber, phoneAddress, hardwareAddress,
                 contact, contactPhoneNumber, record, title, department, position, qualification, isHealthCertificate,college,profession,
                 speciality,college1,college2,college3,eduStartTime1,eduStartTime2,eduStartTime3,eduEndTime1,eduEndTime2,eduEndTime3,
-                work1,work2,work3,workstartTime1,workstartTime2,workstartTime3,workEndTime1,workEndTime2,workEndTime3);
+                work1,work2,work3,workstartTime1,workstartTime2,workstartTime3,workEndTime1,workEndTime2,workEndTime3,gender);
 
             return Json(sr);
         }

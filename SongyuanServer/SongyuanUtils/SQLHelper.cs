@@ -11,7 +11,7 @@ namespace SongyuanUtils
     {
 
         //private static string cloudConnectionString = "Data Source=192.168.13.1;Initial Catalog=f2wyt;Integrated Security=false;User ID=sa;Password=!1asdfgh";//松园服务器连接字符串
-        private static string cloudsyConnectionString = "Data Source=111.230.136.172;Initial Catalog=F2wytCloud;Integrated Security=false;User ID=sa;Password=!1asdfgh";//松园本地连接字符串
+        private static string cloudsyConnectionString = "Data Source=111.230.136.172;Initial Catalog=F2wyt;Integrated Security=false;User ID=sa;Password=!1asdfgh";//松园本地连接字符串
         private static string localsyConnectionString = "Data Source=192.168.13.1;Initial Catalog=f2wyt;Integrated Security=false;User ID=sa;Password=!1asdfgh";//松园本地连接字符串
         private static string cloudydConnectionString = "Data Source=111.230.136.172;Initial Catalog=yd;Integrated Security=false;User ID=sa;Password=!1asdfgh";//松园本地连接字符串
         private static string localydConnectionString = "Data Source=192.168.13.1;Initial Catalog=yd;Integrated Security=false;User ID=sa;Password=!1asdfgh";//松园本地连接字符串
